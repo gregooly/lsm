@@ -1,0 +1,359 @@
+@model LaundryMS.Web.Models.ViewModels.ScanHistoryIndexViewModel
+
+@{
+    ViewData["Title"] = "Scan history";
+
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        tag = Model.Query.Tag,
+        q = Model.Query.Q,
+        readerId = Model.Query.ReaderId,
+        readerWayId = Model.Query.ReaderWayId,
+        processingResult = Model.Query.ProcessingResult,
+        jobId = Model.Query.JobId,
+        rejectionReason = Model.Query.RejectionReason,
+        idempotencyKey = Model.Query.IdempotencyKey,
+        onlyRejected = Model.Query.OnlyRejected,
+        onlyDuplicates = Model.Query.OnlyDuplicates,
+        minIngestLagSeconds = Model.Query.MinIngestLagSeconds,
+        from = Model.Query.From,
+        to = Model.Query.To,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+
+        return Url.Action("Index", new
+        {
+            tag = Model.Query.Tag,
+            q = Model.Query.Q,
+            readerId = Model.Query.ReaderId,
+            readerWayId = Model.Query.ReaderWayId,
+            processingResult = Model.Query.ProcessingResult,
+            jobId = Model.Query.JobId,
+            rejectionReason = Model.Query.RejectionReason,
+            idempotencyKey = Model.Query.IdempotencyKey,
+            onlyRejected = Model.Query.OnlyRejected,
+            onlyDuplicates = Model.Query.OnlyDuplicates,
+            minIngestLagSeconds = Model.Query.MinIngestLagSeconds,
+            from = Model.Query.From,
+            to = Model.Query.To,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Scan history</h1>
+        <p class="page-subtitle">Full RFID scan log. Use filters for time, reader, route, result, job, lag, duplicates, or tag.</p>
+    </div>
+    <div class="page-header-actions w-100 flex-wrap gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Clear</a>
+        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("ExportCsv", new {
+            tag = Model.Query.Tag,
+            q = Model.Query.Q,
+            readerId = Model.Query.ReaderId,
+            readerWayId = Model.Query.ReaderWayId,
+            processingResult = Model.Query.ProcessingResult,
+            jobId = Model.Query.JobId,
+            rejectionReason = Model.Query.RejectionReason,
+            idempotencyKey = Model.Query.IdempotencyKey,
+            onlyRejected = Model.Query.OnlyRejected,
+            onlyDuplicates = Model.Query.OnlyDuplicates,
+            minIngestLagSeconds = Model.Query.MinIngestLagSeconds,
+            from = Model.Query.From,
+            to = Model.Query.To
+        })">
+            <i class="bi bi-download me-1"></i>Export CSV
+        </a>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Scans (24h)</div><div class="fs-4 fw-semibold">@Model.Total24h</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Rejected (24h)</div><div class="fs-4 fw-semibold">@Model.Rejected24h</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Duplicate keys (24h)</div><div class="fs-4 fw-semibold">@Model.Duplicates24h</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Avg lag (24h)</div><div class="fs-4 fw-semibold">@Model.AvgLagSeconds24h s</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">P95 lag (24h)</div><div class="fs-4 fw-semibold">@Model.P95LagSeconds24h s</div></div></div>
+    </div>
+</div>
+
+<form method="get" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-3">
+                <label class="form-label small text-muted mb-1">Tag contains</label>
+                <input name="tag" class="form-control form-control-sm" value="@Model.Query.Tag" placeholder="EPC / RFID..." />
+            </div>
+            <div class="col-12 col-lg-3">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="idempotency, rejection, tag..." />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Result</label>
+                <select name="processingResult" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var r in Model.ProcessingResultOptions)
+                    {
+                        <option value="@r" selected="@(Model.Query.ProcessingResult == r)">@r</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Reader</label>
+                <select name="readerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var r in Model.Readers)
+                    {
+                        <option value="@r.Id" selected="@(Model.Query.ReaderId == r.Id)">@r.ReaderName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <label class="form-label small text-muted mb-1">Scan route</label>
+                <select name="readerWayId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var w in Model.ReaderWays)
+                    {
+                        <option value="@w.Id" selected="@(Model.Query.ReaderWayId == w.Id)">@w.DisplayName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Job ID</label>
+                <input name="jobId" class="form-control form-control-sm" value="@(Model.Query.JobId?.ToString() ?? "")" placeholder="#" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Min lag (s)</label>
+                <input name="minIngestLagSeconds" type="number" class="form-control form-control-sm" value="@Model.Query.MinIngestLagSeconds" min="0" max="86400" />
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <label class="form-label small text-muted mb-1">Rejection contains</label>
+                <input name="rejectionReason" class="form-control form-control-sm" value="@Model.Query.RejectionReason" placeholder="Reason..." />
+            </div>
+            <div class="col-12 col-md-6 col-lg-3">
+                <label class="form-label small text-muted mb-1">Idempotency key</label>
+                <input name="idempotencyKey" class="form-control form-control-sm" value="@Model.Query.IdempotencyKey" placeholder="Exact key" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">From (UTC)</label>
+                <input type="datetime-local" name="from" class="form-control form-control-sm" value="@(Model.Query.From?.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">To (UTC)</label>
+                <input type="datetime-local" name="to" class="form-control form-control-sm" value="@(Model.Query.To?.ToString("yyyy-MM-ddTHH:mm") ?? "")" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    <option value="100" selected="@(Model.PageSize == 100)">100</option>
+                    <option value="200" selected="@(Model.PageSize == 200)">200</option>
+                    <option value="500" selected="@(Model.PageSize == 500)">500</option>
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyRejected" value="true" id="onlyRejected" checked="@Model.Query.OnlyRejected" />
+                    <label class="form-check-label small" for="onlyRejected">Only rejected</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyDuplicates" value="true" id="onlyDuplicates" checked="@Model.Query.OnlyDuplicates" />
+                    <label class="form-check-label small" for="onlyDuplicates">Only duplicates</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-funnel me-1"></i>Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+        <div class="small text-muted mt-2">
+            Showing <strong>@Model.Events.Count</strong> event(s) · Total <strong>@Model.TotalCount</strong> · Page <strong>@Model.Page</strong> / <strong>@Model.TotalPages</strong>
+        </div>
+    </div>
+</form>
+
+@if (Model.TopRejectionReasons24h.Count > 0)
+{
+    <div class="card section-card mb-3">
+        <div class="card-header section-card-header">
+            <h2 class="section-title mb-0"><i class="bi bi-exclamation-triangle section-title-icon"></i>Top rejection reasons (24h)</h2>
+        </div>
+        <div class="card-body">
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var r in Model.TopRejectionReasons24h)
+                {
+                    <span class="badge bg-light text-dark border" title="@r.Reason">@r.Count × @r.Reason</span>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Events.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No scan events found.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>RFID Tag</th>
+                            <th>Reader</th>
+                            <th>Scan route</th>
+                            <th>Result</th>
+                            <th class="text-center">Job</th>
+                            <th class="text-center">Lag</th>
+                            <th><a class="text-decoration-none" href="@SortHref("occurred")">Occurred</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("received")">Received</a></th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Events)
+                        {
+                            var res = (item.ProcessingResult ?? "").ToLowerInvariant();
+                            var badge = res == "rejected" ? "bg-danger" : (res == "accepted" || res == "applied" ? "bg-success" : "bg-dark");
+
+                            <tr>
+                                <td class="text-center">@item.Id</td>
+                                <td>
+                                    <a class="text-decoration-none" asp-controller="LinenItems" asp-action="Details" asp-route-id="@item.LinenItemId">
+                                        <code class="small">@item.RfidTag</code>
+                                    </a>
+                                </td>
+                                <td>
+                                    <a class="text-decoration-none" asp-controller="Readers" asp-action="Details" asp-route-id="@item.ReaderId">@item.ReaderName</a>
+                                </td>
+                                <td>
+                                    <a class="text-decoration-none" asp-controller="ReaderWays" asp-action="Details" asp-route-id="@item.ReaderWayId">@item.WayName</a>
+                                </td>
+                                <td><span class="badge @badge text-uppercase">@item.ProcessingResult</span></td>
+                                <td class="text-center">
+                                    @if (item.LogisticsJobId.HasValue)
+                                    {
+                                        <a class="small" asp-controller="LogisticsJobs" asp-action="Details" asp-route-id="@item.LogisticsJobId.Value">#@item.LogisticsJobId.Value</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="text-center small">@item.IngestLagSeconds s</td>
+                                <td class="small text-nowrap">@item.OccurredAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="small text-nowrap">@item.ReceivedAtServer.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td class="text-center text-nowrap">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-event" data-id="@item.Id" title="Details">
+                                        <i class="bi bi-info-circle"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<nav class="mt-3">
+    <ul class="pagination pagination-sm mb-0">
+        <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+        <li class="page-item active"><span class="page-link">@Model.Page</span></li>
+        <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+    </ul>
+</nav>
+
+<div class="modal fade" id="eventDetailsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Scan event details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="eventDetailsBody" class="small text-muted">Loading...</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const modalEl = document.getElementById('eventDetailsModal');
+            const bodyEl = document.getElementById('eventDetailsBody');
+            const modal = modalEl ? new bootstrap.Modal(modalEl) : null;
+
+            document.querySelectorAll('.js-open-event').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!modal || !bodyEl) return;
+                    const id = btn.getAttribute('data-id');
+                    bodyEl.textContent = 'Loading...';
+                    modal.show();
+
+                    const res = await fetch(`@Url.Action("Get","ScanHistory")?id=${encodeURIComponent(id)}`, { headers: { 'X-Requested-With': 'fetch' } });
+                    const data = await res.json();
+                    if (!data?.ok) { bodyEl.textContent = data?.message ?? 'Failed to load.'; return; }
+
+                    const e = data.ev || {};
+                    const esc = (s) => String(s ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+                    const jobId = e.logisticsJobId ?? e.LogisticsJobId;
+
+                    bodyEl.innerHTML = `
+                        <dl class="row mb-0">
+                          <dt class="col-sm-3 text-muted">Event ID</dt><dd class="col-sm-9">${esc(e.id ?? e.Id)}</dd>
+                          <dt class="col-sm-3 text-muted">RFID</dt><dd class="col-sm-9"><code>${esc(e.rfidTag ?? e.RfidTag)}</code></dd>
+                          <dt class="col-sm-3 text-muted">Reader</dt><dd class="col-sm-9">${esc(e.readerName ?? e.ReaderName)}</dd>
+                          <dt class="col-sm-3 text-muted">Scan route</dt><dd class="col-sm-9">${esc(e.wayName ?? e.WayName)}</dd>
+                          <dt class="col-sm-3 text-muted">Result</dt><dd class="col-sm-9">${esc(e.processingResult ?? e.ProcessingResult)}</dd>
+                          <dt class="col-sm-3 text-muted">Job</dt><dd class="col-sm-9">${jobId ? `<a href="@Url.Action("Details","LogisticsJobs")/${encodeURIComponent(jobId)}">#${esc(jobId)}</a>` : '—'}</dd>
+                          <dt class="col-sm-3 text-muted">Occurred</dt><dd class="col-sm-9">${esc(e.occurredAt ?? e.OccurredAt)}</dd>
+                          <dt class="col-sm-3 text-muted">Received</dt><dd class="col-sm-9">${esc(e.receivedAtServer ?? e.ReceivedAtServer)}</dd>
+                          <dt class="col-sm-3 text-muted">Lag</dt><dd class="col-sm-9">${esc(e.ingestLagSeconds ?? e.IngestLagSeconds)} s</dd>
+                          <dt class="col-sm-3 text-muted">Condition</dt><dd class="col-sm-9">${esc(e.conditionAfterEvent ?? e.ConditionAfterEvent) || '—'}</dd>
+                          <dt class="col-sm-3 text-muted">Rejection</dt><dd class="col-sm-9">${esc(e.rejectionReason ?? e.RejectionReason) || '—'}</dd>
+                          <dt class="col-sm-3 text-muted">Idempotency</dt><dd class="col-sm-9"><code>${esc(e.idempotencyKey ?? e.IdempotencyKey) || '—'}</code></dd>
+                        </dl>
+                    `;
+                });
+            });
+        })();
+    </script>
+}

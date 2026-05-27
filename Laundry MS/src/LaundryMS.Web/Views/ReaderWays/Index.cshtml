@@ -1,0 +1,614 @@
+@model LaundryMS.Web.Models.ViewModels.ReaderWaysIndexViewModel
+
+@{
+    ViewData["Title"] = "Scan routes";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        readerId = Model.Query.ReaderId,
+        fromLocationId = Model.Query.FromLocationId,
+        toLocationId = Model.Query.ToLocationId,
+        businessPurposeKey = Model.Query.BusinessPurposeKey,
+        movementDirection = Model.Query.MovementDirection,
+        targetProcessStatus = Model.Query.TargetProcessStatus,
+        includeInactive = Model.Query.IncludeInactive,
+        onlySilent = Model.Query.OnlySilent,
+        onlyMissingEndpoints = Model.Query.OnlyMissingEndpoints,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            readerId = Model.Query.ReaderId,
+            fromLocationId = Model.Query.FromLocationId,
+            toLocationId = Model.Query.ToLocationId,
+            businessPurposeKey = Model.Query.BusinessPurposeKey,
+            movementDirection = Model.Query.MovementDirection,
+            targetProcessStatus = Model.Query.TargetProcessStatus,
+            includeInactive = Model.Query.IncludeInactive,
+            onlySilent = Model.Query.OnlySilent,
+            onlyMissingEndpoints = Model.Query.OnlyMissingEndpoints,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Scan routes</h1>
+        <p class="page-subtitle">Define how each reader applies movement direction, from → to locations, and target process status when linen is scanned.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-sm btn-primary js-open-create">
+            <i class="bi bi-plus-lg me-1"></i>Create
+        </button>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="Readers" asp-action="Index">Readers</a>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Matching routes</div><div class="fs-4 fw-semibold">@Model.TotalCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Active (filtered)</div><div class="fs-4 fw-semibold">@Model.ActiveCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Silent (7d)</div><div class="fs-4 fw-semibold">@Model.SilentCount</div></div></div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-3">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" class="form-control form-control-sm" name="q" value="@Model.Query.Q" placeholder="Route name, reader, purpose…" />
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Reader</label>
+                <select class="form-select form-select-sm" name="readerId">
+                    <option value="">All</option>
+                    @foreach (var r in Model.Readers)
+                    {
+                        <option value="@r.Id" selected="@(Model.Query.ReaderId == r.Id)">@r.ReaderName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">From location</label>
+                <select class="form-select form-select-sm" name="fromLocationId">
+                    <option value="">All</option>
+                    @foreach (var l in Model.Locations)
+                    {
+                        <option value="@l.Id" selected="@(Model.Query.FromLocationId == l.Id)">@l.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">To location</label>
+                <select class="form-select form-select-sm" name="toLocationId">
+                    <option value="">All</option>
+                    @foreach (var l in Model.Locations)
+                    {
+                        <option value="@l.Id" selected="@(Model.Query.ToLocationId == l.Id)">@l.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Purpose</label>
+                <select class="form-select form-select-sm" name="businessPurposeKey">
+                    <option value="">All</option>
+                    @foreach (var p in Model.PurposeOptions)
+                    {
+                        <option value="@p" selected="@(Model.Query.BusinessPurposeKey == p)">@p</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Direction</label>
+                <select class="form-select form-select-sm" name="movementDirection">
+                    <option value="">All</option>
+                    <option value="in" selected="@(Model.Query.MovementDirection == "in")">in</option>
+                    <option value="out" selected="@(Model.Query.MovementDirection == "out")">out</option>
+                    <option value="enter" selected="@(Model.Query.MovementDirection == "enter")">enter</option>
+                    <option value="exit" selected="@(Model.Query.MovementDirection == "exit")">exit</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Target status</label>
+                <select class="form-select form-select-sm" name="targetProcessStatus">
+                    <option value="">All</option>
+                    @foreach (var t in Model.TargetStatusOptions)
+                    {
+                        <option value="@t" selected="@(Model.Query.TargetProcessStatus == t)">@t</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="rwIncludeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="rwIncludeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlySilent" value="true" id="rwOnlySilent" checked="@Model.Query.OnlySilent" />
+                    <label class="form-check-label small" for="rwOnlySilent">Only silent (7d)</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyMissingEndpoints" value="true" id="rwOnlyMissing" checked="@Model.Query.OnlyMissingEndpoints" />
+                    <label class="form-check-label small" for="rwOnlyMissing">Missing from/to</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="position-fixed top-0 end-0 p-3 readerways-toast-container">
+    <div id="readerWaysToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="readerWaysToastBody">Saved.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No scan routes found.</p>
+        }
+        else
+        {
+            var rowNumber = (Model.Page - 1) * Model.PageSize;
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th><a class="text-decoration-none" href="@SortHref("name")">Route name</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("reader")">Reader</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("direction")">Dir</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("purpose")">Purpose</a></th>
+                            <th>From</th>
+                            <th>To</th>
+                            <th>Target</th>
+                            <th class="text-center">Antenna</th>
+                            <th class="text-center"><a class="text-decoration-none" href="@SortHref("lastscan")">Last scan</a></th>
+                            <th class="text-center"><a class="text-decoration-none" href="@SortHref("scans24h")">24h</a></th>
+                            <th class="text-center">7d</th>
+                            <th class="text-center small">Ex 7d</th>
+                            <th class="text-center"><a class="text-decoration-none" href="@SortHref("openjobs")">Jobs</a></th>
+                            <th class="text-center">Activity</th>
+                            <th class="text-center"><a class="text-decoration-none" href="@SortHref("status")">Status</a></th>
+                            <th class="text-center" style="width: 180px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            rowNumber++;
+                            <tr>
+                                <td class="text-center">@rowNumber</td>
+                                <td>@item.WayName</td>
+                                <td>@item.ReaderName</td>
+                                <td class="small">@item.MovementDirection</td>
+                                <td class="small">@item.BusinessPurposeKey</td>
+                                <td class="small">@item.FromLocationName</td>
+                                <td class="small">@item.ToLocationName</td>
+                                <td class="small">@item.TargetProcessStatus</td>
+                                <td class="text-center font-monospace small">@item.AntennaIndex</td>
+                                <td class="text-center small">@(item.LastScanAt?.ToString("MM-dd HH:mm") ?? "—")</td>
+                                <td class="text-center small">@item.Scans24h</td>
+                                <td class="text-center small">@item.Scans7d</td>
+                                <td class="text-center small">@(item.ExceptionScans7d > 0 ? item.ExceptionScans7d.ToString() : "—")</td>
+                                <td class="text-center small">@item.OpenJobsCount</td>
+                                <td class="text-center small">
+                                    @switch (item.ActivityState)
+                                    {
+                                        case "active":
+                                            <span class="badge bg-success">Hot</span>
+                                            break;
+                                        case "quiet":
+                                            <span class="badge bg-info text-dark">Quiet</span>
+                                            break;
+                                        case "silent":
+                                            <span class="badge bg-warning text-dark">Silent</span>
+                                            break;
+                                        default:
+                                            <span class="badge bg-secondary">Never</span>
+                                            break;
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id" title="Details"><i class="bi bi-eye"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-edit"
+                                            title="Edit" aria-label="Edit"
+                                            data-id="@item.Id">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+
+                                    @if (item.IsActive)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary js-open-deactivate"
+                                                title="Deactivate" aria-label="Deactivate"
+                                                data-id="@item.Id"
+                                                data-name="@item.WayName">
+                                            <i class="bi bi-toggle-off"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary js-open-activate"
+                                                title="Activate" aria-label="Activate"
+                                                data-id="@item.Id"
+                                                data-name="@item.WayName">
+                                            <i class="bi bi-toggle-on"></i>
+                                        </button>
+                                    }
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-open-delete"
+                                            title="Delete" aria-label="Delete"
+                                            data-id="@item.Id"
+                                            data-name="@item.WayName">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+    @if (Model.TotalCount > 0)
+    {
+        <div class="card-footer d-flex flex-wrap align-items-center justify-content-between gap-2 py-2">
+            <div class="small text-muted">
+                Page @Model.Page of @Model.TotalPages — @Model.TotalCount route(s)
+            </div>
+            <div class="btn-group btn-group-sm">
+                <a class="btn btn-outline-secondary @prevDisabled" href="@PageUrl(Model.Page - 1)">Prev</a>
+                <a class="btn btn-outline-secondary @nextDisabled" href="@PageUrl(Model.Page + 1)">Next</a>
+            </div>
+        </div>
+    }
+</div>
+
+@Html.AntiForgeryToken()
+
+<div class="modal fade" id="wayCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="wayCreateForm" method="post" action="@Url.Action("Create","ReaderWays")">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create scan route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="_ReaderWayFormFields" model="Model" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-1"></i>Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="wayEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="wayEditForm" method="post" action="@Url.Action("Edit","ReaderWays")">
+                <input type="hidden" name="Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit scan route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <partial name="_ReaderWayFormFields" model="Model" />
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-1"></i>Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="wayDeactivateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="wayDeactivateForm" method="post" action="@Url.Action("Deactivate","ReaderWays")">
+                <input type="hidden" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Deactivate scan route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Deactivate <strong id="deactivateWayName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning">
+                        <i class="bi bi-toggle-off me-1"></i>Deactivate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="wayActivateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="wayActivateForm" method="post" action="@Url.Action("Activate","ReaderWays")">
+                <input type="hidden" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Activate scan route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Activate <strong id="activateWayName"></strong>?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-toggle-on me-1"></i>Activate
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="wayDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="wayDeleteForm" method="post" action="@Url.Action("Delete","ReaderWays")">
+                <input type="hidden" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete scan route</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete <strong id="deleteWayName"></strong>?</p>
+                    <p class="text-muted mb-0 mt-2 small">Deletion is blocked if this route has scan history or logistics jobs.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+
+            const toastEl = document.getElementById('readerWaysToast');
+            const toastBodyEl = document.getElementById('readerWaysToastBody');
+            const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 2500 }) : null;
+
+            const createModalEl = document.getElementById('wayCreateModal');
+            const editModalEl = document.getElementById('wayEditModal');
+            const deactivateModalEl = document.getElementById('wayDeactivateModal');
+            const activateModalEl = document.getElementById('wayActivateModal');
+            const deleteModalEl = document.getElementById('wayDeleteModal');
+
+            const createModal = createModalEl ? new bootstrap.Modal(createModalEl) : null;
+            const editModal = editModalEl ? new bootstrap.Modal(editModalEl) : null;
+            const deactivateModal = deactivateModalEl ? new bootstrap.Modal(deactivateModalEl) : null;
+            const activateModal = activateModalEl ? new bootstrap.Modal(activateModalEl) : null;
+            const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
+
+            const createForm = document.getElementById('wayCreateForm');
+            const editForm = document.getElementById('wayEditForm');
+            const deactivateForm = document.getElementById('wayDeactivateForm');
+            const activateForm = document.getElementById('wayActivateForm');
+            const deleteForm = document.getElementById('wayDeleteForm');
+
+            function showToast(message, isError) {
+                if (!toastEl || !toastBodyEl || !toast) return;
+                toastEl.classList.remove('text-bg-success', 'text-bg-danger');
+                toastEl.classList.add(isError ? 'text-bg-danger' : 'text-bg-success');
+                toastBodyEl.textContent = message;
+                toast.show();
+            }
+
+            function clearValidation(form) {
+                form.querySelectorAll('.is-invalid').forEach(x => x.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback').forEach(x => x.textContent = '');
+            }
+
+            function applyErrors(form, errors) {
+                if (!errors) return;
+                Object.keys(errors).forEach(k => {
+                    const msgs = errors[k] || [];
+                    const field = form.querySelector(`[name="${k}"]`);
+                    const feedback = form.querySelector(`.invalid-feedback[data-field="${k}"]`);
+                    if (field) field.classList.add('is-invalid');
+                    if (feedback) feedback.textContent = msgs[0] ?? 'Invalid value.';
+                });
+            }
+
+            async function postForm(form) {
+                const fd = new FormData(form);
+                fd.append('__RequestVerificationToken', antiforgery);
+                const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'fetch' } });
+                return await res.json();
+            }
+
+            document.querySelector('.js-open-create')?.addEventListener('click', () => {
+                if (!createModal || !createForm) return;
+                createForm.reset();
+                clearValidation(createForm);
+                createModal.show();
+            });
+
+            document.querySelectorAll('.js-open-edit').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!editModal || !editForm) return;
+                    clearValidation(editForm);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(`@Url.Action("Get","ReaderWays")?id=${encodeURIComponent(id)}`, { headers: { 'X-Requested-With': 'fetch' } });
+                    const data = await res.json();
+                    if (!data?.ok) { showToast(data?.message ?? 'Failed to load way.', true); return; }
+
+                    const w = data.way || {};
+                    editForm.querySelector('[name="Id"]').value = w.id ?? w.Id ?? '';
+                    editForm.querySelector('[name="ReaderId"]').value = w.readerId ?? w.ReaderId ?? '';
+                    editForm.querySelector('[name="WayName"]').value = w.wayName ?? w.WayName ?? '';
+                    editForm.querySelector('[name="MovementDirection"]').value = w.movementDirection ?? w.MovementDirection ?? 'in';
+                    editForm.querySelector('[name="BusinessPurposeKey"]').value = w.businessPurposeKey ?? w.BusinessPurposeKey ?? 'scan';
+                    editForm.querySelector('[name="FromLocationId"]').value = w.fromLocationId ?? w.FromLocationId ?? '';
+                    editForm.querySelector('[name="ToLocationId"]').value = w.toLocationId ?? w.ToLocationId ?? '';
+                    editForm.querySelector('[name="TargetProcessStatus"]').value = w.targetProcessStatus ?? w.TargetProcessStatus ?? 'at_customer';
+                    const antField = editForm.querySelector('[name="AntennaIndex"]');
+                    if (antField) antField.value = String(w.antennaIndex ?? w.AntennaIndex ?? 0);
+                    editForm.querySelector('[name="IsActive"]').value = String(w.isActive ?? w.IsActive ?? true);
+
+                    editModal.show();
+                });
+            });
+
+            document.querySelectorAll('.js-open-deactivate').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!deactivateModal || !deactivateForm) return;
+                    deactivateForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? '';
+                    document.getElementById('deactivateWayName').textContent = btn.getAttribute('data-name') ?? '';
+                    deactivateModal.show();
+                });
+            });
+
+            document.querySelectorAll('.js-open-activate').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!activateModal || !activateForm) return;
+                    activateForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? '';
+                    document.getElementById('activateWayName').textContent = btn.getAttribute('data-name') ?? '';
+                    activateModal.show();
+                });
+            });
+
+            document.querySelectorAll('.js-open-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!deleteModal || !deleteForm) return;
+                    deleteForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? '';
+                    document.getElementById('deleteWayName').textContent = btn.getAttribute('data-name') ?? '';
+                    deleteModal.show();
+                });
+            });
+
+            createForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(createForm);
+                const data = await postForm(createForm);
+                if (!data?.ok) {
+                    applyErrors(createForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to create.', true);
+                    return;
+                }
+                sessionStorage.setItem('readerWaysToast', 'Created successfully.');
+                window.location.reload();
+            });
+
+            editForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(editForm);
+                const data = await postForm(editForm);
+                if (!data?.ok) {
+                    applyErrors(editForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to save changes.', true);
+                    return;
+                }
+                sessionStorage.setItem('readerWaysToast', 'Updated successfully.');
+                window.location.reload();
+            });
+
+            deactivateForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = await postForm(deactivateForm);
+                if (!data?.ok) { showToast(data?.message ?? 'Failed to deactivate.', true); return; }
+                sessionStorage.setItem('readerWaysToast', 'Deactivated successfully.');
+                window.location.reload();
+            });
+
+            activateForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = await postForm(activateForm);
+                if (!data?.ok) { showToast(data?.message ?? 'Failed to activate.', true); return; }
+                sessionStorage.setItem('readerWaysToast', 'Activated successfully.');
+                window.location.reload();
+            });
+
+            deleteForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = await postForm(deleteForm);
+                if (!data?.ok) { showToast(data?.message ?? 'Failed to delete.', true); return; }
+                sessionStorage.setItem('readerWaysToast', 'Deleted successfully.');
+                window.location.reload();
+            });
+
+            const pendingToast = sessionStorage.getItem('readerWaysToast');
+            if (pendingToast) {
+                sessionStorage.removeItem('readerWaysToast');
+                showToast(pendingToast, false);
+            }
+        })();
+    </script>
+}

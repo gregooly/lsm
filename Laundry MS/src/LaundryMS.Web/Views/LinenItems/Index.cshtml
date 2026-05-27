@@ -1,0 +1,255 @@
+@model LaundryMS.Web.Models.ViewModels.LinenItemsIndexViewModel
+
+@{
+    ViewData["Title"] = "Items";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        customerId = Model.Query.CustomerId,
+        locationId = Model.Query.LocationId,
+        locationUnassigned = Model.Query.LocationUnassigned,
+        processStatus = Model.Query.ProcessStatus,
+        physicalCondition = Model.Query.PhysicalCondition,
+        processingResult = Model.Query.ProcessingResult,
+        staleDays = Model.Query.StaleDays,
+        exceptionOnly = Model.Query.ExceptionOnly,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        includeInactive = Model.Query.IncludeInactive,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            customerId = Model.Query.CustomerId,
+            locationId = Model.Query.LocationId,
+            locationUnassigned = Model.Query.LocationUnassigned,
+            processStatus = Model.Query.ProcessStatus,
+            physicalCondition = Model.Query.PhysicalCondition,
+            processingResult = Model.Query.ProcessingResult,
+            staleDays = Model.Query.StaleDays,
+            exceptionOnly = Model.Query.ExceptionOnly,
+            sortBy = column,
+            sortDir = nextDir,
+            includeInactive = Model.Query.IncludeInactive,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Items</h1>
+        <p class="page-subtitle">Master list of RFID-tagged linen and clothes with lifecycle exceptions, last-scan visibility, and drill-down timeline.</p>
+    </div>
+    <div class="page-header-actions w-100">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="LinenAssignment" asp-action="Index">Linen assignment</a>
+        </div>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-3">
+                <label class="form-label small text-muted mb-1">RFID / search</label>
+                <div class="input-group input-group-sm items-search">
+                    <span class="input-group-text"><i class="bi bi-upc-scan"></i></span>
+                    <input type="text" name="q" class="form-control" value="@Model.Query.Q" placeholder="Tag contains..." />
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Owner</label>
+                <select name="customerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.Customers)
+                    {
+                        <option value="@c.Id" selected="@(Model.Query.CustomerId == c.Id)">@c.CustomerName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Location</label>
+                <select name="locationId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var loc in Model.Locations)
+                    {
+                        <option value="@loc.Id" selected="@(Model.Query.LocationId == loc.Id)">@loc.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Process status</label>
+                <select name="processStatus" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var s in Model.ProcessStatuses)
+                    {
+                        <option value="@s" selected="@(Model.Query.ProcessStatus == s)">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-1">
+                <label class="form-label small text-muted mb-1">Condition</label>
+                <select name="physicalCondition" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.PhysicalConditions)
+                    {
+                        <option value="@c" selected="@(Model.Query.PhysicalCondition == c)">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Result</label>
+                <select name="processingResult" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var r in Model.ProcessingResults)
+                    {
+                        <option value="@r" selected="@(Model.Query.ProcessingResult == r)">@r</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-1">
+                <label class="form-label small text-muted mb-1">Stale days</label>
+                <input type="number" min="1" max="3650" name="staleDays" class="form-control form-control-sm" value="@Model.Query.StaleDays" />
+            </div>
+            <div class="col-6 col-md-4 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="locationUnassigned" value="true" id="locationUnassigned" checked="@Model.Query.LocationUnassigned" />
+                    <label class="form-check-label small" for="locationUnassigned">Location not set only</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="exceptionOnly" value="true" id="exceptionOnly" checked="@Model.Query.ExceptionOnly" />
+                    <label class="form-check-label small" for="exceptionOnly">Exception only</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No items match your filters.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th><a href='@SortHref("rfid")' class="text-decoration-none text-dark"><text>RFID</text></a></th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th><a href='@SortHref("status")' class="text-decoration-none text-dark"><text>Status</text></a></th>
+                            <th><a href='@SortHref("location")' class="text-decoration-none text-dark"><text>Location</text></a></th>
+                            <th>Assignment</th>
+                            <th><a href='@SortHref("condition")' class="text-decoration-none text-dark"><text>Condition</text></a></th>
+                            <th><a href='@SortHref("owner")' class="text-decoration-none text-dark"><text>Owner</text></a></th>
+                            <th><a href='@SortHref("lastscan")' class="text-decoration-none text-dark"><text>Last scan</text></a></th>
+                            <th class="text-center">Age</th>
+                            <th class="text-center">Exceptions</th>
+                            <th class="text-center text-nowrap">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            var stale = item.DaysSinceLastScan is > 7;
+                            <tr class="@(!item.IsActive ? "table-secondary" : stale ? "table-warning" : null)">
+                                <td><code class="small">@item.RfidTag</code></td>
+                                <td>@item.ItemType</td>
+                                <td>@(item.SizeLabel ?? "—")</td>
+                                <td><span class="badge bg-light text-dark border">@item.CurrentProcessStatus</span></td>
+                                <td class="small">@(item.CurrentLocationName ?? "—")</td>
+                                <td><span class="badge-soft">@item.DefaultAssignmentType</span></td>
+                                <td>@item.PhysicalCondition</td>
+                                <td class="small">@(item.OwnerCustomerName ?? "Laundry pool")</td>
+                                <td class="small text-nowrap">@(item.LastScannedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="text-center">
+                                    @if (item.DaysSinceLastScan.HasValue)
+                                    {
+                                        <span class="small">@item.DaysSinceLastScan.Value d</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="small text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (item.RecentRejectedCount > 0 || item.CurrentLocationName == null)
+                                    {
+                                        <span class="badge bg-danger">@item.RecentRejectedCount</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">0</span>
+                                    }
+                                </td>
+                                <td class="text-center text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>

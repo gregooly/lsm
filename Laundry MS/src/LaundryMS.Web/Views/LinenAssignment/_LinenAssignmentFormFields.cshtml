@@ -1,0 +1,88 @@
+@model LaundryMS.Web.Models.ViewModels.LinenAssignmentIndexViewModel
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">RFID tag</label>
+        <input name="RfidTag" class="form-control" />
+        <div class="invalid-feedback" data-field="RfidTag"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Item type</label>
+        <input name="ItemType" class="form-control" />
+        <div class="invalid-feedback" data-field="ItemType"></div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Size</label>
+        <input name="SizeLabel" class="form-control" placeholder="e.g., M" />
+        <div class="invalid-feedback" data-field="SizeLabel"></div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Assignment</label>
+        <select name="DefaultAssignmentType" class="form-select">
+            <option value="fixed">Fixed</option>
+            <option value="temporary">Temporary</option>
+        </select>
+        <div class="invalid-feedback" data-field="DefaultAssignmentType"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Owner customer (optional)</label>
+        <select name="OwnerCustomerId" class="form-select">
+            <option value="">Laundry pool</option>
+            @foreach (var c in Model.Customers)
+            {
+                <option value="@c.Id">@c.CustomerName</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="OwnerCustomerId"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Assigned employee (optional)</label>
+        <select name="AssignedEmployeeId" class="form-select">
+            <option value="">-</option>
+            @foreach (var e in Model.Employees)
+            {
+                <option value="@e.Id" data-owner-customer-id="@(e.OwnerCustomerId?.ToString() ?? "")">@e.DisplayLabel</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="AssignedEmployeeId"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Current location (optional)</label>
+        <select name="CurrentLocationId" class="form-select">
+            <option value="">-</option>
+            @foreach (var loc in Model.Locations)
+            {
+                <option value="@loc.Id">@loc.LocationName</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="CurrentLocationId"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Current status</label>
+        <select name="CurrentProcessStatus" class="form-select">
+            @foreach (var s in Model.ProcessStatuses)
+            {
+                <option value="@s">@s</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="CurrentProcessStatus"></div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Condition</label>
+        <select name="PhysicalCondition" class="form-select">
+            @foreach (var c in Model.PhysicalConditions)
+            {
+                <option value="@c">@c</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="PhysicalCondition"></div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label">Active</label>
+        <select name="IsActive" class="form-select">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+        </select>
+        <div class="invalid-feedback" data-field="IsActive"></div>
+    </div>
+</div>

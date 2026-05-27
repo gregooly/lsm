@@ -1,0 +1,126 @@
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Sign in";
+    var returnUrl = ViewData["ReturnUrl"] as string ?? "";
+    var returnUrlJson = JsonSerializer.Serialize(returnUrl);
+}
+
+<div class="card login-card">
+    <div class="login-header">
+        <div class="brand-wrap">
+            <div class="brand-logo">Laundry<span class="tag">MS</span></div>
+            <p class="brand-sub">LINEN &amp; LAUNDRY OPERATIONS</p>
+            <p class="project-name">
+                Track readers, logistics jobs, scan history, quality workflows, and reports in one place.
+            </p>
+        </div>
+
+        <div class="role-switch" role="tablist" aria-label="Sign-in path">
+            <button type="button" class="role-btn active" data-role="admin" data-label="Admin">Admin</button>
+            <button type="button" class="role-btn" data-role="users" data-label="Users">Users</button>
+        </div>
+    </div>
+
+    <div class="login-body">
+        <div id="loginAlert" class="alert alert-danger login-alert py-2 px-3 d-none" role="alert"></div>
+
+        <form id="loginForm" novalidate>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email address</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email address" autocomplete="username" required />
+                </div>
+            </div>
+
+            <div class="mb-2">
+                <label for="password" class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required />
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-signin" id="btnSignIn">SIGN IN</button>
+        </form>
+
+        <div class="small-note">
+            Current path: <span id="currentRole">Admin</span> (<span id="currentRoleApi">admin</span>)
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            var signInUrl = @Html.Raw(JsonSerializer.Serialize(Url.Content("~/api/auth/signin")));
+            var dashboardUrl = @Html.Raw(JsonSerializer.Serialize(Url.Action("Dashboard", "Home")));
+            var returnUrl = @Html.Raw(returnUrlJson);
+
+            function setRoleUi(btn) {
+                $(".role-btn").removeClass("active");
+                $(btn).addClass("active");
+                $("#currentRole").text($(btn).data("label"));
+                $("#currentRoleApi").text($(btn).data("role"));
+            }
+
+            $(".role-btn").on("click", function () {
+                setRoleUi(this);
+            });
+
+            function showAlert(msg) {
+                var el = $("#loginAlert");
+                el.text(msg || "Sign-in failed.");
+                el.removeClass("d-none");
+            }
+
+            function hideAlert() {
+                $("#loginAlert").addClass("d-none").text("");
+            }
+
+            $("#loginForm").on("submit", function (e) {
+                e.preventDefault();
+                hideAlert();
+
+                var email = $("#email").val().trim();
+                var password = $("#password").val();
+                var role = $(".role-btn.active").data("role");
+
+                if (!email || !password) {
+                    showAlert("Please enter email and password.");
+                    return;
+                }
+
+                var btn = $("#btnSignIn");
+                btn.prop("disabled", true);
+
+                fetch(signInUrl, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json", "Accept": "application/json" },
+                    credentials: "same-origin",
+                    body: JSON.stringify({ email: email, password: password, role: role })
+                })
+                    .then(function (res) {
+                        return res.json().then(function (body) {
+                            return { ok: res.ok, status: res.status, body: body };
+                        });
+                    })
+                    .then(function (r) {
+                        if (r.ok && r.body && r.body.success) {
+                            var target = returnUrl && returnUrl.length ? returnUrl : dashboardUrl;
+                            window.location.assign(target);
+                            return;
+                        }
+                        var msg = (r.body && r.body.message) ? r.body.message : "Sign-in failed (" + r.status + ").";
+                        showAlert(msg);
+                    })
+                    .catch(function () {
+                        showAlert("Network error. Please try again.");
+                    })
+                    .finally(function () {
+                        btn.prop("disabled", false);
+                    });
+            });
+        })();
+    </script>
+}

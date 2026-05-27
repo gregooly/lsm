@@ -1,0 +1,316 @@
+@model LaundryMS.Web.Models.ViewModels.ReadersIndexViewModel
+
+@{
+    ViewData["Title"] = "Readers";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        category = Model.Query.Category,
+        includeInactive = Model.Query.IncludeInactive,
+        onlyUnmapped = Model.Query.OnlyUnmapped,
+        onlyIdle = Model.Query.OnlyIdle,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            category = Model.Query.Category,
+            includeInactive = Model.Query.IncludeInactive,
+            onlyUnmapped = Model.Query.OnlyUnmapped,
+            onlyIdle = Model.Query.OnlyIdle,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Readers</h1>
+        <p class="page-subtitle">Register hardware and monitor reader health, route coverage, and recent scan activity.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-sm btn-primary js-open-create">
+            <i class="bi bi-plus-lg me-1"></i>Create
+        </button>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="ReaderWays" asp-action="Index">Scan routes</a>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" class="form-control form-control-sm" name="q" value="@Model.Query.Q" placeholder="Reader, identifier, model..." />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Category</label>
+                <select class="form-select form-select-sm" name="category">
+                    <option value="">All</option>
+                    @foreach (var c in Model.CategoryOptions)
+                    {
+                        <option value="@c" selected="@(Model.Query.Category == c)">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyUnmapped" value="true" id="onlyUnmapped" checked="@Model.Query.OnlyUnmapped" />
+                    <label class="form-check-label small" for="onlyUnmapped">Only unmapped</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyIdle" value="true" id="onlyIdle" checked="@Model.Query.OnlyIdle" />
+                    <label class="form-check-label small" for="onlyIdle">Only idle/offline</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="position-fixed top-0 end-0 p-3 readers-toast-container">
+    <div id="readersToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="readersToastBody">Saved.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No readers found.</p>
+        }
+        else
+        {
+            var rowNumber = (Model.Page - 1) * Model.PageSize;
+            <div class="table-responsive">
+                <table id="readersTable" class="table table-hover mb-0 table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th><a href='@SortHref("name")' class="text-decoration-none text-dark"><text>Reader Name</text></a></th>
+                            <th><a href='@SortHref("category")' class="text-decoration-none text-dark"><text>Category</text></a></th>
+                            <th>Model</th>
+                            <th>Device Identifier</th>
+                            <th class="text-center"><a href='@SortHref("routes")' class="text-decoration-none text-dark"><text>Routes</text></a></th>
+                            <th class="text-center"><a href='@SortHref("lastseen")' class="text-decoration-none text-dark"><text>Last seen</text></a></th>
+                            <th class="text-center">24h</th>
+                            <th class="text-center">7d</th>
+                            <th class="text-center"><a href='@SortHref("status")' class="text-decoration-none text-dark"><text>Status</text></a></th>
+                            <th class="text-center" style="width: 160px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            rowNumber++;
+                            <tr>
+                                <td class="text-center">@rowNumber</td>
+                                <td class="fw-medium">@item.ReaderName</td>
+                                <td>@item.ReaderCategory</td>
+                                <td>@(item.DeviceModel ?? "-")</td>
+                                <td>@item.DeviceIdentifier</td>
+                                <td class="text-center">@item.WayCount</td>
+                                <td class="text-center small text-nowrap">@(item.LastSeenAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="text-center">@item.Scans24h</td>
+                                <td class="text-center">@item.Scans7d</td>
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                    @if (item.OnlineState == "online")
+                                    {
+                                        <span class="badge bg-success ms-1">online</span>
+                                    }
+                                    else if (item.OnlineState == "idle")
+                                    {
+                                        <span class="badge bg-warning text-dark ms-1">idle</span>
+                                    }
+                                    else if (item.OnlineState == "offline")
+                                    {
+                                        <span class="badge bg-danger ms-1">offline</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary ms-1">never seen</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    <a class="btn btn-sm btn-outline-info" asp-action="Details" asp-route-id="@item.Id" title="Details"><i class="bi bi-info-circle"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-edit" title="Edit" data-id="@item.Id"><i class="bi bi-pencil-square"></i></button>
+                                    @if (item.IsActive)
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary js-open-deactivate" title="Deactivate" data-id="@item.Id" data-name="@item.ReaderName"><i class="bi bi-toggle-off"></i></button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="btn btn-sm btn-outline-secondary js-open-activate" title="Activate" data-id="@item.Id" data-name="@item.ReaderName"><i class="bi bi-toggle-on"></i></button>
+                                    }
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-open-delete" title="Delete" data-id="@item.Id" data-name="@item.ReaderName"><i class="bi bi-trash"></i></button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+@Html.AntiForgeryToken()
+
+<!-- reuse existing modals -->
+<div class="modal fade" id="readerCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="readerCreateForm" method="post" action="@Url.Action("Create","Readers")"><div class="modal-header"><h5 class="modal-title">Create reader</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="form-label">Reader name</label><input name="ReaderName" class="form-control" /><div class="invalid-feedback" data-field="ReaderName"></div></div><div class="col-md-6"><label class="form-label">Category</label><select name="ReaderCategory" class="form-select"><option value="gate">Gate</option><option value="handheld">Handheld</option><option value="dock">Dock</option><option value="other">Other</option></select><div class="invalid-feedback" data-field="ReaderCategory"></div></div><div class="col-md-6"><label class="form-label">Device identifier</label><input name="DeviceIdentifier" class="form-control" /><div class="invalid-feedback" data-field="DeviceIdentifier"></div></div><div class="col-md-6"><label class="form-label">Device model (optional)</label><input name="DeviceModel" class="form-control" /><div class="invalid-feedback" data-field="DeviceModel"></div></div><div class="col-md-3"><label class="form-label">Active</label><select name="IsActive" class="form-select"><option value="true" selected>Yes</option><option value="false">No</option></select></div></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div></form></div></div>
+</div>
+
+<div class="modal fade" id="readerEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable"><div class="modal-content"><form id="readerEditForm" method="post" action="@Url.Action("Edit","Readers")"><input type="hidden" name="Id" /><div class="modal-header"><h5 class="modal-title">Edit reader</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="row g-3"><div class="col-md-6"><label class="form-label">Reader name</label><input name="ReaderName" class="form-control" /><div class="invalid-feedback" data-field="ReaderName"></div></div><div class="col-md-6"><label class="form-label">Category</label><select name="ReaderCategory" class="form-select"><option value="gate">Gate</option><option value="handheld">Handheld</option><option value="dock">Dock</option><option value="other">Other</option></select><div class="invalid-feedback" data-field="ReaderCategory"></div></div><div class="col-md-6"><label class="form-label">Device identifier</label><input name="DeviceIdentifier" class="form-control" /><div class="invalid-feedback" data-field="DeviceIdentifier"></div></div><div class="col-md-6"><label class="form-label">Device model (optional)</label><input name="DeviceModel" class="form-control" /><div class="invalid-feedback" data-field="DeviceModel"></div></div><div class="col-md-3"><label class="form-label">Active</label><select name="IsActive" class="form-select"><option value="true">Yes</option><option value="false">No</option></select></div></div></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save changes</button></div></form></div></div>
+</div>
+
+<div class="modal fade" id="readerDeactivateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><form id="readerDeactivateForm" method="post" action="@Url.Action("Deactivate","Readers")"><input type="hidden" name="id" /><div class="modal-header"><h5 class="modal-title">Deactivate reader</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="mb-0">Deactivate <strong id="deactivateName"></strong>?</p></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-warning">Deactivate</button></div></form></div></div></div>
+<div class="modal fade" id="readerActivateModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><form id="readerActivateForm" method="post" action="@Url.Action("Activate","Readers")"><input type="hidden" name="id" /><div class="modal-header"><h5 class="modal-title">Activate reader</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="mb-0">Activate <strong id="activateName"></strong>?</p></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-success">Activate</button></div></form></div></div></div>
+<div class="modal fade" id="readerDeleteModal" tabindex="-1" aria-hidden="true"><div class="modal-dialog"><div class="modal-content"><form id="readerDeleteForm" method="post" action="@Url.Action("Delete","Readers")"><input type="hidden" name="id" /><div class="modal-header"><h5 class="modal-title">Delete reader</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><p class="mb-0">Are you sure you want to delete <strong id="deleteName"></strong>?</p><p class="text-muted mb-0 mt-2">Deletion will be blocked if this reader has scan routes or scan history.</p></div><div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-danger">Delete</button></div></form></div></div></div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+            const toastEl = document.getElementById('readersToast');
+            const toastBodyEl = document.getElementById('readersToastBody');
+            const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 2500 }) : null;
+            const createModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('readerCreateModal'));
+            const editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('readerEditModal'));
+            const deactivateModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('readerDeactivateModal'));
+            const activateModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('readerActivateModal'));
+            const deleteModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('readerDeleteModal'));
+            const createForm = document.getElementById('readerCreateForm');
+            const editForm = document.getElementById('readerEditForm');
+            const deactivateForm = document.getElementById('readerDeactivateForm');
+            const activateForm = document.getElementById('readerActivateForm');
+            const deleteForm = document.getElementById('readerDeleteForm');
+
+            function showToast(message, isError) {
+                if (!toastEl || !toastBodyEl || !toast) return;
+                toastEl.classList.remove('text-bg-success', 'text-bg-danger');
+                toastEl.classList.add(isError ? 'text-bg-danger' : 'text-bg-success');
+                toastBodyEl.textContent = message;
+                toast.show();
+            }
+            function clearValidation(form) {
+                form.querySelectorAll('.is-invalid').forEach(x => x.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback').forEach(x => x.textContent = '');
+            }
+            function applyErrors(form, errors) {
+                if (!errors) return;
+                Object.keys(errors).forEach(k => {
+                    const msgs = errors[k] || [];
+                    const field = form.querySelector(`[name="${k}"]`);
+                    const feedback = form.querySelector(`.invalid-feedback[data-field="${k}"]`);
+                    if (field) field.classList.add('is-invalid');
+                    if (feedback) feedback.textContent = msgs[0] ?? 'Invalid value.';
+                });
+            }
+            async function postForm(form) {
+                const fd = new FormData(form);
+                fd.append('__RequestVerificationToken', antiforgery);
+                const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'fetch' } });
+                return await res.json();
+            }
+
+            document.querySelector('.js-open-create')?.addEventListener('click', () => { createForm.reset(); clearValidation(createForm); createModal.show(); });
+            document.querySelectorAll('.js-open-edit').forEach(btn => btn.addEventListener('click', async () => {
+                clearValidation(editForm);
+                const id = btn.getAttribute('data-id');
+                const res = await fetch(`@Url.Action("Get","Readers")?id=${encodeURIComponent(id)}`, { headers: { 'X-Requested-With': 'fetch' } });
+                const data = await res.json();
+                if (!data?.ok) { showToast(data?.message ?? 'Failed to load reader.', true); return; }
+                const r = data.reader || {};
+                editForm.querySelector('[name="Id"]').value = r.id ?? r.Id ?? '';
+                editForm.querySelector('[name="ReaderName"]').value = r.readerName ?? r.ReaderName ?? '';
+                editForm.querySelector('[name="DeviceIdentifier"]').value = r.deviceIdentifier ?? r.DeviceIdentifier ?? '';
+                editForm.querySelector('[name="DeviceModel"]').value = r.deviceModel ?? r.DeviceModel ?? '';
+                editForm.querySelector('[name="ReaderCategory"]').value = r.readerCategory ?? r.ReaderCategory ?? 'gate';
+                editForm.querySelector('[name="IsActive"]').value = String(r.isActive ?? r.IsActive ?? true);
+                editModal.show();
+            }));
+            document.querySelectorAll('.js-open-deactivate').forEach(btn => btn.addEventListener('click', () => { deactivateForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? ''; document.getElementById('deactivateName').textContent = btn.getAttribute('data-name') ?? ''; deactivateModal.show(); }));
+            document.querySelectorAll('.js-open-activate').forEach(btn => btn.addEventListener('click', () => { activateForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? ''; document.getElementById('activateName').textContent = btn.getAttribute('data-name') ?? ''; activateModal.show(); }));
+            document.querySelectorAll('.js-open-delete').forEach(btn => btn.addEventListener('click', () => { deleteForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? ''; document.getElementById('deleteName').textContent = btn.getAttribute('data-name') ?? ''; deleteModal.show(); }));
+
+            createForm?.addEventListener('submit', async (e) => { e.preventDefault(); clearValidation(createForm); const data = await postForm(createForm); if (!data?.ok) { applyErrors(createForm, data?.errors); showToast(data?.message ?? 'Failed to create.', true); return; } sessionStorage.setItem('readersToast', 'Created successfully.'); window.location.reload(); });
+            editForm?.addEventListener('submit', async (e) => { e.preventDefault(); clearValidation(editForm); const data = await postForm(editForm); if (!data?.ok) { applyErrors(editForm, data?.errors); showToast(data?.message ?? 'Failed to save changes.', true); return; } sessionStorage.setItem('readersToast', 'Updated successfully.'); window.location.reload(); });
+            deactivateForm?.addEventListener('submit', async (e) => { e.preventDefault(); const data = await postForm(deactivateForm); if (!data?.ok) { showToast(data?.message ?? 'Failed to deactivate.', true); return; } sessionStorage.setItem('readersToast', 'Deactivated successfully.'); window.location.reload(); });
+            activateForm?.addEventListener('submit', async (e) => { e.preventDefault(); const data = await postForm(activateForm); if (!data?.ok) { showToast(data?.message ?? 'Failed to activate.', true); return; } sessionStorage.setItem('readersToast', 'Activated successfully.'); window.location.reload(); });
+            deleteForm?.addEventListener('submit', async (e) => { e.preventDefault(); const data = await postForm(deleteForm); if (!data?.ok) { showToast(data?.message ?? 'Failed to delete.', true); return; } sessionStorage.setItem('readersToast', 'Deleted successfully.'); window.location.reload(); });
+
+            const pendingToast = sessionStorage.getItem('readersToast');
+            if (pendingToast) { sessionStorage.removeItem('readersToast'); showToast(pendingToast, false); }
+        })();
+    </script>
+}

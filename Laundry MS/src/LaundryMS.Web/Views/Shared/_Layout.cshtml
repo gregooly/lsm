@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Laundry MS</title>
+    <link rel="icon" type="image/png" href="~/images/branding/laundryms-rfid-linen-management-favicon.png" asp-append-version="true" />
+    <script type="importmap"></script>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LaundryMS.Web.styles.css" asp-append-version="true" />
+</head>
+<body>
+    @{
+        var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? string.Empty;
+        var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? string.Empty;
+        string NavClass(string controller, string? action = null)
+        {
+            var ctrlMatch = string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase);
+            if (action is null)
+            {
+                return ctrlMatch ? "app-nav-link active" : "app-nav-link";
+            }
+
+            return ctrlMatch && string.Equals(currentAction, action, StringComparison.OrdinalIgnoreCase)
+                ? "app-nav-link active"
+                : "app-nav-link";
+        }
+    }
+
+    <aside class="app-sidebar">
+        <div class="app-brand">
+            <div class="app-brand-icon">
+                <img src="~/images/branding/laundryms-rfid-linen-management-logo.png"
+                     asp-append-version="true"
+                     alt="LaundryMS RFID Linen Management Logo" />
+            </div>
+            <div class="app-brand-text-wrap">
+                <h1 class="app-brand-title">LinenTrack</h1>
+                <p class="app-brand-subtitle">RFID Management</p>
+            </div>
+        </div>
+
+        <nav class="app-nav">
+            <a class="@NavClass("Home", "Dashboard")" asp-controller="Home" asp-action="Dashboard"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+             @if (User.IsInRole("ADMIN"))
+            {
+                <a class="@NavClass("Users")" asp-controller="Users" asp-action="Index"><i class="bi bi-person-badge"></i><span>Users</span></a>
+            }
+            <a class="@NavClass("Home", "Pipeline")" asp-controller="Home" asp-action="Pipeline"><i class="bi bi-funnel"></i><span>Pipeline</span></a>
+            <a class="@NavClass("Customers")" asp-controller="Customers" asp-action="Index"><i class="bi bi-people"></i><span>Customers</span></a>
+            <a class="@NavClass("Drivers")" asp-controller="Drivers" asp-action="Index"><i class="bi bi-truck"></i><span>Drivers</span></a>
+            <a class="@NavClass("Locations")" asp-controller="Locations" asp-action="Index"><i class="bi bi-geo-alt"></i><span>Locations</span></a>
+            <a class="@NavClass("LinenItems")" asp-controller="LinenItems" asp-action="Index"><i class="bi bi-tags"></i><span>Items</span></a>
+            <a class="@NavClass("LinenAssignment")" asp-controller="LinenAssignment" asp-action="Index"><i class="bi bi-link-45deg"></i><span>Linen assignment</span></a>
+            <a class="@NavClass("Quality")" asp-controller="Quality" asp-action="Index"><i class="bi bi-shield-exclamation"></i><span>Quality</span></a>
+            <a class="@NavClass("Readers")" asp-controller="Readers" asp-action="Index"><i class="bi bi-broadcast"></i><span>Readers</span></a>
+            <a class="@NavClass("ReaderWays")" asp-controller="ReaderWays" asp-action="Index"><i class="bi bi-signpost-split"></i><span>Scan routes</span></a>
+            <a class="@NavClass("LogisticsJobs")" asp-controller="LogisticsJobs" asp-action="Index"><i class="bi bi-list-task"></i><span>Logistics jobs</span></a>
+            <a class="@NavClass("ScanHistory")" asp-controller="ScanHistory" asp-action="Index"><i class="bi bi-clock-history"></i><span>Scan history</span></a>
+            <a class="@NavClass("Reports")" asp-controller="Reports" asp-action="Index"><i class="bi bi-file-earmark-bar-graph"></i><span>Reports</span></a>
+            <a class="@NavClass("Settings")" asp-controller="Settings" asp-action="Index"><i class="bi bi-gear"></i><span>Settings</span></a>
+           
+        </nav>
+
+        <div class="app-sidebar-footer">
+            <span class="app-online-dot"></span>
+            <span>Readers online — see Dashboard</span>
+            <div class="mt-2">
+                <a class="link-light text-decoration-none small" asp-controller="Account" asp-action="Logout">Sign out</a>
+            </div>
+        </div>
+    </aside>
+
+    <main role="main" class="app-main">
+        @RenderBody()
+    </main>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

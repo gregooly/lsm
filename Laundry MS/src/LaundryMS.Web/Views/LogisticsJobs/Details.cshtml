@@ -1,0 +1,105 @@
+@model LaundryMS.Web.Models.ViewModels.LogisticsJobDetailViewModel
+@{
+    ViewData["Title"] = "Logistics job - #" + Model.Id;
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Logistics job #@Model.Id</h1>
+        <p class="page-subtitle">
+            @Model.JobType / <span class="text-uppercase">@Model.JobStatus</span>
+        </p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-primary" asp-controller="ScanHistory" asp-action="Index" asp-route-jobId="@Model.Id">Scan history</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Back to jobs</a>
+    </div>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Expected</div><div class="fs-4 fw-semibold">@Model.ExpectedItemCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Reached</div><div class="fs-4 fw-semibold">@Model.ReachedItemCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Scanned</div><div class="fs-4 fw-semibold">@Model.ScannedUniqueTagCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Delta</div><div class="fs-4 fw-semibold @(Model.Delta == 0 ? "text-success" : (Model.Delta < 0 ? "text-danger" : "text-warning"))">@Model.Delta</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Last scan</div><div class="small fw-semibold">@(Model.LastScanAt?.ToString("yyyy-MM-dd HH:mm") ?? "Never")</div></div></div>
+    </div>
+</div>
+
+<div class="card section-card mb-4">
+    <div class="card-header section-card-header">
+        <h2 class="section-title mb-0"><i class="bi bi-clipboard-data section-title-icon"></i>Job profile</h2>
+    </div>
+    <div class="card-body">
+        <dl class="row small mb-0">
+            <dt class="col-sm-3 text-muted">Customer</dt>
+            <dd class="col-sm-9">@(Model.CustomerName ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">Driver</dt>
+            <dd class="col-sm-9">@(Model.DriverName ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">From</dt>
+            <dd class="col-sm-9">@(Model.FromLocationName ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">To</dt>
+            <dd class="col-sm-9">@(Model.ToLocationName ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">Scan route</dt>
+            <dd class="col-sm-9">@(Model.ReaderWayName ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">Planned window</dt>
+            <dd class="col-sm-9">@(Model.PlannedStartAt?.ToString("yyyy-MM-dd HH:mm") ?? "-") - @(Model.PlannedEndAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">Actual window</dt>
+            <dd class="col-sm-9">@(Model.ActualStartAt?.ToString("yyyy-MM-dd HH:mm") ?? "-") - @(Model.ActualEndAt?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
+            <dt class="col-sm-3 text-muted">Notes</dt>
+            <dd class="col-sm-9">@(string.IsNullOrWhiteSpace(Model.Notes) ? "-" : Model.Notes)</dd>
+            <dt class="col-sm-3 text-muted">Created</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("u")</dd>
+            <dt class="col-sm-3 text-muted">Updated</dt>
+            <dd class="col-sm-9">@Model.UpdatedAt.ToString("u")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-header section-card-header">
+        <h2 class="section-title mb-0"><i class="bi bi-clock-history section-title-icon"></i>Recent scans</h2>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.RecentScans.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No scans linked to this job.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Occurred</th>
+                            <th>Tag</th>
+                            <th>Reader</th>
+                            <th>Route</th>
+                            <th>Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.RecentScans)
+                        {
+                            <tr>
+                                <td class="small">@s.OccurredAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="small"><code>@s.RfidTag</code></td>
+                                <td class="small">@s.ReaderName</td>
+                                <td class="small">@s.ReaderWayName</td>
+                                <td class="small">@s.ProcessingResult</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

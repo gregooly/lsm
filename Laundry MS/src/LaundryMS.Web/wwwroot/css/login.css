@@ -1,0 +1,211 @@
+@font-face {
+  font-family: "Adwaita Sans-Normal";
+  src: url("/fonts/AdwaitaSans-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Adwaita Sans-Bold";
+  src: url("/fonts/Inter-Latin-700-normal.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --font-heading: "Adwaita Sans-Bold", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "Adwaita Sans-Normal", ui-sans-serif, system-ui, sans-serif;
+  --palette-1: #164450;
+  --palette-2: #37abc8;
+  --palette-3: #87cdde;
+  --palette-4: #d7eef4;
+  --bg-start: var(--palette-3);
+  --bg-end: var(--palette-1);
+  --panel-start: var(--palette-3);
+  --panel-end: var(--palette-2);
+  --primary-btn: var(--palette-2);
+  --primary-btn-hover: color-mix(in srgb, var(--palette-2) 82%, var(--palette-1) 18%);
+  --text-dark: var(--palette-1);
+  --text-muted: color-mix(in srgb, var(--palette-1) 55%, #6c757d 45%);
+  --line-soft: var(--palette-4);
+  --white: #ffffff;
+  --danger: #b91c1c;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body.login-page {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font-body);
+  background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 390px;
+  border: 0;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 14px 36px rgba(22, 68, 80, 0.32);
+  background: var(--white);
+}
+
+.login-header {
+  background: linear-gradient(180deg, var(--panel-start) 0%, var(--panel-end) 100%);
+  padding: 24px 16px 18px;
+}
+
+.brand-wrap {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px 8px;
+  margin-bottom: 12px;
+  color: var(--white);
+}
+
+.brand-logo {
+  font-family: var(--font-heading);
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+
+.brand-logo .tag {
+  color: color-mix(in srgb, var(--palette-2) 72%, #ffffff 28%);
+}
+
+.brand-sub {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 10px;
+  letter-spacing: 0.13em;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+.project-name {
+  margin: 6px 0 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  opacity: 0.92;
+}
+
+.role-switch {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  padding: 4px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+}
+
+.role-btn {
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 0;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.role-btn.active {
+  background: var(--white);
+  color: var(--palette-2);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.09);
+}
+
+.login-body {
+  padding: 22px 18px 26px;
+}
+
+.form-label {
+  font-family: var(--font-body);
+  color: var(--text-dark);
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+
+.input-group-text {
+  background: var(--white);
+  border-color: var(--line-soft);
+  color: #a0acbe;
+  font-size: 13px;
+  width: 38px;
+  justify-content: center;
+}
+
+.form-control {
+  font-family: var(--font-body);
+  border-color: var(--line-soft);
+  font-size: 13px;
+  padding-top: 9px;
+  padding-bottom: 9px;
+}
+
+.form-control::placeholder {
+  color: #b4bdcc;
+  font-size: 12px;
+}
+
+.form-control:focus {
+  border-color: var(--palette-2);
+  box-shadow: 0 0 0 0.2rem color-mix(in srgb, var(--palette-2) 35%, transparent);
+}
+
+.btn-signin {
+  width: 100%;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--primary-btn);
+  color: var(--white);
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  padding: 10px 0;
+  transition: all 0.2s ease;
+}
+
+.btn-signin:hover {
+  background: var(--primary-btn-hover);
+  color: var(--white);
+}
+
+.btn-signin:disabled {
+  opacity: 0.65;
+}
+
+.small-note {
+  margin-top: 8px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.login-alert {
+  font-family: var(--font-body);
+  font-size: 12px;
+  margin-bottom: 12px;
+}

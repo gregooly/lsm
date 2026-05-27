@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Theme color preview</title>
+  <link rel="icon" type="image/png" href="/images/branding/laundryms-rfid-linen-management-favicon.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: "Adwaita Sans-Normal";
+      src: url("/fonts/AdwaitaSans-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Adwaita Sans-Bold";
+      src: url("/fonts/Inter-Latin-700-normal.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    :root {
+      --font-heading: "Adwaita Sans-Bold", ui-sans-serif, system-ui, sans-serif;
+      --font-body: "Adwaita Sans-Normal", ui-sans-serif, system-ui, sans-serif;
+      --palette-1: #164450ff;
+      --palette-2: #37abc8ff;
+      --palette-3: #87cddeff;
+      --palette-4: #d7eef4ff;
+
+      /* Align with site.css semantic tokens — mapped to the four palette colors */
+      --background: color-mix(in srgb, var(--palette-4) 65%, white 35%);
+      --foreground: var(--palette-1);
+      --card: #ffffff;
+      --muted: var(--palette-4);
+      --muted-foreground: color-mix(in srgb, var(--palette-1) 45%, #64748b 55%);
+      --border: color-mix(in srgb, var(--palette-1) 14%, var(--palette-4) 86%);
+      --accent: var(--palette-2);
+      --info: var(--palette-2);
+      --sidebar-background: var(--palette-1);
+      --sidebar-foreground: color-mix(in srgb, var(--palette-4) 88%, white 12%);
+      --sidebar-primary: var(--palette-2);
+      --sidebar-accent: color-mix(in srgb, var(--palette-1) 78%, var(--palette-2) 22%);
+      --sidebar-border: color-mix(in srgb, var(--palette-1) 92%, white 8%);
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-body);
+      background: var(--background);
+      color: var(--foreground);
+    }
+
+    .theme-preview-note {
+      margin: 0 0 1rem;
+      padding: 0.75rem 1rem;
+      border-radius: 0.55rem;
+      border: 1px solid var(--border);
+      background: var(--card);
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      color: var(--foreground);
+    }
+
+    .theme-preview-note strong {
+      display: block;
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.35rem;
+    }
+
+    .theme-preview-note code {
+      font-size: 0.8em;
+      color: color-mix(in srgb, var(--palette-1) 80%, var(--palette-2) 20%);
+    }
+
+    .palette-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.5rem;
+      margin-top: 0.65rem;
+    }
+
+    .palette-strip span {
+      display: block;
+      height: 0.45rem;
+      border-radius: 999px;
+    }
+
+    .app-sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 16rem;
+      z-index: 1000;
+      background: var(--sidebar-background);
+      color: var(--sidebar-foreground);
+      border-right: 1px solid var(--sidebar-border);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-brand {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      padding: 1.2rem 1rem;
+      border-bottom: 1px solid var(--sidebar-border);
+    }
+
+    .app-brand-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 0.5rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--sidebar-primary) 28%, transparent);
+      color: var(--sidebar-primary);
+    }
+
+    .app-brand-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .app-brand-title {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: #fff;
+    }
+
+    .app-brand-subtitle {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      color: color-mix(in srgb, var(--sidebar-foreground) 75%, transparent);
+    }
+
+    .app-nav {
+      flex: 1;
+      padding: 0.85rem 0.55rem;
+    }
+
+    .app-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.62rem 0.75rem;
+      border-radius: 0.42rem;
+      font-family: var(--font-body);
+      color: var(--sidebar-foreground);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+    }
+
+    .app-nav-link:hover {
+      color: #fff;
+      background: var(--sidebar-accent);
+    }
+
+    .app-nav-link.active {
+      color: #fff;
+      background: var(--sidebar-accent);
+      box-shadow: inset 3px 0 0 0 var(--sidebar-primary);
+    }
+
+    .app-sidebar-footer {
+      padding: 0.95rem 1rem;
+      border-top: 1px solid var(--sidebar-border);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      color: color-mix(in srgb, var(--sidebar-foreground) 70%, transparent);
+    }
+
+    .app-online-dot {
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      display: inline-block;
+      margin-right: 0.45rem;
+      background: var(--sidebar-primary);
+    }
+
+    .app-main {
+      margin-left: 16rem;
+      padding: 1.5rem;
+    }
+
+    .page-header {
+      margin-bottom: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .page-title {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 1.85rem;
+      line-height: 1.15;
+      font-weight: 400;
+    }
+
+    .page-subtitle {
+      margin: 0.25rem 0 0;
+      font-family: var(--font-body);
+      color: var(--muted-foreground);
+      font-size: 0.9rem;
+    }
+
+    .page-subtitle a {
+      color: var(--accent);
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .page-subtitle a:hover {
+      text-decoration: underline;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.9rem;
+      margin-bottom: 1rem;
+    }
+
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0.55rem;
+      padding: 0.9rem;
+    }
+
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .metric-card .metric-head h2 {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 0.64rem;
+      text-transform: uppercase;
+      color: var(--muted-foreground);
+      letter-spacing: 0.06em;
+    }
+
+    .metric-icon {
+      width: 1.8rem;
+      height: 1.8rem;
+      border-radius: 0.4rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--accent) 14%, transparent);
+      color: var(--accent);
+    }
+
+    .metric-value {
+      margin: 0.32rem 0 0.05rem;
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      line-height: 1;
+      font-weight: 400;
+    }
+
+    .metric-subtitle {
+      font-family: var(--font-body);
+      color: var(--muted-foreground);
+      font-size: 0.78rem;
+    }
+
+    .metric-card--alert {
+      border-color: color-mix(in srgb, var(--palette-1) 35%, var(--palette-2) 65%);
+      background: linear-gradient(
+        135deg,
+        var(--card) 0%,
+        color-mix(in srgb, var(--palette-4) 55%, white 45%) 100%
+      );
+    }
+
+    .section-card {
+      border: 1px solid var(--border);
+      border-radius: 0.55rem;
+    }
+
+    .section-card-header {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 0.8rem 1rem;
+    }
+
+    .section-title {
+      margin: 0;
+      font-family: var(--font-heading);
+      font-size: 0.98rem;
+      font-weight: 400;
+    }
+
+    .section-title-icon {
+      color: var(--accent);
+      margin-right: 0.4rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.13rem 0.5rem;
+      font-family: var(--font-body);
+      font-size: 0.74rem;
+      font-weight: 500;
+    }
+
+    .status-dot {
+      display: inline-block;
+      width: 0.45rem;
+      height: 0.45rem;
+      border-radius: 999px;
+      margin-right: 0.3rem;
+    }
+
+    .status-dot-transit {
+      background: var(--info);
+    }
+
+    .progress-slim {
+      height: 0.35rem;
+      background: var(--muted);
+      border-radius: 0.25rem;
+      overflow: hidden;
+    }
+
+    .progress-bar-theme {
+      height: 100%;
+      background: linear-gradient(90deg, var(--palette-3), var(--palette-2));
+      border-radius: 0.25rem;
+    }
+
+    .recent-item {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.55rem 0;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-body);
+    }
+
+    .recent-item:last-child {
+      border-bottom: 0;
+    }
+
+    .recent-dot {
+      width: 1.9rem;
+      height: 1.9rem;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--muted);
+      color: var(--muted-foreground);
+    }
+
+    .table-card {
+      border: 1px solid var(--border);
+      border-radius: 0.55rem;
+      overflow: hidden;
+      background: var(--card);
+    }
+
+    .table-card thead th {
+      font-family: var(--font-body);
+      font-size: 0.73rem;
+      color: var(--muted-foreground);
+      font-weight: 500;
+    }
+
+    .table-card tbody td {
+      font-family: var(--font-body);
+      font-size: 0.84rem;
+    }
+
+    .badge-soft {
+      border: 1px solid var(--border);
+      background: var(--muted);
+      color: var(--foreground);
+      border-radius: 999px;
+      padding: 0.15rem 0.45rem;
+      font-family: var(--font-body);
+      font-size: 0.7rem;
+    }
+
+    .metric-card--clickable {
+      cursor: default;
+    }
+
+    @media (max-width: 1199px) {
+      .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 991px) {
+      .app-sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+      }
+
+      .app-main {
+        margin-left: 0;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .palette-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="app-sidebar">
+    <div class="app-brand">
+      <div class="app-brand-icon">
+        <img src="/images/branding/laundryms-rfid-linen-management-logo.png" alt="" />
+      </div>
+      <div>
+        <h1 class="app-brand-title">LinenTrack</h1>
+        <p class="app-brand-subtitle">RFID Management</p>
+      </div>
+    </div>
+
+    <nav class="app-nav" aria-label="Main">
+      <a class="app-nav-link active" href="#"><i class="bi bi-speedometer2"></i><span>Dashboard</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-funnel"></i><span>Pipeline</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-people"></i><span>Customers</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-truck"></i><span>Drivers</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-geo-alt"></i><span>Locations</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-tags"></i><span>Items</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-link-45deg"></i><span>Linen assignment</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-shield-exclamation"></i><span>Quality</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-broadcast"></i><span>Readers</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-signpost-split"></i><span>Scan routes</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-list-task"></i><span>Logistics jobs</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-clock-history"></i><span>Scan history</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-file-earmark-bar-graph"></i><span>Reports</span></a>
+      <a class="app-nav-link" href="#"><i class="bi bi-gear"></i><span>Settings</span></a>
+    </nav>
+
+    <div class="app-sidebar-footer">
+      <span class="app-online-dot"></span>
+      <span>Readers online — see Dashboard</span>
+    </div>
+  </aside>
+
+  <main role="main" class="app-main">
+    <div class="theme-preview-note">
+      <strong>Dashboard theme preview only</strong>
+      Static copy of the Dashboard layout with the four project colors. Live app:
+      <code>/Home/Dashboard</code> · Login preview:
+      <a href="/theme-color-preview.html">theme-color-preview.html</a>
+      <div class="palette-strip" title="Palette">
+        <span style="background: var(--palette-1)"></span>
+        <span style="background: var(--palette-2)"></span>
+        <span style="background: var(--palette-3)"></span>
+        <span style="background: var(--palette-4)"></span>
+      </div>
+    </div>
+
+    <section class="page-header">
+      <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">
+          Live overview of items in each process stage and recent RFID activity. See
+          <a href="#">Pipeline</a> for drill-down by status and location.
+        </p>
+      </div>
+    </section>
+
+    <section class="dashboard-grid mb-4">
+      <article class="metric-card">
+        <div class="metric-head">
+          <h2>Total Linen</h2>
+          <span class="metric-icon"><i class="bi bi-inboxes"></i></span>
+        </div>
+        <p class="metric-value">12,480</p>
+        <p class="metric-subtitle mb-0">RFID-tagged items</p>
+      </article>
+      <article class="metric-card">
+        <div class="metric-head">
+          <h2>Scans (24h)</h2>
+          <span class="metric-icon"><i class="bi bi-arrows-fullscreen"></i></span>
+        </div>
+        <p class="metric-value">3,942</p>
+        <p class="metric-subtitle mb-0">Movement events recorded</p>
+      </article>
+      <article class="metric-card">
+        <div class="metric-head">
+          <h2>In transit</h2>
+          <span class="metric-icon"><i class="bi bi-truck"></i></span>
+        </div>
+        <p class="metric-value">612</p>
+        <p class="metric-subtitle mb-0">By process status label</p>
+      </article>
+      <article class="metric-card metric-card--alert metric-card--clickable position-relative">
+        <div class="metric-head">
+          <h2>Damaged / QC</h2>
+          <span class="metric-icon"><i class="bi bi-exclamation-triangle"></i></span>
+        </div>
+        <p class="metric-value">28</p>
+        <p class="metric-subtitle mb-0">Items not marked “good” — open queue</p>
+      </article>
+    </section>
+
+    <section class="row g-4">
+      <div class="col-lg-4">
+        <div class="card section-card h-100 border-0">
+          <div class="card-header section-card-header">
+            <h2 class="section-title"><i class="bi bi-ui-checks-grid section-title-icon"></i>Linen by process status</h2>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between mb-1">
+              <span class="status-pill"><span class="status-dot status-dot-transit"></span>In transit</span><strong>612</strong>
+            </div>
+            <div class="progress progress-slim mb-3"><div class="progress-bar-theme" style="width: 42%"></div></div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="status-pill"><span class="status-dot" style="background: var(--palette-2)"></span>Clean / stock</span><strong>8,204</strong>
+            </div>
+            <div class="progress progress-slim mb-3"><div class="progress-bar-theme" style="width: 78%"></div></div>
+            <div class="d-flex justify-content-between mb-1">
+              <span class="status-pill"><span class="status-dot" style="background: var(--palette-3)"></span>Sorting</span><strong>1,910</strong>
+            </div>
+            <div class="progress progress-slim mb-3"><div class="progress-bar-theme" style="width: 28%"></div></div>
+            <p class="small mb-0" style="color: var(--palette-1); font-weight: 600">
+              <i class="bi bi-info-circle"></i> 14 item(s) flagged with a “lost” status.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card section-card h-100 border-0">
+          <div class="card-header section-card-header">
+            <h2 class="section-title"><i class="bi bi-geo-alt section-title-icon"></i>Linen by location</h2>
+          </div>
+          <div class="card-body">
+            <div class="d-flex justify-content-between py-1 border-bottom"><span>Central plant</span><strong>5,420</strong></div>
+            <div class="d-flex justify-content-between py-1 border-bottom"><span>Hotel Riverside</span><strong>2,880</strong></div>
+            <div class="d-flex justify-content-between py-1 border-bottom"><span>Regional DC North</span><strong>2,104</strong></div>
+            <div class="d-flex justify-content-between py-1"><span>Clinical — Wing B</span><strong>996</strong></div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="card section-card h-100 border-0">
+          <div class="card-header section-card-header">
+            <h2 class="section-title"><i class="bi bi-arrow-repeat section-title-icon"></i>Recent scans</h2>
+          </div>
+          <div class="card-body">
+            <div class="recent-item">
+              <span class="recent-dot"><i class="bi bi-arrow-repeat"></i></span>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">Exit — soiled return</div>
+                <div class="text-muted small">E280-11A9… · Reader dock-04</div>
+              </div>
+              <div class="text-muted small">14:22</div>
+            </div>
+            <div class="recent-item">
+              <span class="recent-dot"><i class="bi bi-arrow-repeat"></i></span>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">Wash line in</div>
+                <div class="text-muted small">E280-204B… · Reader tunnel-01</div>
+              </div>
+              <div class="text-muted small">14:18</div>
+            </div>
+            <div class="recent-item">
+              <span class="recent-dot"><i class="bi bi-arrow-repeat"></i></span>
+              <div class="flex-grow-1">
+                <div class="fw-semibold">Flatwork fold</div>
+                <div class="text-muted small">E280-CC01… · Reader fold-A</div>
+              </div>
+              <div class="text-muted small">14:05</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mt-4">
+      <div class="table-card">
+        <div class="section-card-header">
+          <h2 class="section-title"><i class="bi bi-people section-title-icon"></i>Customer overview</h2>
+        </div>
+        <div class="table-responsive">
+          <table class="table mb-0">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Total linen</th>
+                <th>Active</th>
+                <th>Type</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Riverside Hospitality Group</td>
+                <td>4,200</td>
+                <td>3,910</td>
+                <td><span class="badge-soft">Full service</span></td>
+              </tr>
+              <tr>
+                <td>North Regional Health</td>
+                <td>3,680</td>
+                <td>3,402</td>
+                <td><span class="badge-soft">Clinical</span></td>
+              </tr>
+              <tr>
+                <td>Metro Linen Co-op</td>
+                <td>2,140</td>
+                <td>1,988</td>
+                <td><span class="badge-soft">Pool</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

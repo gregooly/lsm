@@ -1,0 +1,320 @@
+@model LaundryMS.Web.Models.ViewModels.QualityIndexViewModel
+
+@{
+    ViewData["Title"] = "Quality";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        customerId = Model.Query.CustomerId,
+        locationId = Model.Query.LocationId,
+        condition = Model.Query.Condition,
+        processStatus = Model.Query.ProcessStatus,
+        staleDays = Model.Query.StaleDays,
+        includeInactive = Model.Query.IncludeInactive,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            customerId = Model.Query.CustomerId,
+            locationId = Model.Query.LocationId,
+            condition = Model.Query.Condition,
+            processStatus = Model.Query.ProcessStatus,
+            staleDays = Model.Query.StaleDays,
+            includeInactive = Model.Query.IncludeInactive,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Quality</h1>
+        <p class="page-subtitle">Track damaged/lost linen, prioritize by age/location, and resolve quality issues with auditable actions.</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="LinenItems" asp-action="Index">All items</a>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Open issues</div><div class="fs-4 fw-semibold">@Model.OpenIssuesCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Damaged</div><div class="fs-4 fw-semibold text-warning">@Model.DamagedCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Lost</div><div class="fs-4 fw-semibold text-danger">@Model.LostCount</div></div></div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="RFID, type, owner, location..." />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Owner</label>
+                <select name="customerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.Customers)
+                    {
+                        <option value="@c.Id" selected="@(Model.Query.CustomerId == c.Id)">@c.CustomerName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Location</label>
+                <select name="locationId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var l in Model.Locations)
+                    {
+                        <option value="@l.Id" selected="@(Model.Query.LocationId == l.Id)">@l.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Condition</label>
+                <select name="condition" class="form-select form-select-sm">
+                    <option value="">Not good</option>
+                    @foreach (var c in Model.Conditions)
+                    {
+                        <option value="@c" selected="@(Model.Query.Condition == c)">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Status</label>
+                <select name="processStatus" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var s in Model.ProcessStatuses)
+                    {
+                        <option value="@s" selected="@(Model.Query.ProcessStatus == s)">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Stale (days)</label>
+                <input type="number" min="1" max="3650" name="staleDays" class="form-control form-control-sm" value="@Model.Query.StaleDays" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@Html.AntiForgeryToken()
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No quality issues match your filters.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th><a href='@SortHref("rfid")' class="text-decoration-none text-dark"><text>RFID</text></a></th>
+                            <th>Type</th>
+                            <th><a href='@SortHref("condition")' class="text-decoration-none text-dark"><text>Condition</text></a></th>
+                            <th><a href='@SortHref("status")' class="text-decoration-none text-dark"><text>Process status</text></a></th>
+                            <th><a href='@SortHref("owner")' class="text-decoration-none text-dark"><text>Owner</text></a></th>
+                            <th><a href='@SortHref("location")' class="text-decoration-none text-dark"><text>Location</text></a></th>
+                            <th><a href='@SortHref("lastscan")' class="text-decoration-none text-dark"><text>Last scan</text></a></th>
+                            <th>Age</th>
+                            <th><a href='@SortHref("updated")' class="text-decoration-none text-dark"><text>Updated</text></a></th>
+                            <th class="text-end text-nowrap">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td><code class="small">@item.RfidTag</code></td>
+                                <td>@item.ItemType</td>
+                                <td><span class="badge @(item.PhysicalCondition == "lost" ? "bg-danger" : "bg-warning text-dark")">@item.PhysicalCondition</span></td>
+                                <td>@item.CurrentProcessStatus</td>
+                                <td class="small">@(item.OwnerCustomerName ?? "Laundry pool")</td>
+                                <td class="small">@(item.CurrentLocationName ?? "—")</td>
+                                <td class="small text-nowrap">@(item.LastScannedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="small">@(item.DaysSinceLastScan.HasValue ? item.DaysSinceLastScan + " d" : "—")</td>
+                                <td class="small text-nowrap">@item.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-end text-nowrap">
+                                    <button type="button" class="btn btn-sm btn-outline-success js-mark-repaired" data-id="@item.Id" title="Mark repaired">Repaired</button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-mark-lost" data-id="@item.Id" title="Mark lost">Lost</button>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-note" data-id="@item.Id" data-rfid="@item.RfidTag">Note</button>
+                                    <a class="btn btn-sm btn-outline-primary" asp-controller="LinenItems" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+<div class="modal fade" id="qualityNoteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="qualityNoteForm" method="post" action="@Url.Action("AddNote","Quality")">
+                <input type="hidden" name="LinenItemId" id="note_linenItemId" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Add quality note</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-2">Item: <code id="note_rfid"></code></p>
+                    <textarea class="form-control" name="Note" rows="4" maxlength="500" required></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save note</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 quality-toast-container">
+    <div id="qualityToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="qualityToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+            const toastEl = document.getElementById('qualityToast');
+            const toastBody = document.getElementById('qualityToastBody');
+            const toast = bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3500 });
+
+            function showToast(message, isError) {
+                toastEl.classList.remove('text-bg-success', 'text-bg-danger');
+                toastEl.classList.add(isError ? 'text-bg-danger' : 'text-bg-success');
+                toastBody.textContent = message;
+                toast.show();
+            }
+
+            async function postAction(url, data) {
+                data.append('__RequestVerificationToken', token);
+                const res = await fetch(url, { method: 'POST', body: data });
+                let body = null;
+                try { body = await res.json(); } catch { }
+                if (!res.ok || !body || !body.ok) {
+                    showToast(body?.message || 'Action failed.', true);
+                    return false;
+                }
+                return true;
+            }
+
+            document.querySelectorAll('.js-mark-repaired').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const fd = new FormData();
+                    fd.append('LinenItemId', btn.getAttribute('data-id'));
+                    fd.append('NewCondition', 'good');
+                    fd.append('EventType', 'repaired');
+                    const ok = await postAction('@Url.Action("SetCondition","Quality")', fd);
+                    if (ok) window.location.reload();
+                });
+            });
+
+            document.querySelectorAll('.js-mark-lost').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const fd = new FormData();
+                    fd.append('LinenItemId', btn.getAttribute('data-id'));
+                    fd.append('NewCondition', 'lost');
+                    fd.append('EventType', 'lost_confirmed');
+                    const ok = await postAction('@Url.Action("SetCondition","Quality")', fd);
+                    if (ok) window.location.reload();
+                });
+            });
+
+            const noteModalEl = document.getElementById('qualityNoteModal');
+            const noteModal = bootstrap.Modal.getOrCreateInstance(noteModalEl);
+            const noteForm = document.getElementById('qualityNoteForm');
+            document.querySelectorAll('.js-open-note').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.getElementById('note_linenItemId').value = btn.getAttribute('data-id') || '';
+                    document.getElementById('note_rfid').textContent = btn.getAttribute('data-rfid') || '';
+                    noteForm.reset();
+                    document.getElementById('note_linenItemId').value = btn.getAttribute('data-id') || '';
+                    noteModal.show();
+                });
+            });
+            noteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const fd = new FormData(noteForm);
+                const ok = await postAction(noteForm.action, fd);
+                if (ok) {
+                    noteModal.hide();
+                    window.location.reload();
+                }
+            });
+        })();
+    </script>
+}

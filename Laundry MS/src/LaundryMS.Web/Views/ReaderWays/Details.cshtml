@@ -1,0 +1,110 @@
+@model LaundryMS.Web.Models.ViewModels.ReaderWayDetailViewModel
+@{
+    ViewData["Title"] = "Scan route - " + Model.WayName;
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">@Model.WayName</h1>
+        <p class="page-subtitle">
+            Route configuration and recent scan activity.
+            @if (Model.IsActive)
+            {
+                <span class="badge bg-success ms-1">Active</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary ms-1">Inactive</span>
+            }
+        </p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-primary" asp-controller="ScanHistory" asp-action="Index" asp-route-readerWayId="@Model.Id">Scan history</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="Readers" asp-action="Details" asp-route-id="@Model.ReaderId">Reader</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Back to routes</a>
+    </div>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Scans (24h)</div><div class="fs-4 fw-semibold">@Model.Scans24h</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Scans (7d)</div><div class="fs-4 fw-semibold">@Model.Scans7d</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Non-accepted (7d)</div><div class="fs-4 fw-semibold">@Model.ExceptionScans7d</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Open jobs</div><div class="fs-4 fw-semibold">@Model.OpenJobsCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-3">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Last scan</div><div class="small fw-semibold">@(Model.LastScanAt?.ToString("yyyy-MM-dd HH:mm") ?? "Never")</div></div></div>
+    </div>
+</div>
+
+<div class="card section-card mb-4">
+    <div class="card-header section-card-header">
+        <h2 class="section-title mb-0"><i class="bi bi-signpost-split section-title-icon"></i>Route profile</h2>
+    </div>
+    <div class="card-body">
+        <dl class="row small mb-0">
+            <dt class="col-sm-3 text-muted">Reader</dt>
+            <dd class="col-sm-9">@Model.ReaderName</dd>
+            <dt class="col-sm-3 text-muted">Direction</dt>
+            <dd class="col-sm-9">@Model.MovementDirection</dd>
+            <dt class="col-sm-3 text-muted">Purpose</dt>
+            <dd class="col-sm-9"><code>@Model.BusinessPurposeKey</code></dd>
+            <dt class="col-sm-3 text-muted">From</dt>
+            <dd class="col-sm-9">@(Model.FromLocationName ?? "—")</dd>
+            <dt class="col-sm-3 text-muted">To</dt>
+            <dd class="col-sm-9">@(Model.ToLocationName ?? "—")</dd>
+            <dt class="col-sm-3 text-muted">Target status</dt>
+            <dd class="col-sm-9">@Model.TargetProcessStatus</dd>
+            <dt class="col-sm-3 text-muted">Antenna index</dt>
+            <dd class="col-sm-9">@Model.AntennaIndex <span class="text-muted small">(0 = fallback / default route)</span></dd>
+            <dt class="col-sm-3 text-muted">Created</dt>
+            <dd class="col-sm-9">@Model.CreatedAt.ToString("u")</dd>
+            <dt class="col-sm-3 text-muted">Updated</dt>
+            <dd class="col-sm-9">@Model.UpdatedAt.ToString("u")</dd>
+        </dl>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-header section-card-header">
+        <h2 class="section-title mb-0"><i class="bi bi-clock-history section-title-icon"></i>Recent route events</h2>
+    </div>
+    <div class="card-body p-0">
+        @if (Model.RecentEvents.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted small">No audit events recorded yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>When</th>
+                            <th>Type</th>
+                            <th>Note</th>
+                            <th>By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ev in Model.RecentEvents)
+                        {
+                            <tr>
+                                <td class="small">@ev.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="small"><code>@ev.EventType</code></td>
+                                <td class="small">@(ev.Note ?? "—")</td>
+                                <td class="small">@(ev.ChangedBy ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

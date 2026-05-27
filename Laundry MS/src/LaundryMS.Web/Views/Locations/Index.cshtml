@@ -1,0 +1,591 @@
+@model LaundryMS.Web.Models.ViewModels.LocationsIndexViewModel
+@{
+    ViewData["Title"] = "Locations";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        locationType = Model.Query.LocationType,
+        customerId = Model.Query.CustomerId,
+        includeInactive = Model.Query.IncludeInactive,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            locationType = Model.Query.LocationType,
+            customerId = Model.Query.CustomerId,
+            includeInactive = Model.Query.IncludeInactive,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Locations</h1>
+        <p class="page-subtitle">Manage every node in the linen movement network: customer site, laundry, dock, and internal transfer points.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#locationCreateModal"
+                title="Add location"
+                aria-label="Add location">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="Name, type, address, contact, customer..." />
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Type</label>
+                <select class="form-select form-select-sm" name="locationType">
+                    <option value="">All types</option>
+                    @foreach (var t in Model.LocationTypeOptions)
+                    {
+                        if (string.Equals(Model.Query.LocationType, t, StringComparison.OrdinalIgnoreCase))
+                        {
+                            <option value="@t" selected>@t</option>
+                        }
+                        else
+                        {
+                            <option value="@t">@t</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <label class="form-label small text-muted mb-1">Customer</label>
+                <select class="form-select form-select-sm" name="customerId">
+                    <option value="">All customers</option>
+                    @foreach (var c in Model.CustomerOptions)
+                    {
+                        if (Model.Query.CustomerId == c.Id)
+                        {
+                            <option value="@c.Id" selected>@c.CustomerName</option>
+                        }
+                        else
+                        {
+                            <option value="@c.Id">@c.CustomerName</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        if (Model.PageSize == sz)
+                        {
+                            <option value="@sz" selected>@sz</option>
+                        }
+                        else
+                        {
+                            <option value="@sz">@sz</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (Model.TotalCount == 0 && string.IsNullOrWhiteSpace(Model.Query.Q) && string.IsNullOrWhiteSpace(Model.Query.LocationType) && !Model.Query.CustomerId.HasValue && !Model.Query.IncludeInactive)
+{
+    <div class="alert alert-info mb-3">No locations yet. Use the <strong>+</strong> button to add one.</div>
+}
+else if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info mb-3">No locations match your filters.</div>
+}
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="locationsTable" class="table table-hover mb-0 table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th class="text-center text-nowrap">ID</th>
+                        <th class="text-start">
+                            <a href='@SortHref("name")' class="text-decoration-none text-dark">
+                                <text>Name</text>
+                                @if (string.Equals(Model.Query.SortBy, "name", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-start">
+                            <a href='@SortHref("type")' class="text-decoration-none text-dark">
+                                <text>Type</text>
+                                @if (string.Equals(Model.Query.SortBy, "type", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-start d-none d-lg-table-cell">
+                            <a href='@SortHref("customer")' class="text-decoration-none text-dark">
+                                <text>Customer</text>
+                                @if (string.Equals(Model.Query.SortBy, "customer", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-start d-none d-xl-table-cell">Address</th>
+                        <th class="text-center text-nowrap" title="Linen currently at this location">Linen</th>
+                        <th class="text-center text-nowrap" title="Reader ways touching this location">Routes</th>
+                        <th class="text-center text-nowrap" title="Open / in-progress logistics jobs">Open jobs</th>
+                        <th class="text-center text-nowrap">
+                            <a href='@SortHref("status")' class="text-decoration-none text-dark">
+                                <text>Status</text>
+                                @if (string.Equals(Model.Query.SortBy, "status", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-center text-nowrap">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr><td colspan="10" class="text-muted text-center">-</td></tr>
+                    }
+                    else
+                    {
+                        var rowNumber = (Model.Page - 1) * Model.PageSize;
+                        @foreach (var item in Model.Items)
+                        {
+                            rowNumber++;
+                            var addr = item.LocationAddressText;
+                            var addrShort = !string.IsNullOrWhiteSpace(addr) && addr.Length > 36 ? addr[..36] + "..." : (addr ?? "—");
+                            <tr>
+                                <td class="text-center">@rowNumber</td>
+                                <td class="text-start fw-medium">@item.LocationName</td>
+                                <td class="text-start small">@item.LocationType</td>
+                                <td class="text-start small d-none d-lg-table-cell">@(item.CustomerName ?? "—")</td>
+                                <td class="text-start small d-none d-xl-table-cell">@addrShort</td>
+                                <td class="text-center small">@item.LinkedLinenCount</td>
+                                <td class="text-center small">@item.LinkedReaderWaysCount</td>
+                                <td class="text-center small">@item.OpenLogisticsJobsCount</td>
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center text-nowrap">
+                                    <div class="d-inline-flex flex-wrap justify-content-center gap-1">
+                                        <a class="btn btn-sm btn-outline-info btn-customer-action" asp-action="Details" asp-route-id="@item.Id" title="Profile" aria-label="Profile">
+                                            <i class="bi bi-geo-alt" aria-hidden="true"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary btn-customer-action js-open-edit"
+                                                data-id="@item.Id"
+                                                title="Edit"
+                                                aria-label="Edit">
+                                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        </button>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger btn-customer-action js-open-delete"
+                                                data-id="@item.Id"
+                                                data-name="@item.LocationName"
+                                                title="Delete"
+                                                aria-label="Delete">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Create -->
+<div class="modal fade" id="locationCreateModal" tabindex="-1" aria-labelledby="locationCreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationCreateModalLabel">Add location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="locationCreateForm" asp-action="Create" asp-controller="Locations" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_LocationName">Name</label>
+                            <input class="form-control form-control-sm" id="create_LocationName" name="LocationName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_LocationType">Type</label>
+                            <select class="form-select form-select-sm" id="create_LocationType" name="LocationType" required>
+                                <option value="customer_site">customer_site</option>
+                                <option value="laundry_plant">laundry_plant</option>
+                                <option value="dock">dock</option>
+                                <option value="storage">storage</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_CustomerId">Customer (optional)</label>
+                            <select class="form-select form-select-sm" id="create_CustomerId" name="CustomerId">
+                                <option value="">None</option>
+                                @foreach (var c in Model.CustomerOptions)
+                                {
+                                    <option value="@c.Id">@c.CustomerName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="create_LocationAddressText">Address (optional)</label>
+                            <textarea class="form-control form-control-sm" id="create_LocationAddressText" name="LocationAddressText" rows="2" maxlength="500"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_ContactPerson">Contact person (optional)</label>
+                            <input class="form-control form-control-sm" id="create_ContactPerson" name="ContactPerson" maxlength="120" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_ContactPhone">Contact phone (optional)</label>
+                            <input class="form-control form-control-sm" id="create_ContactPhone" name="ContactPhone" maxlength="30" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_GeoLat">Latitude (optional)</label>
+                            <input class="form-control form-control-sm" id="create_GeoLat" name="GeoLat" inputmode="decimal" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_GeoLng">Longitude (optional)</label>
+                            <input class="form-control form-control-sm" id="create_GeoLng" name="GeoLng" inputmode="decimal" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="create_IsActive" name="IsActive">
+                                <option value="true" selected>Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit -->
+<div class="modal fade" id="locationEditModal" tabindex="-1" aria-labelledby="locationEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="locationEditModalLabel">Edit location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="locationEditForm" asp-action="Edit" asp-controller="Locations" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="edit_Id" />
+                <div class="modal-body">
+                    <div id="editFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_LocationName">Name</label>
+                            <input class="form-control form-control-sm" id="edit_LocationName" name="LocationName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_LocationType">Type</label>
+                            <select class="form-select form-select-sm" id="edit_LocationType" name="LocationType" required>
+                                <option value="customer_site">customer_site</option>
+                                <option value="laundry_plant">laundry_plant</option>
+                                <option value="dock">dock</option>
+                                <option value="storage">storage</option>
+                                <option value="other">other</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_CustomerId">Customer (optional)</label>
+                            <select class="form-select form-select-sm" id="edit_CustomerId" name="CustomerId">
+                                <option value="">None</option>
+                                @foreach (var c in Model.CustomerOptions)
+                                {
+                                    <option value="@c.Id">@c.CustomerName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="edit_LocationAddressText">Address (optional)</label>
+                            <textarea class="form-control form-control-sm" id="edit_LocationAddressText" name="LocationAddressText" rows="2" maxlength="500"></textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_ContactPerson">Contact person (optional)</label>
+                            <input class="form-control form-control-sm" id="edit_ContactPerson" name="ContactPerson" maxlength="120" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_ContactPhone">Contact phone (optional)</label>
+                            <input class="form-control form-control-sm" id="edit_ContactPhone" name="ContactPhone" maxlength="30" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_GeoLat">Latitude (optional)</label>
+                            <input class="form-control form-control-sm" id="edit_GeoLat" name="GeoLat" inputmode="decimal" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_GeoLng">Longitude (optional)</label>
+                            <input class="form-control form-control-sm" id="edit_GeoLng" name="GeoLng" inputmode="decimal" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="edit_IsActive" name="IsActive">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal fade" id="locationDeleteModal" tabindex="-1" aria-labelledby="locationDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-danger">
+                <h5 class="modal-title text-danger" id="locationDeleteModalLabel">Delete location</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleteFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Delete <strong id="deleteDisplayName"></strong> permanently?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="locationDeleteForm" asp-action="Delete" asp-controller="Locations" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="delete_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 location-toast-container">
+    <div id="locationToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="locationToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const getUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Url.Action("Get", "Locations") ?? ""));
+            const toastKey = 'locationToast';
+
+            const pendingToast = sessionStorage.getItem(toastKey);
+            if (pendingToast) {
+                sessionStorage.removeItem(toastKey);
+                document.getElementById('locationToastBody').textContent = pendingToast;
+                bootstrap.Toast.getOrCreateInstance(document.getElementById('locationToast'), { delay: 5000 }).show();
+            }
+
+            function hideAlert(el) {
+                el.classList.add('d-none');
+                el.textContent = '';
+            }
+
+            function showErrors(alertEl, errors) {
+                if (!errors || typeof errors !== 'object') {
+                    alertEl.textContent = 'Something went wrong.';
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+                const lines = [];
+                for (const key of Object.keys(errors)) {
+                    const msgs = errors[key];
+                    if (Array.isArray(msgs)) msgs.forEach(m => lines.push(m));
+                }
+                alertEl.textContent = lines.length ? lines.join(' ') : 'Validation failed.';
+                alertEl.classList.remove('d-none');
+            }
+
+            async function submitModalForm(form, alertEl, modalEl, successMessage) {
+                hideAlert(alertEl);
+                const fd = new FormData(form);
+                const res = await fetch(form.action, { method: 'POST', body: fd });
+                let body = null;
+                try { body = await res.json(); } catch { }
+
+                if (res.ok && body && body.ok) {
+                    if (successMessage) sessionStorage.setItem(toastKey, successMessage);
+                    const inst = bootstrap.Modal.getInstance(modalEl);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+
+                if (body && body.message) {
+                    alertEl.textContent = body.message;
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+
+                if (body && body.errors) showErrors(alertEl, body.errors);
+                else showErrors(alertEl, null);
+            }
+
+            const createModal = document.getElementById('locationCreateModal');
+            const createForm = document.getElementById('locationCreateForm');
+            const createAlert = document.getElementById('createFormAlert');
+            createModal.addEventListener('show.bs.modal', () => {
+                createForm.reset();
+                document.getElementById('create_IsActive').value = 'true';
+                hideAlert(createAlert);
+            });
+            createForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(createForm, createAlert, createModal, 'Location created successfully.');
+            });
+
+            const editModal = document.getElementById('locationEditModal');
+            const editForm = document.getElementById('locationEditForm');
+            const editAlert = document.getElementById('editFormAlert');
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(editForm, editAlert, editModal, 'Location updated successfully.');
+            });
+
+            document.querySelectorAll('.js-open-edit').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    hideAlert(editAlert);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(getUrl + '?id=' + encodeURIComponent(id));
+                    if (!res.ok) return;
+                    const loc = await res.json();
+
+                    document.getElementById('edit_Id').value = loc.id ?? loc.Id ?? '';
+                    document.getElementById('edit_LocationName').value = loc.locationName ?? loc.LocationName ?? '';
+                    document.getElementById('edit_LocationType').value = loc.locationType ?? loc.LocationType ?? '';
+                    document.getElementById('edit_CustomerId').value = (loc.customerId ?? loc.CustomerId ?? '').toString();
+                    document.getElementById('edit_LocationAddressText').value = loc.locationAddressText ?? loc.LocationAddressText ?? '';
+                    document.getElementById('edit_ContactPerson').value = loc.contactPerson ?? loc.ContactPerson ?? '';
+                    document.getElementById('edit_ContactPhone').value = loc.contactPhone ?? loc.ContactPhone ?? '';
+                    document.getElementById('edit_GeoLat').value = loc.geoLat ?? loc.GeoLat ?? '';
+                    document.getElementById('edit_GeoLng').value = loc.geoLng ?? loc.GeoLng ?? '';
+                    document.getElementById('edit_IsActive').value = (loc.isActive ?? loc.IsActive) ? 'true' : 'false';
+
+                    new bootstrap.Modal(editModal).show();
+                });
+            });
+
+            const deleteModal = document.getElementById('locationDeleteModal');
+            const deleteForm = document.getElementById('locationDeleteForm');
+            const deleteAlert = document.getElementById('deleteFormAlert');
+            document.querySelectorAll('.js-open-delete').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(deleteAlert);
+                    document.getElementById('delete_id').value = btn.getAttribute('data-id');
+                    document.getElementById('deleteDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(deleteModal).show();
+                });
+            });
+            deleteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideAlert(deleteAlert);
+                const fd = new FormData(deleteForm);
+                const res = await fetch(deleteForm.action, { method: 'POST', body: fd });
+                let body = null;
+                try { body = await res.json(); } catch { }
+
+                if (res.ok && body && body.ok) {
+                    sessionStorage.setItem(toastKey, 'Location deleted successfully.');
+                    const inst = bootstrap.Modal.getInstance(deleteModal);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+                if (body && body.message) {
+                    deleteAlert.textContent = body.message;
+                    deleteAlert.classList.remove('d-none');
+                    return;
+                }
+                if (body && body.errors) showErrors(deleteAlert, body.errors);
+                else showErrors(deleteAlert, null);
+            });
+        })();
+    </script>
+}

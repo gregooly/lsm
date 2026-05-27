@@ -1,0 +1,177 @@
+@model LaundryMS.Web.Models.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var totalStatus = Model.ItemsByStatus.Sum(x => x.Count);
+    var inTransit = Model.ItemsByStatus.Where(x => (x.Status ?? "").Contains("transit", StringComparison.OrdinalIgnoreCase)).Sum(x => x.Count);
+    var lost = Model.ItemsByStatus.Where(x => (x.Status ?? "").Contains("lost", StringComparison.OrdinalIgnoreCase)).Sum(x => x.Count);
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Dashboard</h1>
+        <p class="page-subtitle">Live overview of items in each process stage and recent RFID activity. See <a asp-controller="Home" asp-action="Pipeline">Pipeline</a> for drill-down by status and location.</p>
+    </div>
+</section>
+
+@if (!Model.DatabaseReachable)
+{
+    <div class="alert alert-warning">
+        <h2 class="h6 mb-2">Database connection issue</h2>
+        <p class="mb-0">Please verify MySQL connection settings. Details: @Model.ErrorMessage</p>
+    </div>
+}
+else
+{
+    <section class="dashboard-grid mb-4">
+        <article class="metric-card">
+            <div class="metric-head">
+                <h2>Total Linen</h2>
+                <span class="metric-icon"><i class="bi bi-inboxes"></i></span>
+            </div>
+            <p class="metric-value">@Model.LinenItemCount.ToString("N0")</p>
+            <p class="metric-subtitle mb-0">RFID-tagged items</p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-head">
+                <h2>Scans (24h)</h2>
+                <span class="metric-icon"><i class="bi bi-arrows-fullscreen"></i></span>
+            </div>
+            <p class="metric-value">@Model.ScansLast24Hours.ToString("N0")</p>
+            <p class="metric-subtitle mb-0">Movement events recorded</p>
+        </article>
+        <article class="metric-card">
+            <div class="metric-head">
+                <h2>In transit</h2>
+                <span class="metric-icon"><i class="bi bi-truck"></i></span>
+            </div>
+            <p class="metric-value">@inTransit.ToString("N0")</p>
+            <p class="metric-subtitle mb-0">By process status label</p>
+        </article>
+        <article class="metric-card metric-card--alert position-relative">
+            <a class="stretched-link" asp-controller="Quality" asp-action="Index" aria-label="Open quality queue"></a>
+            <div class="metric-head">
+                <h2>Damaged / QC</h2>
+                <span class="metric-icon"><i class="bi bi-exclamation-triangle"></i></span>
+            </div>
+            <p class="metric-value">@Model.DamagedLinenCount.ToString("N0")</p>
+            <p class="metric-subtitle mb-0">Items not marked “good” — open queue</p>
+        </article>
+    </section>
+
+    <section class="row g-4">
+        <div class="col-lg-4">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title"><i class="bi bi-ui-checks-grid section-title-icon"></i>Linen by process status</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.ItemsByStatus.Count == 0)
+                    {
+                        <p class="mb-0 text-muted">No linen items yet.</p>
+                    }
+                    else
+                    {
+                        @foreach (var row in Model.ItemsByStatus.Take(8))
+                        {
+                            var pct = totalStatus > 0 ? Math.Max(4, (int)Math.Round(100.0 * row.Count / totalStatus)) : 0;
+                            <div class="d-flex justify-content-between mb-1"><span class="status-pill"><span class="status-dot status-dot-transit"></span>@row.Status</span><strong>@row.Count</strong></div>
+                            <div class="progress progress-slim mb-3"><div class="progress-bar bg-info" style="width:@pct%"></div></div>
+                        }
+                        @if (lost > 0)
+                        {
+                            <p class="small text-danger mb-0"><i class="bi bi-info-circle"></i> @lost item(s) flagged with a “lost” status.</p>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title"><i class="bi bi-geo-alt section-title-icon"></i>Linen by location</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.ItemsByLocation.Count == 0)
+                    {
+                        <p class="mb-0 text-muted">No location assignments yet.</p>
+                    }
+                    else
+                    {
+                        @foreach (var row in Model.ItemsByLocation)
+                        {
+                            <div class="d-flex justify-content-between py-1 border-bottom"><span>@row.LocationName</span><strong>@row.Count</strong></div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title"><i class="bi bi-arrow-repeat section-title-icon"></i>Recent scans</h2>
+                </div>
+                <div class="card-body">
+                    @if (Model.RecentMovements.Count == 0)
+                    {
+                        <p class="mb-0 text-muted">No movement events available yet.</p>
+                    }
+                    else
+                    {
+                        @foreach (var movement in Model.RecentMovements.Take(6))
+                        {
+                            <div class="recent-item">
+                                <span class="recent-dot"><i class="bi bi-arrow-repeat"></i></span>
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold">@movement.WayName</div>
+                                    <div class="text-muted small">@movement.RfidTag · @movement.ReaderName</div>
+                                </div>
+                                <div class="text-muted small">@movement.OccurredAt.ToString("HH:mm")</div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-4">
+        <div class="table-card">
+            <div class="section-card-header">
+                <h2 class="section-title"><i class="bi bi-people section-title-icon"></i>Customer overview</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table mb-0">
+                    <thead>
+                        <tr>
+                            <th>Customer</th>
+                            <th>Total linen</th>
+                            <th>Active</th>
+                            <th>Type</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.CustomerOverview.Count == 0)
+                        {
+                            <tr>
+                                <td colspan="4" class="text-muted">No customers yet.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var row in Model.CustomerOverview)
+                            {
+                                <tr>
+                                    <td>@row.CustomerName</td>
+                                    <td>@row.LinenCount</td>
+                                    <td>@row.ActiveLinenCount</td>
+                                    <td><span class="badge-soft">@row.ContractHint</span></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+}

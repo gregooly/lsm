@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LaundryMS — Theme color preview</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    rel="stylesheet"
+  />
+
+  <style>
+    @font-face {
+      font-family: "Adwaita Sans-Normal";
+      src: url("/fonts/AdwaitaSans-Regular.ttf") format("truetype");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    @font-face {
+      font-family: "Adwaita Sans-Bold";
+      src: url("/fonts/Inter-Latin-700-normal.woff2") format("woff2");
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    /*
+      Project palette (RGBA in hex notation — alpha ff = opaque).
+      Map roles below so the rest of the app can swap variables only.
+    */
+    :root {
+      --font-heading: "Adwaita Sans-Bold", ui-sans-serif, system-ui, sans-serif;
+      --font-body: "Adwaita Sans-Normal", ui-sans-serif, system-ui, sans-serif;
+      --palette-1: #164450ff;
+      --palette-2: #37abc8ff;
+      --palette-3: #87cddeff;
+      --palette-4: #d7eef4ff;
+
+      /* Semantic tokens */
+      --bg-start: var(--palette-3);
+      --bg-end: var(--palette-1);
+      --panel-start: var(--palette-3);
+      --panel-end: var(--palette-2);
+      --primary-btn: var(--palette-2);
+      --primary-btn-hover: color-mix(in srgb, var(--palette-2) 82%, var(--palette-1) 18%);
+      --text-dark: var(--palette-1);
+      --text-muted: color-mix(in srgb, var(--palette-1) 55%, #6c757d 45%);
+      --line-soft: var(--palette-4);
+      --surface: #ffffff;
+      --tag-accent: color-mix(in srgb, var(--palette-2) 70%, #ffffff 30%);
+      --focus-ring: color-mix(in srgb, var(--palette-2) 35%, transparent);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: var(--font-body);
+      background: linear-gradient(180deg, var(--bg-start) 0%, var(--bg-end) 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      gap: 20px;
+    }
+
+    .preview-banner {
+      width: 100%;
+      max-width: 720px;
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 12px 16px;
+      box-shadow: 0 8px 24px rgba(22, 68, 80, 0.18);
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text-dark);
+    }
+
+    .preview-banner strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--palette-2);
+    }
+
+    .swatches {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .swatch {
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid color-mix(in srgb, var(--palette-1) 15%, transparent);
+      font-size: 10px;
+      text-align: center;
+    }
+
+    .swatch-color {
+      height: 44px;
+    }
+
+    .swatch-meta {
+      padding: 6px 4px;
+      background: var(--surface);
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      word-break: break-all;
+      line-height: 1.25;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 390px;
+      border: 0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 14px 36px rgba(22, 68, 80, 0.35);
+      background: var(--surface);
+    }
+
+    .login-header {
+      background: linear-gradient(180deg, var(--panel-start) 0%, var(--panel-end) 100%);
+      padding: 24px 16px 18px;
+    }
+
+    .brand-wrap {
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 10px;
+      text-align: center;
+      padding: 10px 8px;
+      margin-bottom: 12px;
+      color: var(--surface);
+    }
+
+    .brand-logo {
+      font-family: var(--font-heading);
+      font-size: 30px;
+      line-height: 1;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+      margin-bottom: 2px;
+    }
+
+    .brand-logo .tag {
+      color: var(--tag-accent);
+    }
+
+    .brand-sub {
+      margin: 0;
+      font-family: var(--font-body);
+      font-size: 10px;
+      letter-spacing: 0.13em;
+      font-weight: 600;
+      opacity: 0.95;
+    }
+
+    .project-name {
+      margin: 6px 0 0;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      line-height: 1.4;
+      opacity: 0.92;
+    }
+
+    .role-switch {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      padding: 4px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px;
+    }
+
+    .role-btn {
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--surface);
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 0;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .role-btn.active {
+      background: var(--surface);
+      color: var(--palette-2);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .login-body {
+      padding: 22px 18px 26px;
+      background: linear-gradient(180deg, var(--surface) 0%, var(--palette-4) 100%);
+    }
+
+    .form-label {
+      font-family: var(--font-body);
+      color: var(--text-dark);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .input-group-text {
+      background: var(--surface);
+      border-color: var(--line-soft);
+      color: var(--text-muted);
+      font-size: 13px;
+      width: 38px;
+      justify-content: center;
+    }
+
+    .form-control {
+      font-family: var(--font-body);
+      border-color: var(--line-soft);
+      font-size: 13px;
+      padding-top: 9px;
+      padding-bottom: 9px;
+      background: var(--surface);
+    }
+
+    .form-control::placeholder {
+      color: color-mix(in srgb, var(--text-muted) 75%, #ffffff 25%);
+      font-size: 12px;
+    }
+
+    .form-control:focus {
+      border-color: var(--palette-2);
+      box-shadow: 0 0 0 0.2rem var(--focus-ring);
+    }
+
+    .btn-signin {
+      width: 100%;
+      margin-top: 6px;
+      border: 0;
+      border-radius: 9px;
+      background: var(--primary-btn);
+      color: var(--surface);
+      font-family: var(--font-heading);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      padding: 10px 0;
+      transition: all 0.2s ease;
+    }
+
+    .btn-signin:hover {
+      background: var(--primary-btn-hover);
+      color: var(--surface);
+    }
+
+    .small-note {
+      margin-top: 8px;
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      .swatches {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="preview-banner">
+    <strong>Theme preview only</strong>
+    Static sandbox for the four project colors. Open from the running site:
+    <code>/theme-color-preview.html</code>
+    <div class="swatches mt-2">
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--palette-1)"></div>
+        <div class="swatch-meta">--palette-1<br />#164450ff</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--palette-2)"></div>
+        <div class="swatch-meta">--palette-2<br />#37abc8ff</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--palette-3)"></div>
+        <div class="swatch-meta">--palette-3<br />#87cddeff</div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background: var(--palette-4)"></div>
+        <div class="swatch-meta">--palette-4<br />#d7eef4ff</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card login-card">
+    <div class="login-header">
+      <div class="brand-wrap">
+        <div class="brand-logo">Laundry<span class="tag">MS</span></div>
+        <p class="brand-sub">LINEN &amp; LAUNDRY OPERATIONS</p>
+        <p class="project-name">
+          Sample login panel — same layout as <code>login-design.html</code>, new palette.
+        </p>
+      </div>
+
+      <div class="role-switch">
+        <button type="button" class="role-btn active" data-role="Admin">Admin</button>
+        <button type="button" class="role-btn" data-role="Users">Users</button>
+      </div>
+    </div>
+
+    <div class="login-body">
+      <form id="loginForm">
+        <div class="mb-3">
+          <label for="email" class="form-label">Email address</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+            <input
+              type="email"
+              id="email"
+              class="form-control"
+              placeholder="Enter your email address"
+              autocomplete="username"
+            />
+          </div>
+        </div>
+
+        <div class="mb-2">
+          <label for="password" class="form-label">Password</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-lock"></i></span>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-signin">SIGN IN</button>
+      </form>
+
+      <div class="small-note">Current role: <span id="currentRole">Admin</span></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.querySelectorAll(".role-btn").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        document.querySelectorAll(".role-btn").forEach(function (b) {
+          b.classList.remove("active");
+        });
+        btn.classList.add("active");
+        document.getElementById("currentRole").textContent = btn.getAttribute("data-role");
+      });
+    });
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+    });
+  </script>
+</body>
+</html>

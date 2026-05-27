@@ -1,0 +1,234 @@
+@model LaundryMS.Web.Models.ViewModels.CollectionJobDetailViewModel
+
+@{
+    ViewData["Title"] = $"Collection job #{Model.Id}";
+    string StatusBadgeClass(string status) => status.ToLowerInvariant() switch
+    {
+        "completed" => "bg-success",
+        "in_progress" => "bg-primary",
+        "cancelled" => "bg-secondary",
+        _ => "bg-warning text-dark"
+    };
+}
+
+<section class="page-header">
+    <div>
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a asp-action="Index">Collections</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Job #@Model.Id</li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Collection job #@Model.Id</h1>
+        <p class="page-subtitle mb-0">
+            <span class="badge @StatusBadgeClass(Model.JobStatus) text-uppercase me-1">@Model.JobStatus</span>
+            <span class="text-muted">@Model.JobType</span>
+            @if (!string.IsNullOrEmpty(Model.CustomerName))
+            {
+                <span class="text-muted"> · @Model.CustomerName</span>
+            }
+        </p>
+    </div>
+    <div class="page-header-actions d-flex flex-wrap gap-2 align-items-center">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Back to list</a>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="ScanHistory" asp-action="Index" asp-route-jobId="@Model.Id">Scan history (this job)</a>
+        @if (Model.JobStatus != "completed" && Model.JobStatus != "cancelled")
+        {
+            <form asp-action="StartProgress" asp-route-id="@Model.Id" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-outline-primary">Start / resume</button>
+            </form>
+            <form asp-action="Finalize" asp-route-id="@Model.Id" method="post" class="d-inline" onsubmit="return confirm('Mark this job as completed?');">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-sm btn-primary">Mark complete</button>
+            </form>
+        }
+    </div>
+</section>
+
+@if (TempData["CollectionsToast"] is string toast && !string.IsNullOrWhiteSpace(toast))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @toast
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-3 mb-3">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3">Logistics</h2>
+                <dl class="row small mb-0">
+                    <dt class="col-sm-4 text-muted">Driver</dt>
+                    <dd class="col-sm-8">@(Model.DriverName ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">From</dt>
+                    <dd class="col-sm-8">@(Model.FromLocationName ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">To</dt>
+                    <dd class="col-sm-8">@(Model.ToLocationName ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Scan route</dt>
+                    <dd class="col-sm-8">
+                        @if (!string.IsNullOrEmpty(Model.ReaderWayName))
+                        {
+                            <span>@Model.ReaderWayName</span>
+                            @if (!string.IsNullOrEmpty(Model.ReaderNameOnWay))
+                            {
+                                <span class="text-muted">(@Model.ReaderNameOnWay)</span>
+                            }
+                        }
+                        else
+                        {
+                            <span>—</span>
+                        }
+                    </dd>
+                    <dt class="col-sm-4 text-muted">Planned</dt>
+                    <dd class="col-sm-8">
+                        @(Model.PlannedStartAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")
+                        → @(Model.PlannedEndAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")
+                    </dd>
+                    <dt class="col-sm-4 text-muted">Actual</dt>
+                    <dd class="col-sm-8">
+                        @(Model.ActualStartAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")
+                        → @(Model.ActualEndAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")
+                    </dd>
+                    <dt class="col-sm-4 text-muted">Notes</dt>
+                    <dd class="col-sm-8">@(string.IsNullOrWhiteSpace(Model.Notes) ? "—" : Model.Notes)</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-body">
+                <h2 class="h6 text-uppercase text-muted mb-3">Counts</h2>
+                <div class="d-flex flex-wrap gap-3">
+                    <div>
+                        <div class="text-muted small">Expected items</div>
+                        <div class="fs-4 fw-semibold">@Model.ExpectedItemCount</div>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Reached (flags)</div>
+                        <div class="fs-4 fw-semibold">@Model.ReachedItemCount</div>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Scanned tags (unique)</div>
+                        <div class="fs-4 fw-semibold">@Model.ScannedUniqueTagCount</div>
+                    </div>
+                    <div>
+                        <div class="text-muted small">Last scan</div>
+                        <div class="fw-semibold">@(Model.LastScanAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—")</div>
+                    </div>
+                </div>
+                @if (Model.ExpectedItemCount > 0)
+                {
+                    var deltaReached = Model.ReachedItemCount - Model.ExpectedItemCount;
+                    var deltaScan = Model.ScannedUniqueTagCount - Model.ExpectedItemCount;
+                    <p class="small text-muted mt-3 mb-0">
+                        Delta vs expected: reached <strong>@((deltaReached >= 0 ? "+" : "") + deltaReached)</strong>,
+                        scanned <strong>@((deltaScan >= 0 ? "+" : "") + deltaScan)</strong>
+                    </p>
+                }
+                <p class="small text-muted mt-2 mb-0">
+                    Ingest API should set <code>logistics_job_id</code> on movement events to attach mobile/fixed reads to this job.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card section-card mb-3">
+    <div class="card-body p-0">
+        <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center">
+            <h2 class="h6 mb-0">Expected items &amp; condition</h2>
+            <span class="small text-muted">@Model.ExpectedItems.Count row(s)</span>
+        </div>
+        @if (Model.ExpectedItems.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted small">No expected items linked yet. Attach linen to this job from your assignment flow.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>RFID</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Condition</th>
+                            <th>Expected status</th>
+                            <th class="text-center">Reached</th>
+                            <th>Reached at</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var row in Model.ExpectedItems)
+                        {
+                            <tr>
+                                <td><code class="small">@row.RfidTag</code></td>
+                                <td>@row.ItemType</td>
+                                <td>@(row.SizeLabel ?? "—")</td>
+                                <td>@(row.PhysicalCondition ?? "—")</td>
+                                <td>@row.ExpectedProcessStatus</td>
+                                <td class="text-center">
+                                    @if (row.ReachedExpectedStatus)
+                                    {
+                                        <span class="badge bg-success">Yes</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-dark border">No</span>
+                                    }
+                                </td>
+                                <td class="small">@(row.ReachedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        <div class="px-3 py-2 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h2 class="h6 mb-0">Scans for this job</h2>
+            <span class="small text-muted">Latest @Model.RecentScans.Count event(s) shown</span>
+        </div>
+        @if (Model.RecentScans.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted small">No movement events linked to this job yet.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover table-sm mb-0">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>RFID</th>
+                            <th>Reader</th>
+                            <th>Scan route</th>
+                            <th>Result</th>
+                            <th>Condition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var s in Model.RecentScans)
+                        {
+                            <tr>
+                                <td class="text-nowrap small">@s.OccurredAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <td><code class="small">@s.RfidTag</code></td>
+                                <td>@s.ReaderName</td>
+                                <td>@s.WayName</td>
+                                <td><span class="badge bg-dark text-uppercase">@s.ProcessingResult</span></td>
+                                <td class="small">@(s.ConditionAfterEvent ?? "—")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

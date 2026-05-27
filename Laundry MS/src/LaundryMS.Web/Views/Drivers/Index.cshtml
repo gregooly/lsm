@@ -1,0 +1,596 @@
+@model LaundryMS.Web.Models.ViewModels.DriversIndexViewModel
+@{
+    ViewData["Title"] = "Drivers";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        includeInactive = Model.Query.IncludeInactive,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            includeInactive = Model.Query.IncludeInactive,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Drivers</h1>
+        <p class="page-subtitle">Manage drivers, handheld device IDs (R2 / app sign-up), vehicle registration, and logistics activity (collections &amp; deliveries, 90 days).</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button"
+                class="btn btn-primary btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#driverCreateModal"
+                title="Add driver"
+                aria-label="Add driver">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i>
+        </button>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-5">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="Name, phone, vehicle, or device ID…" />
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        if (Model.PageSize == sz)
+                        {
+                            <option value="@sz" selected>@sz</option>
+                        }
+                        else
+                        {
+                            <option value="@sz">@sz</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (Model.TotalCount == 0 && string.IsNullOrWhiteSpace(Model.Query.Q) && !Model.Query.IncludeInactive)
+{
+    <div class="alert alert-info mb-3">No drivers yet. Use the <strong>+</strong> button to add one.</div>
+}
+else if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info mb-3">No drivers match your filters.</div>
+}
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table id="driversTable" class="table table-hover mb-0 table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th class="text-center text-nowrap">ID</th>
+                        <th class="text-start">
+                            <a href='@SortHref("name")' class="text-decoration-none text-dark">
+                                <text>Name</text>
+                                @if (string.Equals(Model.Query.SortBy, "name", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-start d-none d-md-table-cell">Phone</th>
+                        <th class="text-start">
+                            <a href='@SortHref("vehicle")' class="text-decoration-none text-dark">
+                                <text>Vehicle</text>
+                                @if (string.Equals(Model.Query.SortBy, "vehicle", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-start d-none d-lg-table-cell" title="Handheld device ID">Device</th>
+                        <th class="text-center text-nowrap" title="Collection jobs (90d)">Coll</th>
+                        <th class="text-center text-nowrap" title="Delivery jobs (90d)">Deliv</th>
+                        <th class="text-center text-nowrap" title="Open or in-progress jobs">Open</th>
+                        <th class="text-center text-nowrap">
+                            <a href='@SortHref("status")' class="text-decoration-none text-dark">
+                                <text>Status</text>
+                                @if (string.Equals(Model.Query.SortBy, "status", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                                }
+                            </a>
+                        </th>
+                        <th class="text-center text-nowrap">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="10" class="text-muted text-center">—</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        var rowNumber = (Model.Page - 1) * Model.PageSize;
+                        @foreach (var item in Model.Items)
+                        {
+                            rowNumber++;
+                            var dev = item.HandheldDeviceId;
+                            var devShort = dev != null && dev.Length > 14 ? dev[..14] + "…" : dev;
+                            <tr>
+                                <td class="text-center">@rowNumber</td>
+                                <td class="text-start fw-medium">@item.DriverName</td>
+                                <td class="text-start small d-none d-md-table-cell">@(item.MobilePhone ?? "—")</td>
+                                <td class="text-start small">@(item.VehicleRegistrationNo ?? "—")</td>
+                                <td class="text-start small d-none d-lg-table-cell"><code class="small">@(devShort ?? "—")</code></td>
+                                <td class="text-center small">@item.RecentCollectionJobCount</td>
+                                <td class="text-center small">@item.RecentDeliveryJobCount</td>
+                                <td class="text-center small">@item.OpenLogisticsJobsCount</td>
+                                <td class="text-center">
+                                    @if (item.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-center text-nowrap">
+                                    <div class="d-inline-flex flex-wrap justify-content-center gap-1">
+                                        <a class="btn btn-sm btn-outline-info btn-customer-action" asp-action="Details" asp-route-id="@item.Id" title="Profile" aria-label="Profile">
+                                            <i class="bi bi-person-vcard" aria-hidden="true"></i>
+                                        </a>
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-primary btn-customer-action js-open-edit"
+                                                data-id="@item.Id"
+                                                title="Edit"
+                                                aria-label="Edit">
+                                            <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                        </button>
+                                        @if (item.IsActive)
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-warning btn-customer-action js-open-deactivate"
+                                                    data-id="@item.Id"
+                                                    data-name="@item.DriverName"
+                                                    title="Inactivate"
+                                                    aria-label="Inactivate">
+                                                <i class="bi bi-toggle-off" aria-hidden="true"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm btn-outline-success btn-customer-action js-open-activate"
+                                                    data-id="@item.Id"
+                                                    data-name="@item.DriverName"
+                                                    title="Activate"
+                                                    aria-label="Activate">
+                                                <i class="bi bi-toggle-on" aria-hidden="true"></i>
+                                            </button>
+                                        }
+                                        <button type="button"
+                                                class="btn btn-sm btn-outline-danger btn-customer-action js-open-delete"
+                                                data-id="@item.Id"
+                                                data-name="@item.DriverName"
+                                                title="Delete"
+                                                aria-label="Delete">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)–@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+<!-- Create -->
+<div class="modal fade" id="driverCreateModal" tabindex="-1" aria-labelledby="driverCreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="driverCreateModalLabel">Add driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="driverCreateForm" asp-action="Create" asp-controller="Drivers" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-8">
+                            <label class="form-label" for="create_DriverName">Name</label>
+                            <input class="form-control form-control-sm" id="create_DriverName" name="DriverName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="create_IsActive" name="IsActive">
+                                <option value="true" selected>Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_MobilePhone">Phone</label>
+                            <input class="form-control form-control-sm" id="create_MobilePhone" name="MobilePhone" maxlength="30" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_VehicleRegistrationNo">Vehicle</label>
+                            <input class="form-control form-control-sm" id="create_VehicleRegistrationNo" name="VehicleRegistrationNo" maxlength="30" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="create_HandheldDeviceId">Handheld device ID (R2 / app)</label>
+                            <input class="form-control form-control-sm font-monospace" id="create_HandheldDeviceId" name="HandheldDeviceId" maxlength="120" placeholder="e.g. xxxxxxxxxxxxxxxx" autocomplete="off" />
+                            <div class="form-text small">Optional. Must be unique per driver if set.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit -->
+<div class="modal fade" id="driverEditModal" tabindex="-1" aria-labelledby="driverEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="driverEditModalLabel">Edit driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="driverEditForm" asp-action="Edit" asp-controller="Drivers" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="edit_Id" />
+                <div class="modal-body">
+                    <div id="editFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-8">
+                            <label class="form-label" for="edit_DriverName">Name</label>
+                            <input class="form-control form-control-sm" id="edit_DriverName" name="DriverName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="edit_IsActive" name="IsActive">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_MobilePhone">Phone</label>
+                            <input class="form-control form-control-sm" id="edit_MobilePhone" name="MobilePhone" maxlength="30" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_VehicleRegistrationNo">Vehicle</label>
+                            <input class="form-control form-control-sm" id="edit_VehicleRegistrationNo" name="VehicleRegistrationNo" maxlength="30" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="edit_HandheldDeviceId">Handheld device ID (R2 / app)</label>
+                            <input class="form-control form-control-sm font-monospace" id="edit_HandheldDeviceId" name="HandheldDeviceId" maxlength="120" placeholder="e.g. xxxxxxxxxxxxxxxx" autocomplete="off" />
+                            <div class="form-text small">Optional. Must be unique per driver if set.</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Deactivate -->
+<div class="modal fade" id="driverDeactivateModal" tabindex="-1" aria-labelledby="driverDeactivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="driverDeactivateModalLabel">Inactivate driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deactivateFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Inactivate <strong id="deactivateDisplayName"></strong>? They will be marked inactive (not removed).</p>
+            </div>
+            <div class="modal-footer">
+                <form id="driverDeactivateForm" asp-action="Deactivate" asp-controller="Drivers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deactivate_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning btn-sm">Inactivate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Activate -->
+<div class="modal fade" id="driverActivateModal" tabindex="-1" aria-labelledby="driverActivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="driverActivateModalLabel">Activate driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="activateFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Activate <strong id="activateDisplayName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="driverActivateForm" asp-action="Activate" asp-controller="Drivers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="activate_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success btn-sm">Activate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete -->
+<div class="modal fade" id="driverDeleteModal" tabindex="-1" aria-labelledby="driverDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-danger">
+                <h5 class="modal-title text-danger" id="driverDeleteModalLabel">Delete driver</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleteFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Delete <strong id="deleteDisplayName"></strong> permanently. If they are linked to jobs or scans, deletion will be blocked.</p>
+            </div>
+            <div class="modal-footer">
+                <form id="driverDeleteForm" asp-action="Delete" asp-controller="Drivers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="delete_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 driver-toast-container">
+    <div id="driverToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="driverToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const getUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Url.Action("Get", "Drivers") ?? ""));
+            const toastKey = 'driverToast';
+
+            const pendingToast = sessionStorage.getItem(toastKey);
+            if (pendingToast) {
+                sessionStorage.removeItem(toastKey);
+                document.getElementById('driverToastBody').textContent = pendingToast;
+                const toastEl = document.getElementById('driverToast');
+                bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 5000 }).show();
+            }
+
+            function hideAlert(el) {
+                el.classList.add('d-none');
+                el.textContent = '';
+            }
+
+            function showErrors(alertEl, errors) {
+                if (!errors || typeof errors !== 'object') {
+                    alertEl.textContent = 'Something went wrong.';
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+                const lines = [];
+                for (const key of Object.keys(errors)) {
+                    const msgs = errors[key];
+                    if (Array.isArray(msgs)) msgs.forEach(m => lines.push(m));
+                }
+                alertEl.textContent = lines.length ? lines.join(' ') : 'Validation failed.';
+                alertEl.classList.remove('d-none');
+            }
+
+            async function submitModalForm(form, alertEl, modalEl, successMessage) {
+                hideAlert(alertEl);
+                const fd = new FormData(form);
+                const res = await fetch(form.action, { method: 'POST', body: fd });
+                let body = null;
+                try { body = await res.json(); } catch { }
+
+                if (res.ok && body && body.ok) {
+                    if (successMessage) sessionStorage.setItem(toastKey, successMessage);
+                    const inst = bootstrap.Modal.getInstance(modalEl);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+
+                if (body && body.message) {
+                    alertEl.textContent = body.message;
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+
+                if (body && body.errors) showErrors(alertEl, body.errors);
+                else showErrors(alertEl, null);
+            }
+
+            const createModal = document.getElementById('driverCreateModal');
+            const createForm = document.getElementById('driverCreateForm');
+            const createAlert = document.getElementById('createFormAlert');
+            createModal.addEventListener('show.bs.modal', () => {
+                createForm.reset();
+                document.getElementById('create_IsActive').value = 'true';
+                hideAlert(createAlert);
+            });
+            createForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(createForm, createAlert, createModal, 'Driver created successfully.');
+            });
+
+            const editModal = document.getElementById('driverEditModal');
+            const editForm = document.getElementById('driverEditForm');
+            const editAlert = document.getElementById('editFormAlert');
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(editForm, editAlert, editModal, 'Driver updated successfully.');
+            });
+
+            document.querySelectorAll('.js-open-edit').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    hideAlert(editAlert);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(getUrl + '?id=' + encodeURIComponent(id));
+                    if (!res.ok) return;
+                    const d = await res.json();
+
+                    document.getElementById('edit_Id').value = d.id;
+                    document.getElementById('edit_DriverName').value = d.driverName || '';
+                    document.getElementById('edit_MobilePhone').value = d.mobilePhone || '';
+                    document.getElementById('edit_VehicleRegistrationNo').value = d.vehicleRegistrationNo || '';
+                    document.getElementById('edit_HandheldDeviceId').value = d.handheldDeviceId || '';
+                    document.getElementById('edit_IsActive').value = d.isActive ? 'true' : 'false';
+                    new bootstrap.Modal(editModal).show();
+                });
+            });
+
+            const deactivateModal = document.getElementById('driverDeactivateModal');
+            const deactivateForm = document.getElementById('driverDeactivateForm');
+            const deactivateAlert = document.getElementById('deactivateFormAlert');
+            deactivateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(deactivateForm, deactivateAlert, deactivateModal, 'Driver inactivated.');
+            });
+
+            document.querySelectorAll('.js-open-deactivate').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(deactivateAlert);
+                    document.getElementById('deactivate_id').value = btn.getAttribute('data-id');
+                    document.getElementById('deactivateDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(deactivateModal).show();
+                });
+            });
+
+            const activateModal = document.getElementById('driverActivateModal');
+            const activateForm = document.getElementById('driverActivateForm');
+            const activateAlert = document.getElementById('activateFormAlert');
+            activateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(activateForm, activateAlert, activateModal, 'Driver activated.');
+            });
+
+            document.querySelectorAll('.js-open-activate').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(activateAlert);
+                    document.getElementById('activate_id').value = btn.getAttribute('data-id');
+                    document.getElementById('activateDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(activateModal).show();
+                });
+            });
+
+            const deleteModal = document.getElementById('driverDeleteModal');
+            const deleteForm = document.getElementById('driverDeleteForm');
+            const deleteAlert = document.getElementById('deleteFormAlert');
+            deleteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideAlert(deleteAlert);
+                const fd = new FormData(deleteForm);
+                const res = await fetch(deleteForm.action, { method: 'POST', body: fd });
+                let body = null;
+                try { body = await res.json(); } catch { }
+
+                if (res.ok && body && body.ok) {
+                    sessionStorage.setItem(toastKey, 'Driver deleted permanently.');
+                    const inst = bootstrap.Modal.getInstance(deleteModal);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+                if (body && body.message) {
+                    deleteAlert.textContent = body.message;
+                    deleteAlert.classList.remove('d-none');
+                    return;
+                }
+                if (body && body.errors) showErrors(deleteAlert, body.errors);
+                else showErrors(deleteAlert, null);
+            });
+
+            document.querySelectorAll('.js-open-delete').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(deleteAlert);
+                    document.getElementById('delete_id').value = btn.getAttribute('data-id');
+                    document.getElementById('deleteDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(deleteModal).show();
+                });
+            });
+        })();
+    </script>
+}

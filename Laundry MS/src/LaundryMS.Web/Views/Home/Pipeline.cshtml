@@ -1,0 +1,126 @@
+@model LaundryMS.Web.Models.ViewModels.PipelineViewModel
+
+@{
+    ViewData["Title"] = "Pipeline";
+    var visibleStatusRows = Model.ShowEmptyStages
+        ? Model.ByProcessStatus
+        : Model.ByProcessStatus.Where(x => x.Count > 0 || !x.IsCanonical).ToList();
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Pipeline</h1>
+        <p class="page-subtitle">Where active linen sits now — by process status and by current location. Use counts to drill into <a asp-controller="LinenItems" asp-action="Index">Items</a> with filters.</p>
+    </div>
+</section>
+
+@if (Model.TotalActiveItems == 0)
+{
+    <div class="alert alert-info">No active linen items to show.</div>
+}
+else
+{
+    <p class="small text-muted mb-3">Total active items: <strong>@Model.TotalActiveItems.ToString("N0")</strong></p>
+    <div class="d-flex flex-wrap gap-2 mb-3">
+        @if (Model.ShowEmptyStages)
+        {
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Pipeline" asp-route-showEmptyStages="false">
+                <i class="bi bi-eye-slash me-1"></i>Hide empty stages
+            </a>
+        }
+        else
+        {
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Pipeline" asp-route-showEmptyStages="true">
+                <i class="bi bi-eye me-1"></i>Show empty stages
+            </a>
+        }
+        @if (Model.UnassignedLocationCount > 0)
+        {
+            <a class="btn btn-sm btn-outline-warning"
+               asp-controller="LinenItems"
+               asp-action="Index"
+               asp-route-locationUnassigned="true">
+                <i class="bi bi-exclamation-triangle me-1"></i>Review items without location
+            </a>
+        }
+    </div>
+    @if (Model.UnassignedLocationCount > 0 || Model.NonCanonicalStatusCount > 0)
+    {
+        <div class="alert alert-warning py-2 small">
+            <strong>Data quality checks:</strong>
+            @if (Model.UnassignedLocationCount > 0)
+            {
+                <span class="me-3">@Model.UnassignedLocationCount item(s) have no current location.</span>
+            }
+            @if (Model.NonCanonicalStatusCount > 0)
+            {
+                <span>@Model.NonCanonicalStatusCount item(s) use non-standard process statuses.</span>
+            }
+        </div>
+    }
+
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-ui-checks-grid section-title-icon"></i>By process status</h2>
+                </div>
+                <div class="card-body">
+                    @if (visibleStatusRows.Count == 0)
+                    {
+                        <p class="small text-muted mb-0">No process stages to show for current filters.</p>
+                    }
+                    @foreach (var row in visibleStatusRows)
+                    {
+                        var pct = row.Count == 0 ? 0 : Math.Max(4, row.Percent);
+                        <div class="d-flex justify-content-between mb-1 align-items-center">
+                            <a class="text-decoration-none @(row.IsCanonical ? "" : "text-warning")"
+                               asp-controller="LinenItems"
+                               asp-action="Index"
+                               asp-route-processStatus="@row.StatusKey">@row.Status</a>
+                            <strong>@row.Count</strong>
+                        </div>
+                        <div class="progress progress-slim mb-3">
+                            <div class="progress-bar @(row.IsCanonical ? "bg-info" : "bg-warning")" style="width:@pct%"></div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-geo-alt section-title-icon"></i>By current location</h2>
+                </div>
+                <div class="card-body">
+                    @foreach (var row in Model.ByLocation.Take(16))
+                    {
+                        var pct = row.Count == 0 ? 0 : Math.Max(4, row.Percent);
+                        <div class="d-flex justify-content-between mb-1 align-items-center">
+                            @if (row.IsUnassigned)
+                            {
+                                <a class="text-decoration-none"
+                                   asp-controller="LinenItems"
+                                   asp-action="Index"
+                                   asp-route-locationUnassigned="true">@row.Label</a>
+                            }
+                            else if (row.LocationId.HasValue)
+                            {
+                                <a class="text-decoration-none"
+                                   asp-controller="LinenItems"
+                                   asp-action="Index"
+                                   asp-route-locationId="@row.LocationId.Value">@row.Label</a>
+                            }
+                            else
+                            {
+                                <span>@row.Label</span>
+                            }
+                            <strong>@row.Count</strong>
+                        </div>
+                        <div class="progress progress-slim mb-3"><div class="progress-bar bg-secondary" style="width:@pct%"></div></div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,639 @@
+@model LaundryMS.Web.Models.ViewModels.CustomersIndexViewModel
+@{
+    ViewData["Title"] = "Customers";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        customerType = Model.Query.CustomerType,
+        includeInactive = Model.Query.IncludeInactive,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            customerType = Model.Query.CustomerType,
+            includeInactive = Model.Query.IncludeInactive,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Customers</h1>
+        <p class="page-subtitle">Manage laundry clients and monitor account activity — counts show employees, owned linen, open logistics jobs, and damaged active linen.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#customerCreateModal">
+            <i class="bi bi-plus-lg"></i> Add customer
+        </button>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="Name, email, or phone…" />
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Type</label>
+                <select name="customerType" class="form-select form-select-sm">
+                    @foreach (var opt in new (string Val, string Label)[] { ("", "All"), ("fixed", "Fixed"), ("rental", "Rental"), ("other", "Other") })
+                    {
+                        if (string.Equals(Model.Query.CustomerType ?? "", opt.Val, StringComparison.Ordinal))
+                        {
+                            <option value="@opt.Val" selected>@opt.Label</option>
+                        }
+                        else
+                        {
+                            <option value="@opt.Val">@opt.Label</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-4 col-lg-2">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        if (Model.PageSize == sz)
+                        {
+                            <option value="@sz" selected>@sz</option>
+                        }
+                        else
+                        {
+                            <option value="@sz">@sz</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+@if (Model.TotalCount == 0 && string.IsNullOrWhiteSpace(Model.Query.Q) && string.IsNullOrWhiteSpace(Model.Query.CustomerType) && !Model.Query.IncludeInactive)
+{
+    <div class="alert alert-info mb-3">No customers yet. Use <strong>Add customer</strong> to create one.</div>
+}
+else if (Model.Items.Count == 0)
+{
+    <div class="alert alert-info mb-3">No customers match your filters.</div>
+}
+
+<div class="table-responsive">
+    <table id="customersTable" class="table table-striped table-sm align-middle">
+        <thead>
+            <tr>
+                <th class="text-center text-nowrap">ID</th>
+                <th class="text-start">
+                    <a href='@SortHref("name")' class="text-decoration-none text-dark">
+                        <text>Name</text>
+                        @if (string.Equals(Model.Query.SortBy, "name", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                        }
+                    </a>
+                </th>
+                <th class="text-center text-nowrap">
+                    <a href='@SortHref("type")' class="text-decoration-none text-dark">
+                        <text>Type</text>
+                        @if (string.Equals(Model.Query.SortBy, "type", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                        }
+                    </a>
+                </th>
+                <th class="text-start d-none d-md-table-cell text-truncate" style="max-width: 200px;">Email</th>
+                <th class="text-start d-none d-lg-table-cell text-nowrap">Phone</th>
+                <th class="text-center text-nowrap">Emp</th>
+                <th class="text-center text-nowrap" title="Active owned linen">Linen</th>
+                <th class="text-center text-nowrap" title="Open / in-progress logistics jobs">Jobs</th>
+                <th class="text-center text-nowrap" title="Active linen not in good condition">DMG</th>
+                <th class="text-center text-nowrap">
+                    <a href='@SortHref("status")' class="text-decoration-none text-dark">
+                        <text>Status</text>
+                        @if (string.Equals(Model.Query.SortBy, "status", StringComparison.OrdinalIgnoreCase))
+                        {
+                            <span class="text-muted small ms-1">@(string.Equals(Model.Query.SortDir, "desc", StringComparison.OrdinalIgnoreCase) ? "▼" : "▲")</span>
+                        }
+                    </a>
+                </th>
+                <th class="text-center text-nowrap">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Items.Count == 0)
+            {
+                <tr class="no-results-placeholder">
+                    <td colspan="11" class="text-muted text-center">—</td>
+                </tr>
+            }
+            else
+            {
+                var rowNumber = (Model.Page - 1) * Model.PageSize;
+                @foreach (var item in Model.Items)
+                {
+                    rowNumber++;
+                    <tr>
+                        <td class="text-center">@rowNumber</td>
+                        <td class="text-start fw-medium">@item.CustomerName</td>
+                        <td class="text-center small">@item.CustomerTypeDisplay</td>
+                        <td class="text-start small d-none d-md-table-cell text-truncate" style="max-width: 200px;">@(item.PrimaryEmail ?? "—")</td>
+                        <td class="text-start small d-none d-lg-table-cell">@(item.PrimaryPhone ?? "—")</td>
+                        <td class="text-center small">@item.EmployeeCount</td>
+                        <td class="text-center small">@item.OwnedLinenActiveCount</td>
+                        <td class="text-center small">@item.OpenLogisticsJobsCount</td>
+                        <td class="text-center small @(item.DamagedLinenCount > 0 ? "text-danger fw-semibold" : "")">@item.DamagedLinenCount</td>
+                        <td class="text-center">
+                            @if (item.IsActive)
+                            {
+                                <span class="badge bg-success">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Inactive</span>
+                            }
+                        </td>
+                        <td class="text-center text-nowrap">
+                            <div class="d-inline-flex flex-wrap justify-content-center gap-1">
+                                <a class="btn btn-sm btn-outline-info btn-customer-action" asp-action="Details" asp-route-id="@item.Id" title="Account" aria-label="Account">
+                                    <i class="bi bi-person-vcard" aria-hidden="true"></i>
+                                </a>
+                                <button type="button" class="btn btn-sm btn-outline-primary btn-customer-action js-open-edit" data-id="@item.Id" title="Edit" aria-label="Edit">
+                                    <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                </button>
+                                @if (item.IsActive)
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-warning btn-customer-action js-open-deactivate"
+                                            data-id="@item.Id" data-name="@item.CustomerName" title="Deactivate" aria-label="Deactivate">
+                                        <i class="bi bi-toggle-off" aria-hidden="true"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button type="button" class="btn btn-sm btn-outline-success btn-customer-action js-open-activate"
+                                            data-id="@item.Id" data-name="@item.CustomerName" title="Activate" aria-label="Activate">
+                                        <i class="bi bi-toggle-on" aria-hidden="true"></i>
+                                    </button>
+                                }
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-customer-action js-open-delete"
+                                        data-id="@item.Id" data-name="@item.CustomerName" title="Delete" aria-label="Delete">
+                                    <i class="bi bi-trash" aria-hidden="true"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)–@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+@{
+    var typeOptions = new[] { ("fixed", "Fixed"), ("rental", "Rental"), ("other", "Other") };
+}
+
+<div class="modal fade" id="customerCreateModal" tabindex="-1" aria-labelledby="customerCreateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerCreateModalLabel">Add customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="customerCreateForm" asp-action="Create" asp-controller="Customers" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-body">
+                    <div id="createFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-8">
+                            <label class="form-label" for="create_CustomerName">Name</label>
+                            <input class="form-control form-control-sm" id="create_CustomerName" name="CustomerName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_CustomerType">Type</label>
+                            <select class="form-select form-select-sm" id="create_CustomerType" name="CustomerType">
+                                @foreach (var (val, label) in typeOptions)
+                                {
+                                    if (val == "other")
+                                    {
+                                        <option value="@val" selected>@label</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@val">@label</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_PrimaryEmail">Email</label>
+                            <input class="form-control form-control-sm" type="email" id="create_PrimaryEmail" name="PrimaryEmail" maxlength="150" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="create_PrimaryPhone">Phone</label>
+                            <input class="form-control form-control-sm" id="create_PrimaryPhone" name="PrimaryPhone" maxlength="30" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="create_AddressText">Address</label>
+                            <textarea class="form-control form-control-sm" id="create_AddressText" name="AddressText" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="create_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="create_IsActive" name="IsActive">
+                                <option value="true" selected>Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerEditModal" tabindex="-1" aria-labelledby="customerEditModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerEditModalLabel">Edit customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="customerEditForm" asp-action="Edit" asp-controller="Customers" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="Id" id="edit_Id" />
+                <div class="modal-body">
+                    <div id="editFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                    <div class="row g-2">
+                        <div class="col-md-8">
+                            <label class="form-label" for="edit_CustomerName">Name</label>
+                            <input class="form-control form-control-sm" id="edit_CustomerName" name="CustomerName" maxlength="150" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_CustomerType">Type</label>
+                            <select class="form-select form-select-sm" id="edit_CustomerType" name="CustomerType">
+                                @foreach (var (val, label) in typeOptions)
+                                {
+                                    <option value="@val">@label</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_PrimaryEmail">Email</label>
+                            <input class="form-control form-control-sm" type="email" id="edit_PrimaryEmail" name="PrimaryEmail" maxlength="150" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="edit_PrimaryPhone">Phone</label>
+                            <input class="form-control form-control-sm" id="edit_PrimaryPhone" name="PrimaryPhone" maxlength="30" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="edit_AddressText">Address</label>
+                            <textarea class="form-control form-control-sm" id="edit_AddressText" name="AddressText" rows="2"></textarea>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="edit_IsActive">Status</label>
+                            <select class="form-select form-select-sm" id="edit_IsActive" name="IsActive">
+                                <option value="true">Active</option>
+                                <option value="false">Inactive</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerDeactivateModal" tabindex="-1" aria-labelledby="customerDeactivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerDeactivateModalLabel">Deactivate customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deactivateFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Deactivate <strong id="deactivateDisplayName"></strong>? They will be marked inactive (not removed from the database).</p>
+            </div>
+            <div class="modal-footer">
+                <form id="customerDeactivateForm" asp-action="Deactivate" asp-controller="Customers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="deactivate_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Deactivate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerActivateModal" tabindex="-1" aria-labelledby="customerActivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerActivateModalLabel">Activate customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="activateFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Activate <strong id="activateDisplayName"></strong>?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="customerActivateForm" asp-action="Activate" asp-controller="Customers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="activate_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-success btn-sm">Activate</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="customerDeleteModal" tabindex="-1" aria-labelledby="customerDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-danger">
+                <h5 class="modal-title text-danger" id="customerDeleteModalLabel">Delete customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="deleteFormAlert" class="alert alert-danger d-none" role="alert"></div>
+                <p class="mb-0">Permanently delete <strong id="deleteDisplayName"></strong>? This cannot be undone. If the customer has linked linen, employees, or jobs, delete will be blocked.</p>
+            </div>
+            <div class="modal-footer">
+                <form id="customerDeleteForm" asp-action="Delete" asp-controller="Customers" method="post" class="d-flex gap-2 ms-auto">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="delete_id" />
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger btn-sm">Delete permanently</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed top-0 end-0 p-3 customer-toast-container">
+    <div id="customerToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="customerToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+            const getUrl = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Url.Action("Get", "Customers") ?? ""));
+            const toastKey = 'customerToast';
+
+            const pending = sessionStorage.getItem(toastKey);
+            if (pending) {
+                sessionStorage.removeItem(toastKey);
+                const toastEl = document.getElementById('customerToast');
+                document.getElementById('customerToastBody').textContent = pending;
+                bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 5000 }).show();
+            }
+
+            function hideAlert(el) {
+                el.classList.add('d-none');
+                el.textContent = '';
+            }
+
+            function showErrors(alertEl, errors) {
+                if (!errors || typeof errors !== 'object') {
+                    alertEl.textContent = 'Something went wrong.';
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+                const lines = [];
+                for (const key of Object.keys(errors)) {
+                    const msgs = errors[key];
+                    if (Array.isArray(msgs))
+                        msgs.forEach(m => lines.push(m));
+                }
+                alertEl.textContent = lines.length ? lines.join(' ') : 'Validation failed.';
+                alertEl.classList.remove('d-none');
+            }
+
+            async function submitModalForm(form, alertEl, modalEl, successMessage) {
+                hideAlert(alertEl);
+                const fd = new FormData(form);
+                const res = await fetch(form.action, { method: 'POST', body: fd });
+                let body = null;
+                try {
+                    body = await res.json();
+                } catch { /* non-json */ }
+
+                if (res.ok && body && body.ok) {
+                    if (successMessage)
+                        sessionStorage.setItem(toastKey, successMessage);
+                    const inst = bootstrap.Modal.getInstance(modalEl);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+                if (body && body.message) {
+                    alertEl.textContent = body.message;
+                    alertEl.classList.remove('d-none');
+                    return;
+                }
+                if (body && body.errors)
+                    showErrors(alertEl, body.errors);
+                else
+                    showErrors(alertEl, null);
+            }
+
+            const createModal = document.getElementById('customerCreateModal');
+            const createForm = document.getElementById('customerCreateForm');
+            const createAlert = document.getElementById('createFormAlert');
+            createModal.addEventListener('show.bs.modal', () => {
+                createForm.reset();
+                document.getElementById('create_CustomerType').value = 'other';
+                document.getElementById('create_IsActive').value = 'true';
+                hideAlert(createAlert);
+            });
+            createForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(createForm, createAlert, createModal, 'Customer created successfully.');
+            });
+
+            const editModal = document.getElementById('customerEditModal');
+            const editForm = document.getElementById('customerEditForm');
+            const editAlert = document.getElementById('editFormAlert');
+            editForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(editForm, editAlert, editModal, 'Customer updated successfully.');
+            });
+
+            function applyCustomerTypeToSelect(selectEl, rawFromServer) {
+                const raw = (rawFromServer ?? '').toString().trim();
+                const lower = raw.toLowerCase();
+                const known = ['fixed', 'rental', 'other'];
+                const useVal = known.includes(lower) ? lower : (raw.length ? raw : 'other');
+                if (!known.includes(lower) && raw.length) {
+                    const exists = [...selectEl.options].some(o => o.value === useVal);
+                    if (!exists) {
+                        const opt = document.createElement('option');
+                        opt.value = useVal;
+                        opt.textContent = raw;
+                        opt.dataset.tempCustom = '1';
+                        selectEl.appendChild(opt);
+                    }
+                }
+                selectEl.value = useVal;
+                if (selectEl.value !== useVal)
+                    selectEl.value = 'other';
+            }
+
+            document.querySelectorAll('.js-open-edit').forEach((btn) => {
+                btn.addEventListener('click', async () => {
+                    hideAlert(editAlert);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(getUrl + '?id=' + encodeURIComponent(id));
+                    if (!res.ok) return;
+                    const c = await res.json();
+                    const typeSel = document.getElementById('edit_CustomerType');
+                    typeSel.querySelectorAll('option[data-temp-custom]').forEach(o => o.remove());
+                    document.getElementById('edit_Id').value = c.id;
+                    document.getElementById('edit_CustomerName').value = c.customerName || '';
+                    applyCustomerTypeToSelect(typeSel, c.customerType);
+                    document.getElementById('edit_PrimaryEmail').value = c.primaryEmail || '';
+                    document.getElementById('edit_PrimaryPhone').value = c.primaryPhone || '';
+                    document.getElementById('edit_AddressText').value = c.addressText || '';
+                    document.getElementById('edit_IsActive').value = c.isActive ? 'true' : 'false';
+                    new bootstrap.Modal(editModal).show();
+                });
+            });
+
+            const deactivateModal = document.getElementById('customerDeactivateModal');
+            const deactivateForm = document.getElementById('customerDeactivateForm');
+            const deactivateAlert = document.getElementById('deactivateFormAlert');
+            document.querySelectorAll('.js-open-deactivate').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(deactivateAlert);
+                    document.getElementById('deactivate_id').value = btn.getAttribute('data-id');
+                    document.getElementById('deactivateDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(deactivateModal).show();
+                });
+            });
+            deactivateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(deactivateForm, deactivateAlert, deactivateModal, 'Customer deactivated.');
+            });
+
+            const activateModal = document.getElementById('customerActivateModal');
+            const activateForm = document.getElementById('customerActivateForm');
+            const activateAlert = document.getElementById('activateFormAlert');
+            document.querySelectorAll('.js-open-activate').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(activateAlert);
+                    document.getElementById('activate_id').value = btn.getAttribute('data-id');
+                    document.getElementById('activateDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(activateModal).show();
+                });
+            });
+            activateForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                submitModalForm(activateForm, activateAlert, activateModal, 'Customer activated.');
+            });
+
+            const deleteModal = document.getElementById('customerDeleteModal');
+            const deleteForm = document.getElementById('customerDeleteForm');
+            const deleteAlert = document.getElementById('deleteFormAlert');
+            document.querySelectorAll('.js-open-delete').forEach((btn) => {
+                btn.addEventListener('click', () => {
+                    hideAlert(deleteAlert);
+                    document.getElementById('delete_id').value = btn.getAttribute('data-id');
+                    document.getElementById('deleteDisplayName').textContent = btn.getAttribute('data-name') || '';
+                    new bootstrap.Modal(deleteModal).show();
+                });
+            });
+            deleteForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                hideAlert(deleteAlert);
+                const fd = new FormData(deleteForm);
+                const res = await fetch(deleteForm.action, { method: 'POST', body: fd });
+                let body = null;
+                try {
+                    body = await res.json();
+                } catch { /* non-json */ }
+
+                if (res.ok && body && body.ok) {
+                    sessionStorage.setItem(toastKey, 'Customer deleted permanently.');
+                    const inst = bootstrap.Modal.getInstance(deleteModal);
+                    if (inst) inst.hide();
+                    window.location.reload();
+                    return;
+                }
+                if (body && body.message) {
+                    deleteAlert.textContent = body.message;
+                    deleteAlert.classList.remove('d-none');
+                    return;
+                }
+                if (body && body.errors)
+                    showErrors(deleteAlert, body.errors);
+                else
+                    showErrors(deleteAlert, null);
+            });
+        })();
+    </script>
+}

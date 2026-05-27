@@ -1,0 +1,187 @@
+@model LaundryMS.Web.Models.ViewModels.LinenItemDetailViewModel
+
+@{
+    ViewData["Title"] = $"Item {Model.RfidTag}";
+    bool IsCollection(string? t)
+    {
+        t = (t ?? "").Trim().ToLowerInvariant();
+        return t is "collection" or "pickup" or "collect";
+    }
+    bool IsDelivery(string? t)
+    {
+        t = (t ?? "").Trim().ToLowerInvariant();
+        return t is "delivery" or "dispatch";
+    }
+}
+
+<section class="page-header">
+    <div>
+        <nav aria-label="breadcrumb" class="mb-2">
+            <ol class="breadcrumb mb-0 small">
+                <li class="breadcrumb-item"><a asp-action="Index">Items</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><code>@Model.RfidTag</code></li>
+            </ol>
+        </nav>
+        <h1 class="page-title">Item detail</h1>
+        <p class="page-subtitle">Identity, current state, and recent RFID movement history (newest first).</p>
+    </div>
+    <div class="page-header-actions flex-wrap gap-2">
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="ScanHistory" asp-action="Index" asp-route-tag="@Model.RfidTag">
+            <i class="bi bi-clock-history me-1"></i>Full scan log
+        </a>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="LinenAssignment" asp-action="Index">
+            <i class="bi bi-link-45deg me-1"></i>Linen assignment
+        </a>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Total scans</div>
+                <div class="fs-4 fw-semibold">@Model.TotalScanCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Rejected scans</div>
+                <div class="fs-4 fw-semibold text-danger">@Model.RejectedScanCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Last accepted</div>
+                <div class="small fw-semibold">@(Model.LastAcceptedScanAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Scan age</div>
+                <div class="fs-4 fw-semibold">@(Model.DaysSinceLastScan?.ToString() ?? "—")</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header">
+                <h2 class="section-title mb-0"><i class="bi bi-tag section-title-icon"></i>Summary</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0 small">
+                    <dt class="col-sm-4 text-muted">RFID</dt>
+                    <dd class="col-sm-8"><code>@Model.RfidTag</code></dd>
+                    <dt class="col-sm-4 text-muted">Type</dt>
+                    <dd class="col-sm-8">@Model.ItemType</dd>
+                    <dt class="col-sm-4 text-muted">Size</dt>
+                    <dd class="col-sm-8">@(Model.SizeLabel ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Assignment</dt>
+                    <dd class="col-sm-8"><span class="badge-soft">@Model.DefaultAssignmentType</span></dd>
+                    <dt class="col-sm-4 text-muted">Owner</dt>
+                    <dd class="col-sm-8">@(Model.OwnerCustomerName ?? "Laundry pool")</dd>
+                    <dt class="col-sm-4 text-muted">Employee</dt>
+                    <dd class="col-sm-8">@(Model.AssignedEmployeeName ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Location</dt>
+                    <dd class="col-sm-8">@(Model.CurrentLocationName ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Process status</dt>
+                    <dd class="col-sm-8"><span class="badge bg-light text-dark border">@Model.CurrentProcessStatus</span></dd>
+                    <dt class="col-sm-4 text-muted">Condition</dt>
+                    <dd class="col-sm-8">@Model.PhysicalCondition</dd>
+                    <dt class="col-sm-4 text-muted">Lifecycle state</dt>
+                    <dd class="col-sm-8">@Model.LifecycleState</dd>
+                    <dt class="col-sm-4 text-muted">Deactivation reason</dt>
+                    <dd class="col-sm-8">@(Model.DeactivationReason ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Last scanned</dt>
+                    <dd class="col-sm-8">@(Model.LastScannedAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Active</dt>
+                    <dd class="col-sm-8">@(Model.IsActive ? "Yes" : "No")</dd>
+                    <dt class="col-sm-4 text-muted">Updated</dt>
+                    <dd class="col-sm-8">@Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card section-card">
+            <div class="card-header section-card-header d-flex align-items-center flex-wrap gap-2">
+                <h2 class="section-title mb-0"><i class="bi bi-activity section-title-icon"></i>Recent movement timeline</h2>
+                <span class="badge bg-secondary ms-lg-auto">Last @Model.Timeline.Count events</span>
+            </div>
+            <div class="card-body p-0">
+                @if (Model.Timeline.Count == 0)
+                {
+                    <p class="p-3 mb-0 text-muted">No scan events recorded for this tag yet.</p>
+                }
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-sm table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Reader</th>
+                                    <th>Scan route</th>
+                                    <th>Result</th>
+                                    <th>Job</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ev in Model.Timeline)
+                                {
+                                    <tr>
+                                        <td class="text-nowrap small">@ev.OccurredAt.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                        <td class="small">@ev.ReaderName</td>
+                                        <td class="small">@ev.ScanRouteName</td>
+                                        <td class="small">
+                                            @ev.ProcessingResult
+                                            @if (!string.IsNullOrEmpty(ev.ConditionAfterEvent))
+                                            {
+                                                <span class="text-muted">(@ev.ConditionAfterEvent)</span>
+                                            }
+                                        </td>
+                                        <td class="small">
+                                            @if (ev.LogisticsJobId is { } jid)
+                                            {
+                                                if (IsCollection(ev.LogisticsJobType))
+                                                {
+                                                    <a asp-controller="Collections" asp-action="Details" asp-route-id="@jid">#@jid</a>
+                                                }
+                                                else if (IsDelivery(ev.LogisticsJobType))
+                                                {
+                                                    <a asp-controller="Deliveries" asp-action="Details" asp-route-id="@jid">#@jid</a>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted" title="Open from All logistics jobs">#@jid</span>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">—</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+            @if (Model.Timeline.Count > 0)
+            {
+                <div class="card-footer small text-muted">
+                    Showing the most recent events only. Use <a asp-controller="ScanHistory" asp-action="Index" asp-route-tag="@Model.RfidTag">Scan history</a> for full filters and export-style review.
+                </div>
+            }
+        </div>
+    </div>
+</div>

@@ -1,0 +1,325 @@
+@using LaundryMS.Web.Models
+@model LaundryMS.Web.Models.ViewModels.LogisticsJobsIndexViewModel
+
+@{
+    ViewData["Title"] = "Logistics jobs";
+
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        kind = Model.Query.Kind,
+        q = Model.Query.Q,
+        jobStatus = Model.Query.JobStatus,
+        customerId = Model.Query.CustomerId,
+        driverId = Model.Query.DriverId,
+        readerWayId = Model.Query.ReaderWayId,
+        fromLocationId = Model.Query.FromLocationId,
+        toLocationId = Model.Query.ToLocationId,
+        onlyOpen = Model.Query.OnlyOpen,
+        onlyOverdue = Model.Query.OnlyOverdue,
+        onlyStalled = Model.Query.OnlyStalled,
+        onlyDeltaMismatch = Model.Query.OnlyDeltaMismatch,
+        stalledHours = Model.Query.StalledHours,
+        createdFrom = Model.Query.CreatedFrom,
+        createdTo = Model.Query.CreatedTo,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+
+        return Url.Action("Index", new
+        {
+            kind = Model.Query.Kind,
+            q = Model.Query.Q,
+            jobStatus = Model.Query.JobStatus,
+            customerId = Model.Query.CustomerId,
+            driverId = Model.Query.DriverId,
+            readerWayId = Model.Query.ReaderWayId,
+            fromLocationId = Model.Query.FromLocationId,
+            toLocationId = Model.Query.ToLocationId,
+            onlyOpen = Model.Query.OnlyOpen,
+            onlyOverdue = Model.Query.OnlyOverdue,
+            onlyStalled = Model.Query.OnlyStalled,
+            onlyDeltaMismatch = Model.Query.OnlyDeltaMismatch,
+            stalledHours = Model.Query.StalledHours,
+            createdFrom = Model.Query.CreatedFrom,
+            createdTo = Model.Query.CreatedTo,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Logistics jobs</h1>
+        <p class="page-subtitle">Dispatch board for collection and delivery operations with SLA and scan progress signals.</p>
+    </div>
+    <div class="page-header-actions w-100 flex-wrap gap-2">
+        <a class="btn btn-sm btn-outline-primary" asp-controller="Collections" asp-action="Index">
+            <i class="bi bi-box-arrow-in-down me-1"></i>Collection workspace
+        </a>
+        <a class="btn btn-sm btn-outline-primary" asp-controller="Deliveries" asp-action="Index">
+            <i class="bi bi-box-arrow-up me-1"></i>Delivery workspace
+        </a>
+    </div>
+</section>
+
+<div class="row g-3 mb-3">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Open</div><div class="fs-4 fw-semibold">@Model.OpenCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">In progress</div><div class="fs-4 fw-semibold">@Model.InProgressCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Completed today</div><div class="fs-4 fw-semibold">@Model.CompletedTodayCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Overdue</div><div class="fs-4 fw-semibold">@Model.OverdueCount</div></div></div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100"><div class="card-body py-3 text-center"><div class="small text-muted">Stalled</div><div class="fs-4 fw-semibold">@Model.StalledCount</div></div></div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-3">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="Job id, note, customer, driver..." />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Job kind</label>
+                <select name="kind" class="form-select form-select-sm">
+                    <option value="all" selected="@(Model.Query.Kind == "all")">All</option>
+                    <option value="collection" selected="@(Model.Query.Kind == "collection")">Collection</option>
+                    <option value="delivery" selected="@(Model.Query.Kind == "delivery")">Delivery</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Status</label>
+                <select name="jobStatus" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var s in Model.JobStatuses)
+                    {
+                        <option value="@s" selected="@(Model.Query.JobStatus == s)">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Customer</label>
+                <select name="customerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.Customers)
+                    {
+                        <option value="@c.Id" selected="@(Model.Query.CustomerId == c.Id)">@c.CustomerName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Driver</label>
+                <select name="driverId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var d in Model.Drivers)
+                    {
+                        <option value="@d.Id" selected="@(Model.Query.DriverId == d.Id)">@d.DriverName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Scan route</label>
+                <select name="readerWayId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var w in Model.ReaderWays)
+                    {
+                        <option value="@w.Id" selected="@(Model.Query.ReaderWayId == w.Id)">@w.DisplayName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">From location</label>
+                <select name="fromLocationId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var l in Model.Locations)
+                    {
+                        <option value="@l.Id" selected="@(Model.Query.FromLocationId == l.Id)">@l.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">To location</label>
+                <select name="toLocationId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var l in Model.Locations)
+                    {
+                        <option value="@l.Id" selected="@(Model.Query.ToLocationId == l.Id)">@l.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Created from</label>
+                <input type="date" name="createdFrom" class="form-control form-control-sm" value="@(Model.Query.CreatedFrom?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Created to</label>
+                <input type="date" name="createdTo" class="form-control form-control-sm" value="@(Model.Query.CreatedTo?.ToString("yyyy-MM-dd"))" />
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Stalled h</label>
+                <input type="number" name="stalledHours" class="form-control form-control-sm" value="@Model.Query.StalledHours" min="1" max="240" />
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyOpen" value="true" id="onlyOpen" checked="@Model.Query.OnlyOpen" />
+                    <label class="form-check-label small" for="onlyOpen">Only open/in progress</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyOverdue" value="true" id="onlyOverdue" checked="@Model.Query.OnlyOverdue" />
+                    <label class="form-check-label small" for="onlyOverdue">Only overdue</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyStalled" value="true" id="onlyStalled" checked="@Model.Query.OnlyStalled" />
+                    <label class="form-check-label small" for="onlyStalled">Only stalled</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyDeltaMismatch" value="true" id="onlyDeltaMismatch" checked="@Model.Query.OnlyDeltaMismatch" />
+                    <label class="form-check-label small" for="onlyDeltaMismatch">Only delta mismatch</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Jobs.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No jobs match your filters.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th><a class="text-decoration-none" href="@SortHref("type")">Type</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("status")">Status</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("customer")">Customer</a></th>
+                            <th><a class="text-decoration-none" href="@SortHref("driver")">Driver</a></th>
+                            <th>Route</th>
+                            <th>Scan route</th>
+                            <th class="text-center">Exp.</th>
+                            <th class="text-center">Rch.</th>
+                            <th class="text-center">Scn.</th>
+                            <th class="text-center">Delta</th>
+                            <th><a class="text-decoration-none" href="@SortHref("lastscan")">Last scan</a></th>
+                            <th>Planned end</th>
+                            <th><a class="text-decoration-none" href="@SortHref("created")">Created</a></th>
+                            <th class="text-center"><a class="text-decoration-none" href="@SortHref("updated")">Updated</a></th>
+                            <th class="text-center text-nowrap" style="min-width: 168px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Jobs)
+                        {
+                            var fromTo = string.IsNullOrEmpty(item.FromLocationName) && string.IsNullOrEmpty(item.ToLocationName)
+                                ? "—"
+                                : string.IsNullOrEmpty(item.FromLocationName)
+                                    ? "? " + item.ToLocationName
+                                    : string.IsNullOrEmpty(item.ToLocationName)
+                                        ? item.FromLocationName
+                                        : item.FromLocationName + " ? " + item.ToLocationName;
+
+                            string deltaClass = item.Delta == null ? "text-muted" : (item.Delta == 0 ? "text-success" : (item.Delta < 0 ? "text-danger" : "text-warning"));
+
+                            <tr>
+                                <td class="text-center"><a asp-action="Details" asp-route-id="@item.Id" class="fw-semibold">@item.Id</a></td>
+                                <td>@item.JobType</td>
+                                <td><span class="badge bg-light text-dark border text-uppercase">@item.JobStatus</span></td>
+                                <td>@(item.CustomerName ?? "-")</td>
+                                <td>@(item.DriverName ?? "-")</td>
+                                <td class="small">@fromTo</td>
+                                <td class="small">@(item.ReaderWayName ?? "—")</td>
+                                <td class="text-center">@item.ExpectedItemCount</td>
+                                <td class="text-center">@item.ReachedItemCount</td>
+                                <td class="text-center">@item.ScannedUniqueTagCount</td>
+                                <td class="text-center"><span class="@deltaClass fw-semibold">@(item.Delta.HasValue ? (item.Delta > 0 ? "+" : "") + item.Delta.Value : "—")</span></td>
+                                <td class="small text-nowrap">@(item.LastScanAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="small text-nowrap">@(item.PlannedEndAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="small text-nowrap">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="small text-center text-nowrap">@item.UpdatedAt.ToString("MM-dd HH:mm")</td>
+                                <td class="text-center text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id" title="Details"><i class="bi bi-eye"></i></a>
+                                    @if (LogisticsJobTypeHelper.IsCollection(item.JobType))
+                                    {
+                                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Collections" asp-action="Details" asp-route-id="@item.Id" title="Collection workspace"><i class="bi bi-box-arrow-up-right"></i></a>
+                                    }
+                                    else if (LogisticsJobTypeHelper.IsDelivery(item.JobType))
+                                    {
+                                        <a class="btn btn-sm btn-outline-secondary" asp-controller="Deliveries" asp-action="Details" asp-route-id="@item.Id" title="Delivery workspace"><i class="bi bi-box-arrow-up-right"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>

@@ -1,0 +1,100 @@
+@model LaundryMS.Web.Models.ViewModels.DriverDetailViewModel
+@{
+    ViewData["Title"] = "Driver — " + Model.DriverName;
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">@Model.DriverName</h1>
+        <p class="page-subtitle">
+            Driver profile and logistics activity.
+            @if (Model.IsActive)
+            {
+                <span class="badge bg-success ms-1">Active</span>
+            }
+            else
+            {
+                <span class="badge bg-secondary ms-1">Inactive</span>
+            }
+        </p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Back to drivers</a>
+    </div>
+</section>
+
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Collections (90d)</div>
+                <div class="fs-4 fw-semibold">@Model.RecentCollectionJobCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Deliveries (90d)</div>
+                <div class="fs-4 fw-semibold">@Model.RecentDeliveryJobCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Open jobs</div>
+                <div class="fs-4 fw-semibold">@Model.OpenLogisticsJobsCount</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-4 col-lg-2">
+        <div class="card section-card h-100">
+            <div class="card-body py-3 text-center">
+                <div class="small text-muted">Linked scans</div>
+                <div class="fs-4 fw-semibold">@Model.LinkedScanEventCount</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header">
+                <h2 class="section-title mb-0"><i class="bi bi-person-badge section-title-icon"></i>Contact &amp; device</h2>
+            </div>
+            <div class="card-body">
+                <dl class="row small mb-0">
+                    <dt class="col-sm-4 text-muted">Phone</dt>
+                    <dd class="col-sm-8">@(Model.MobilePhone ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Vehicle</dt>
+                    <dd class="col-sm-8">@(Model.VehicleRegistrationNo ?? "—")</dd>
+                    <dt class="col-sm-4 text-muted">Handheld device ID</dt>
+                    <dd class="col-sm-8"><code class="small">@(Model.HandheldDeviceId ?? "—")</code></dd>
+                    <dt class="col-sm-4 text-muted">Created</dt>
+                    <dd class="col-sm-8">@Model.CreatedAt.ToString("u")</dd>
+                    <dt class="col-sm-4 text-muted">Updated</dt>
+                    <dd class="col-sm-8">@Model.UpdatedAt.ToString("u")</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header">
+                <h2 class="section-title mb-0"><i class="bi bi-link-45deg section-title-icon"></i>Shortcuts</h2>
+            </div>
+            <div class="card-body d-flex flex-column gap-2">
+                <a class="btn btn-outline-primary btn-sm text-start" asp-controller="LogisticsJobs" asp-action="Index" asp-route-driverId="@Model.Id">
+                    <i class="bi bi-truck me-2"></i>Logistics jobs for this driver
+                </a>
+                <a class="btn btn-outline-primary btn-sm text-start" asp-controller="Collections" asp-action="Index">
+                    <i class="bi bi-box-arrow-in-down me-2"></i>Collections (filter by driver in Logistics jobs)
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<p class="small text-muted mt-3 mb-0">The handheld device ID is the string reported by the mobile app when the driver registers (e.g. R2).</p>

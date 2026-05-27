@@ -1,0 +1,556 @@
+@model LaundryMS.Web.Models.ViewModels.CollectionsIndexViewModel
+
+@{
+    ViewData["Title"] = "Collections";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Collections</h1>
+        <p class="page-subtitle">Driver pickup trips — job types: collection, pickup, collect. Set from/to locations and scan route; open a job for expected items, scans linked via <code>logistics_job_id</code>, and reports.</p>
+    </div>
+    <div class="page-header-actions w-100">
+        <div class="d-flex flex-wrap gap-2 align-items-center">
+            <button type="button" class="btn btn-sm btn-primary js-open-create">
+                <i class="bi bi-plus-lg me-1"></i>Create
+            </button>
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="Deliveries" asp-action="Index">Delivery workspace</a>
+            <a class="btn btn-sm btn-outline-secondary" asp-controller="LogisticsJobs" asp-action="Index">Logistics jobs</a>
+        </div>
+
+        <div class="ms-auto collections-search input-group input-group-sm">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" class="form-control js-table-search" data-table-id="collectionsTable" placeholder="Search..." />
+        </div>
+    </div>
+</section>
+
+<div class="alert alert-light border small mb-3 mb-md-4">
+    <i class="bi bi-info-circle me-1"></i> Combined job list with filters: <a asp-controller="LogisticsJobs" asp-action="Index" class="alert-link">Logistics jobs</a>.
+</div>
+
+<div class="position-fixed top-0 end-0 p-3 collections-toast-container">
+    <div id="collectionsToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="collectionsToastBody">Saved.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Jobs.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No collection jobs found. Create jobs with type <code>collection</code>, <code>pickup</code>, or <code>collect</code>.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table id="collectionsTable" class="table table-hover mb-0 js-filterable-table table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center">ID</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Customer</th>
+                            <th>Driver</th>
+                            <th>Route</th>
+                            <th>Scan route</th>
+                            <th class="text-center">Exp.</th>
+                            <th class="text-center">Rch.</th>
+                            <th class="text-center">Scn.</th>
+                            <th class="text-center">Δ</th>
+                            <th>Last scan</th>
+                            <th>Created</th>
+                            <th class="text-center text-nowrap" style="min-width: 132px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Jobs)
+                        {
+                            var fLoc = item.FromLocationName;
+                            var tLoc = item.ToLocationName;
+                            string fromTo;
+                            if (string.IsNullOrEmpty(fLoc) && string.IsNullOrEmpty(tLoc))
+                                fromTo = "—";
+                            else if (string.IsNullOrEmpty(fLoc))
+                                fromTo = "→ " + tLoc;
+                            else if (string.IsNullOrEmpty(tLoc))
+                                fromTo = fLoc!;
+                            else
+                                fromTo = fLoc + " → " + tLoc;
+                            var delta = item.ExpectedItemCount > 0 ? item.ReachedItemCount - item.ExpectedItemCount : (int?)null;
+                            <tr>
+                                <td class="text-center">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="fw-semibold">@item.Id</a>
+                                </td>
+                                <td>@item.JobType</td>
+                                <td><span class="badge bg-light text-dark border text-uppercase">@item.JobStatus</span></td>
+                                <td>@(item.CustomerName ?? "-")</td>
+                                <td>@(item.DriverName ?? "-")</td>
+                                <td class="small">@fromTo</td>
+                                <td class="small">@(item.ReaderWayName ?? "—")</td>
+                                <td class="text-center">@item.ExpectedItemCount</td>
+                                <td class="text-center">@item.ReachedItemCount</td>
+                                <td class="text-center">@item.ScannedUniqueTagCount</td>
+                                <td class="text-center">
+                                    @if (delta.HasValue)
+                                    {
+                                        var cls = delta.Value == 0 ? "text-success" : (delta.Value < 0 ? "text-danger" : "text-warning");
+                                        <span class="@cls fw-semibold">@(delta.Value > 0 ? "+" : "")@delta.Value</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">—</span>
+                                    }
+                                </td>
+                                <td class="small text-nowrap">@(item.LastScanAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                                <td class="small">@item.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-center text-nowrap">
+                                    <a class="btn btn-sm btn-outline-primary" asp-action="Details" asp-route-id="@item.Id" title="Open job"><i class="bi bi-box-arrow-up-right"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-edit"
+                                            title="Edit" aria-label="Edit"
+                                            data-id="@item.Id">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-open-delete"
+                                            title="Delete" aria-label="Delete"
+                                            data-id="@item.Id"
+                                            data-type="@item.JobType">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@Html.AntiForgeryToken()
+
+<div class="modal fade" id="collectionCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="collectionCreateForm" method="post" action="@Url.Action("Create","Collections")">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create collection job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Job type</label>
+                            <select name="JobType" class="form-select">
+                                <option value="collection">Collection</option>
+                                <option value="pickup">Pickup</option>
+                                <option value="collect">Collect</option>
+                            </select>
+                            <div class="invalid-feedback" data-field="JobType"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="JobStatus" class="form-select">
+                                <option value="open">Open</option>
+                                <option value="in_progress">In progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <div class="invalid-feedback" data-field="JobStatus"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Customer (optional)</label>
+                            <select name="CustomerId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var c in Model.Customers)
+                                {
+                                    <option value="@c.Id">@c.CustomerName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="CustomerId"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Driver (optional)</label>
+                            <select name="DriverId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var d in Model.Drivers)
+                                {
+                                    <option value="@d.Id">@d.DriverName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="DriverId"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Notes (optional)</label>
+                            <input name="Notes" class="form-control" placeholder="Optional notes for the driver / dispatcher" />
+                            <div class="invalid-feedback" data-field="Notes"></div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">From location (pickup)</label>
+                            <select name="FromLocationId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var loc in Model.Locations)
+                                {
+                                    <option value="@loc.Id">@loc.LocationName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="FromLocationId"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">To location</label>
+                            <select name="ToLocationId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var loc in Model.Locations)
+                                {
+                                    <option value="@loc.Id">@loc.LocationName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="ToLocationId"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Scan route</label>
+                            <select name="ReaderWayId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var w in Model.ReaderWays)
+                                {
+                                    <option value="@w.Id">@w.DisplayName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="ReaderWayId"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Planned start</label>
+                            <input type="datetime-local" name="PlannedStartAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="PlannedStartAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Planned end</label>
+                            <input type="datetime-local" name="PlannedEndAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="PlannedEndAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Actual start</label>
+                            <input type="datetime-local" name="ActualStartAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="ActualStartAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Actual end</label>
+                            <input type="datetime-local" name="ActualEndAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="ActualEndAt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-1"></i>Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="collectionEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="collectionEditForm" method="post" action="@Url.Action("Edit","Collections")">
+                <input type="hidden" name="Id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit collection job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Job type</label>
+                            <select name="JobType" class="form-select">
+                                <option value="collection">Collection</option>
+                                <option value="pickup">Pickup</option>
+                                <option value="collect">Collect</option>
+                            </select>
+                            <div class="invalid-feedback" data-field="JobType"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="JobStatus" class="form-select">
+                                <option value="open">Open</option>
+                                <option value="in_progress">In progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <div class="invalid-feedback" data-field="JobStatus"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Customer (optional)</label>
+                            <select name="CustomerId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var c in Model.Customers)
+                                {
+                                    <option value="@c.Id">@c.CustomerName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="CustomerId"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Driver (optional)</label>
+                            <select name="DriverId" class="form-select">
+                                <option value="">-</option>
+                                @foreach (var d in Model.Drivers)
+                                {
+                                    <option value="@d.Id">@d.DriverName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="DriverId"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Notes (optional)</label>
+                            <input name="Notes" class="form-control" />
+                            <div class="invalid-feedback" data-field="Notes"></div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label">From location (pickup)</label>
+                            <select name="FromLocationId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var loc in Model.Locations)
+                                {
+                                    <option value="@loc.Id">@loc.LocationName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="FromLocationId"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">To location</label>
+                            <select name="ToLocationId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var loc in Model.Locations)
+                                {
+                                    <option value="@loc.Id">@loc.LocationName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="ToLocationId"></div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Scan route</label>
+                            <select name="ReaderWayId" class="form-select">
+                                <option value="">—</option>
+                                @foreach (var w in Model.ReaderWays)
+                                {
+                                    <option value="@w.Id">@w.DisplayName</option>
+                                }
+                            </select>
+                            <div class="invalid-feedback" data-field="ReaderWayId"></div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Planned start</label>
+                            <input type="datetime-local" name="PlannedStartAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="PlannedStartAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Planned end</label>
+                            <input type="datetime-local" name="PlannedEndAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="PlannedEndAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Actual start</label>
+                            <input type="datetime-local" name="ActualStartAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="ActualStartAt"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Actual end</label>
+                            <input type="datetime-local" name="ActualEndAt" class="form-control" />
+                            <div class="invalid-feedback" data-field="ActualEndAt"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check2 me-1"></i>Save changes
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="collectionDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="collectionDeleteForm" method="post" action="@Url.Action("Delete","Collections")">
+                <input type="hidden" name="id" />
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete job</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete job <strong id="deleteJobId"></strong>?</p>
+                    <p class="text-muted mb-0 mt-2">Deletion will be blocked if expected items are attached.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash me-1"></i>Delete
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+
+            const toastEl = document.getElementById('collectionsToast');
+            const toastBodyEl = document.getElementById('collectionsToastBody');
+            const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 2500 }) : null;
+
+            const createModalEl = document.getElementById('collectionCreateModal');
+            const editModalEl = document.getElementById('collectionEditModal');
+            const deleteModalEl = document.getElementById('collectionDeleteModal');
+            const createModal = createModalEl ? new bootstrap.Modal(createModalEl) : null;
+            const editModal = editModalEl ? new bootstrap.Modal(editModalEl) : null;
+            const deleteModal = deleteModalEl ? new bootstrap.Modal(deleteModalEl) : null;
+
+            const createForm = document.getElementById('collectionCreateForm');
+            const editForm = document.getElementById('collectionEditForm');
+            const deleteForm = document.getElementById('collectionDeleteForm');
+
+            function showToast(message, isError) {
+                if (!toastEl || !toastBodyEl || !toast) return;
+                toastEl.classList.remove('text-bg-success', 'text-bg-danger');
+                toastEl.classList.add(isError ? 'text-bg-danger' : 'text-bg-success');
+                toastBodyEl.textContent = message;
+                toast.show();
+            }
+
+            function clearValidation(form) {
+                form.querySelectorAll('.is-invalid').forEach(x => x.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback').forEach(x => x.textContent = '');
+            }
+
+            function applyErrors(form, errors) {
+                if (!errors) return;
+                Object.keys(errors).forEach(k => {
+                    const msgs = errors[k] || [];
+                    const field = form.querySelector(`[name="${k}"]`);
+                    const feedback = form.querySelector(`.invalid-feedback[data-field="${k}"]`);
+                    if (field) field.classList.add('is-invalid');
+                    if (feedback) feedback.textContent = msgs[0] ?? 'Invalid value.';
+                });
+            }
+
+            async function postForm(form) {
+                const fd = new FormData(form);
+                fd.append('__RequestVerificationToken', antiforgery);
+                const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'fetch' } });
+                return await res.json();
+            }
+
+            function toDatetimeLocalValue(value) {
+                if (!value) return '';
+                const d = new Date(value);
+                if (Number.isNaN(d.getTime())) return '';
+                const pad = (n) => String(n).padStart(2, '0');
+                return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            }
+
+            document.querySelector('.js-open-create')?.addEventListener('click', () => {
+                if (!createModal || !createForm) return;
+                createForm.reset();
+                clearValidation(createForm);
+                createModal.show();
+            });
+
+            document.querySelectorAll('.js-open-edit').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!editModal || !editForm) return;
+                    clearValidation(editForm);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(`@Url.Action("Get","Collections")?id=${encodeURIComponent(id)}`, { headers: { 'X-Requested-With': 'fetch' } });
+                    const data = await res.json();
+                    if (!data?.ok) { showToast(data?.message ?? 'Failed to load job.', true); return; }
+
+                    const j = data.job || {};
+                    editForm.querySelector('[name="Id"]').value = j.id ?? j.Id ?? '';
+                    editForm.querySelector('[name="JobType"]').value = (j.jobType ?? j.JobType ?? 'collection');
+                    editForm.querySelector('[name="JobStatus"]').value = (j.jobStatus ?? j.JobStatus ?? 'open');
+                    editForm.querySelector('[name="CustomerId"]').value = (j.customerId ?? j.CustomerId ?? '');
+                    editForm.querySelector('[name="DriverId"]').value = (j.driverId ?? j.DriverId ?? '');
+                    editForm.querySelector('[name="FromLocationId"]').value = String(j.fromLocationId ?? j.FromLocationId ?? '');
+                    editForm.querySelector('[name="ToLocationId"]').value = String(j.toLocationId ?? j.ToLocationId ?? '');
+                    editForm.querySelector('[name="ReaderWayId"]').value = String(j.readerWayId ?? j.ReaderWayId ?? '');
+                    editForm.querySelector('[name="Notes"]').value = (j.notes ?? j.Notes ?? '');
+                    editForm.querySelector('[name="PlannedStartAt"]').value = toDatetimeLocalValue(j.plannedStartAt ?? j.PlannedStartAt);
+                    editForm.querySelector('[name="PlannedEndAt"]').value = toDatetimeLocalValue(j.plannedEndAt ?? j.PlannedEndAt);
+                    editForm.querySelector('[name="ActualStartAt"]').value = toDatetimeLocalValue(j.actualStartAt ?? j.ActualStartAt);
+                    editForm.querySelector('[name="ActualEndAt"]').value = toDatetimeLocalValue(j.actualEndAt ?? j.ActualEndAt);
+
+                    editModal.show();
+                });
+            });
+
+            document.querySelectorAll('.js-open-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    if (!deleteModal || !deleteForm) return;
+                    const id = btn.getAttribute('data-id') ?? '';
+                    deleteForm.querySelector('[name="id"]').value = id;
+                    document.getElementById('deleteJobId').textContent = id;
+                    deleteModal.show();
+                });
+            });
+
+            createForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(createForm);
+                const data = await postForm(createForm);
+                if (!data?.ok) {
+                    applyErrors(createForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to create.', true);
+                    return;
+                }
+                sessionStorage.setItem('collectionsToast', 'Created successfully.');
+                window.location.reload();
+            });
+
+            editForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(editForm);
+                const data = await postForm(editForm);
+                if (!data?.ok) {
+                    applyErrors(editForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to save changes.', true);
+                    return;
+                }
+                sessionStorage.setItem('collectionsToast', 'Updated successfully.');
+                window.location.reload();
+            });
+
+            deleteForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = await postForm(deleteForm);
+                if (!data?.ok) { showToast(data?.message ?? 'Failed to delete.', true); return; }
+                sessionStorage.setItem('collectionsToast', 'Deleted successfully.');
+                window.location.reload();
+            });
+
+            const pendingToast = sessionStorage.getItem('collectionsToast');
+            if (pendingToast) {
+                sessionStorage.removeItem('collectionsToast');
+                showToast(pendingToast, false);
+            }
+        })();
+    </script>
+}

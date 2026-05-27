@@ -1,0 +1,233 @@
+@model LaundryMS.Web.Models.ViewModels.SettingsIndexViewModel
+
+@{
+    ViewData["Title"] = "Settings";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Settings</h1>
+        <p class="page-subtitle">Integrations, email reports, and workflow rules (e.g. temporary employee clearing).</p>
+    </div>
+    <div class="page-header-actions">
+        <button form="settingsForm" type="submit" class="btn btn-sm btn-primary">
+            <i class="bi bi-check2 me-1"></i>Save
+        </button>
+    </div>
+</section>
+
+@if (ViewData["Saved"] is string saved && !string.IsNullOrWhiteSpace(saved))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @saved
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (ViewData["TestResult"] is string testResult && !string.IsNullOrWhiteSpace(testResult))
+{
+    <div class="alert alert-info alert-dismissible fade show" role="alert">
+        @testResult
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+@if (ViewData["SettingsError"] is string settingsError && !string.IsNullOrWhiteSpace(settingsError))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @settingsError
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<form id="settingsForm" asp-action="Save" method="post">
+    @Html.AntiForgeryToken()
+
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-plug section-title-icon"></i>Integrations</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" asp-for="DeviceIngestEnabled" />
+                        <label class="form-check-label" asp-for="DeviceIngestEnabled">Enable device ingest API</label>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted" asp-for="DeviceIngestApiKey">Device ingest API key</label>
+                        <input type="password" class="form-control form-control-sm" asp-for="DeviceIngestApiKey" placeholder="Set an API key for Chainway/gateway uploads" autocomplete="new-password" />
+                        @if (Model.DeviceIngestApiKeyConfigured)
+                        {
+                            <div class="small text-success mt-1"><i class="bi bi-shield-check me-1"></i>API key is already configured. Leave blank to keep existing key.</div>
+                        }
+                        <span class="text-muted small">Store on devices as an Authorization header or query param (depending on your ingest design).</span>
+                        <div class="text-danger small">@Html.ValidationMessageFor(x => x.DeviceIngestApiKey)</div>
+                    </div>
+
+                    <div class="mb-0">
+                        <label class="form-label small text-muted" asp-for="WebhookUrl">Webhook URL (optional)</label>
+                        <input class="form-control form-control-sm" asp-for="WebhookUrl" placeholder="https://erp.example.com/webhook" />
+                        <div class="text-danger small">@Html.ValidationMessageFor(x => x.WebhookUrl)</div>
+                        <div class="mt-2">
+                            <button class="btn btn-sm btn-outline-secondary" type="submit" formaction="@Url.Action("TestWebhook", "Settings")">
+                                <i class="bi bi-plug me-1"></i>Test webhook
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-envelope section-title-icon"></i>Email reports</h2>
+                </div>
+                <div class="card-body">
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" asp-for="EmailReportsEnabled" />
+                        <label class="form-check-label" asp-for="EmailReportsEnabled">Enable email report sending</label>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label small text-muted" asp-for="SmtpHost">SMTP host</label>
+                            <input class="form-control form-control-sm" asp-for="SmtpHost" placeholder="smtp.your-domain.com" />
+                            <div class="text-danger small">@Html.ValidationMessageFor(x => x.SmtpHost)</div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small text-muted" asp-for="SmtpPort">Port</label>
+                            <input class="form-control form-control-sm" asp-for="SmtpPort" placeholder="587" />
+                            <div class="text-danger small">@Html.ValidationMessageFor(x => x.SmtpPort)</div>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted" asp-for="SmtpUsername">Username</label>
+                            <input class="form-control form-control-sm" asp-for="SmtpUsername" placeholder="reports@your-domain.com" />
+                            <div class="text-danger small">@Html.ValidationMessageFor(x => x.SmtpUsername)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small text-muted" asp-for="SmtpPassword">Password</label>
+                            <input type="password" class="form-control form-control-sm" asp-for="SmtpPassword" autocomplete="new-password" />
+                            @if (Model.SmtpPasswordConfigured)
+                            {
+                                <div class="small text-success mt-1"><i class="bi bi-shield-check me-1"></i>SMTP password is already configured. Leave blank to keep existing password.</div>
+                            }
+                            <div class="text-danger small">@Html.ValidationMessageFor(x => x.SmtpPassword)</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label small text-muted" asp-for="DefaultFromAddress">Default “from” address</label>
+                        <input type="email" class="form-control form-control-sm" asp-for="DefaultFromAddress" placeholder="reports@your-laundry.com" />
+                        <div class="text-danger small">@Html.ValidationMessageFor(x => x.DefaultFromAddress)</div>
+                    </div>
+
+                    <div class="border rounded p-2">
+                        <div class="small text-muted mb-2">Send reports on:</div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" asp-for="SendPickupReport" />
+                            <label class="form-check-label" asp-for="SendPickupReport">Pickup (driver collection)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" asp-for="SendArrivalReport" />
+                            <label class="form-check-label" asp-for="SendArrivalReport">Laundry arrival (fixed reader gate)</label>
+                        </div>
+                        <div class="form-check mb-0">
+                            <input class="form-check-input" type="checkbox" asp-for="SendDispatchReport" />
+                            <label class="form-check-label" asp-for="SendDispatchReport">Dispatch (outgoing delivery)</label>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button class="btn btn-sm btn-outline-secondary" type="submit" formaction="@Url.Action("TestSmtp", "Settings")">
+                            <i class="bi bi-envelope-check me-1"></i>Test SMTP
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card section-card">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-diagram-3 section-title-icon"></i>Workflow</h2>
+                </div>
+                <div class="card-body">
+                    <div class="mb-0">
+                        <label class="form-label small text-muted" asp-for="WorkflowClearTemporaryEmployeeOnStatus">Clear temporary employee assignee when process status reaches</label>
+                        <input class="form-control form-control-sm" asp-for="WorkflowClearTemporaryEmployeeOnStatus" placeholder="cleaned,ready_for_dispatch,at_customer" />
+                        <span class="text-muted small d-block mt-1">Comma-separated <code>CurrentProcessStatus</code> values. When a <strong>temporary</strong> item’s status changes to one of these, the employee link is cleared (e.g. after washing or return).</span>
+                        <div class="text-danger small">@Html.ValidationMessageFor(x => x.WorkflowClearTemporaryEmployeeOnStatus)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-person-gear section-title-icon"></i>User accounts</h2>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-0">Not implemented yet. If you need roles (admin/operator/driver/customer), integrate ASP.NET Core Identity or your SSO provider.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card section-card h-100">
+                <div class="card-header section-card-header">
+                    <h2 class="section-title mb-0"><i class="bi bi-info-circle section-title-icon"></i>Environment</h2>
+                </div>
+                <div class="card-body">
+                    <p class="mb-0 text-muted small">Connection strings belong in <code>appsettings</code> / environment variables. Avoid committing real SMTP passwords and API keys to source control.</p>
+                    @if (Model.LastUpdatedAtUtc.HasValue)
+                    {
+                        <div class="small text-muted mt-2">Last updated: @Model.LastUpdatedAtUtc.Value.ToString("yyyy-MM-dd HH:mm:ss") UTC</div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+(() => {
+    const ingestToggle = document.getElementById("DeviceIngestEnabled");
+    const ingestKeyInput = document.getElementById("DeviceIngestApiKey");
+    const emailToggle = document.getElementById("EmailReportsEnabled");
+    const smtpHost = document.getElementById("SmtpHost");
+    const smtpPort = document.getElementById("SmtpPort");
+    const smtpUser = document.getElementById("SmtpUsername");
+    const smtpPassword = document.getElementById("SmtpPassword");
+    const fromAddress = document.getElementById("DefaultFromAddress");
+    const sendPickup = document.getElementById("SendPickupReport");
+    const sendArrival = document.getElementById("SendArrivalReport");
+    const sendDispatch = document.getElementById("SendDispatchReport");
+
+    function setDisabled(node, disabled) {
+        if (node) node.disabled = disabled;
+    }
+
+    function syncState() {
+        const ingestOn = ingestToggle && ingestToggle.checked;
+        setDisabled(ingestKeyInput, !ingestOn);
+
+        const emailOn = emailToggle && emailToggle.checked;
+        setDisabled(smtpHost, !emailOn);
+        setDisabled(smtpPort, !emailOn);
+        setDisabled(smtpUser, !emailOn);
+        setDisabled(smtpPassword, !emailOn);
+        setDisabled(fromAddress, !emailOn);
+        setDisabled(sendPickup, !emailOn);
+        setDisabled(sendArrival, !emailOn);
+        setDisabled(sendDispatch, !emailOn);
+    }
+
+    if (ingestToggle) ingestToggle.addEventListener("change", syncState);
+    if (emailToggle) emailToggle.addEventListener("change", syncState);
+    syncState();
+})();
+</script>

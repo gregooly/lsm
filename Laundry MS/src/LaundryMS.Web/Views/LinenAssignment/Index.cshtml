@@ -1,0 +1,538 @@
+@model LaundryMS.Web.Models.ViewModels.LinenAssignmentIndexViewModel
+
+@{
+    ViewData["Title"] = "Linen assignment";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        customerId = Model.Query.CustomerId,
+        locationId = Model.Query.LocationId,
+        assignmentType = Model.Query.AssignmentType,
+        processStatus = Model.Query.ProcessStatus,
+        physicalCondition = Model.Query.PhysicalCondition,
+        includeInactive = Model.Query.IncludeInactive,
+        exceptionOnly = Model.Query.ExceptionOnly,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            customerId = Model.Query.CustomerId,
+            locationId = Model.Query.LocationId,
+            assignmentType = Model.Query.AssignmentType,
+            processStatus = Model.Query.ProcessStatus,
+            physicalCondition = Model.Query.PhysicalCondition,
+            includeInactive = Model.Query.IncludeInactive,
+            exceptionOnly = Model.Query.ExceptionOnly,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Linen assignment</h1>
+        <p class="page-subtitle">Owner, location, process status, and optional <strong>employee</strong> for temporary wardrobe/rental with workflow-aware clearing rules.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-sm btn-primary js-open-create">
+            <i class="bi bi-plus-lg me-1"></i>Create
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-primary js-open-bulk">
+            <i class="bi bi-stack me-1"></i>Bulk update
+        </button>
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="LinenItems" asp-action="Index">Items</a>
+    </div>
+</section>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-4">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" class="form-control form-control-sm" name="q" value="@Model.Query.Q" placeholder="RFID, type, owner, employee, location..." />
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Owner</label>
+                <select name="customerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.Customers)
+                    {
+                        <option value="@c.Id" selected="@(Model.Query.CustomerId == c.Id)">@c.CustomerName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-2">
+                <label class="form-label small text-muted mb-1">Location</label>
+                <select name="locationId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var loc in Model.Locations)
+                    {
+                        <option value="@loc.Id" selected="@(Model.Query.LocationId == loc.Id)">@loc.LocationName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Assignment</label>
+                <select name="assignmentType" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    <option value="fixed" selected="@(Model.Query.AssignmentType == "fixed")">fixed</option>
+                    <option value="temporary" selected="@(Model.Query.AssignmentType == "temporary")">temporary</option>
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Status</label>
+                <select name="processStatus" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var s in Model.ProcessStatuses)
+                    {
+                        <option value="@s" selected="@(Model.Query.ProcessStatus == s)">@s</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Condition</label>
+                <select name="physicalCondition" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.PhysicalConditions)
+                    {
+                        <option value="@c" selected="@(Model.Query.PhysicalCondition == c)">@c</option>
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-md-3 col-lg-1">
+                <label class="form-label small text-muted mb-1">Page size</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        <option value="@sz" selected="@(Model.PageSize == sz)">@sz</option>
+                    }
+                </select>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="exceptionOnly" value="true" id="exceptionOnly" checked="@Model.Query.ExceptionOnly" />
+                    <label class="form-check-label small" for="exceptionOnly">Exception only</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 col-lg-auto d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="position-fixed top-0 end-0 p-3 linenassignment-toast-container">
+    <div id="linenAssignmentToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="linenAssignmentToastBody">Saved.</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Items.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No linen items match your filters.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table id="linenAssignmentTable" class="table table-hover mb-0 table-sm align-middle">
+                    <thead>
+                        <tr>
+                            <th class="text-center"><input type="checkbox" class="form-check-input js-select-all" title="Select all on this page" /></th>
+                            <th><a href='@SortHref("rfid")' class="text-decoration-none text-dark"><text>RFID</text></a></th>
+                            <th>Type</th>
+                            <th class="text-center">Assignment</th>
+                            <th><a href='@SortHref("status")' class="text-decoration-none text-dark"><text>Status</text></a></th>
+                            <th><a href='@SortHref("owner")' class="text-decoration-none text-dark"><text>Owner</text></a></th>
+                            <th><a href='@SortHref("location")' class="text-decoration-none text-dark"><text>Location</text></a></th>
+                            <th>Employee</th>
+                            <th class="text-center">Condition</th>
+                            <th class="text-center">Active</th>
+                            <th><a href='@SortHref("updated")' class="text-decoration-none text-dark"><text>Updated</text></a></th>
+                            <th class="text-center" style="width: 120px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            var exception = item.CurrentLocationId == null || (item.AssignedEmployeeId != null && item.OwnerCustomerId == null);
+                            <tr class="@(exception ? "table-warning" : "")">
+                                <td class="text-center">
+                                    <input type="checkbox" class="form-check-input js-row-select" value="@item.Id" />
+                                </td>
+                                <td><code class="small">@item.RfidTag</code></td>
+                                <td>@item.ItemType</td>
+                                <td class="text-center"><span class="badge-soft">@item.DefaultAssignmentType</span></td>
+                                <td>@item.CurrentProcessStatus</td>
+                                <td>@(item.OwnerCustomerName ?? "Laundry pool")</td>
+                                <td>@(item.CurrentLocationName ?? "—")</td>
+                                <td>@(item.AssignedEmployeeName ?? "—")</td>
+                                <td class="text-center">@item.PhysicalCondition</td>
+                                <td class="text-center">@(item.IsActive ? "Yes" : "No")</td>
+                                <td class="small text-nowrap">@item.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary js-open-edit"
+                                            title="Edit" aria-label="Edit"
+                                            data-id="@item.Id">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-sm btn-outline-danger js-open-delete"
+                                            title="Delete" aria-label="Delete"
+                                            data-id="@item.Id"
+                                            data-rfid="@item.RfidTag">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mt-3">
+    <p class="small text-muted mb-0">
+        @if (Model.TotalCount == 0)
+        {
+            <text>No results.</text>
+        }
+        else
+        {
+            <text>Showing @((Model.Page - 1) * Model.PageSize + 1)-@(Math.Min(Model.Page * Model.PageSize, Model.TotalCount)) of @Model.TotalCount</text>
+        }
+    </p>
+    <nav>
+        <ul class="pagination pagination-sm mb-0">
+            <li class="page-item @prevDisabled"><a class="page-link" href="@PageUrl(Model.Page - 1)">Prev</a></li>
+            <li class="page-item active"><span class="page-link">@Model.Page / @Model.TotalPages</span></li>
+            <li class="page-item @nextDisabled"><a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a></li>
+        </ul>
+    </nav>
+</div>
+
+@Html.AntiForgeryToken()
+
+<!-- create/edit/delete modals keep same fields -->
+<div class="modal fade" id="linenCreateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="linenCreateForm" method="post" action="@Url.Action("Create","LinenAssignment")">
+                <div class="modal-header"><h5 class="modal-title">Create linen item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">@await Html.PartialAsync("_LinenAssignmentFormFields", Model)</div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="linenEditModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <form id="linenEditForm" method="post" action="@Url.Action("Edit","LinenAssignment")">
+                <input type="hidden" name="Id" />
+                <div class="modal-header"><h5 class="modal-title">Edit linen item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">@await Html.PartialAsync("_LinenAssignmentFormFields", Model)</div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Save changes</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="linenDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="linenDeleteForm" method="post" action="@Url.Action("Delete","LinenAssignment")">
+                <input type="hidden" name="id" />
+                <div class="modal-header"><h5 class="modal-title">Delete linen item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <p class="mb-0">Are you sure you want to delete <strong id="deleteRfid"></strong>?</p>
+                    <p class="text-muted mb-0 mt-2">If this item has scan history or logistics references, deletion will be blocked.</p>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-danger">Delete</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="linenBulkModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="linenBulkForm" method="post" action="@Url.Action("BulkUpdate","LinenAssignment")">
+                <div class="modal-header"><h5 class="modal-title">Bulk update assignments</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <p class="small text-muted mb-2">Selected items: <strong id="bulkSelectedCount">0</strong></p>
+                    <div class="row g-2">
+                        <div class="col-md-4">
+                            <label class="form-label">Assignment type</label>
+                            <select name="DefaultAssignmentType" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                <option value="fixed">fixed</option>
+                                <option value="temporary">temporary</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Owner</label>
+                            <select name="OwnerCustomerId" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                @foreach (var c in Model.Customers)
+                                {
+                                    <option value="@c.Id">@c.CustomerName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Employee</label>
+                            <select name="AssignedEmployeeId" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                @foreach (var e in Model.Employees)
+                                {
+                                    <option value="@e.Id">@e.DisplayLabel</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Location</label>
+                            <select name="CurrentLocationId" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                @foreach (var loc in Model.Locations)
+                                {
+                                    <option value="@loc.Id">@loc.LocationName</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Status</label>
+                            <select name="CurrentProcessStatus" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                @foreach (var s in Model.ProcessStatuses)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Condition</label>
+                            <select name="PhysicalCondition" class="form-select form-select-sm">
+                                <option value="">No change</option>
+                                @foreach (var c in Model.PhysicalConditions)
+                                {
+                                    <option value="@c">@c</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="small text-muted mt-2">Only non-empty fields are applied. All changes are audited.</div>
+                </div>
+                <div class="modal-footer"><button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-primary">Apply to selected</button></div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        (() => {
+            const antiforgery = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+            const toastEl = document.getElementById('linenAssignmentToast');
+            const toastBodyEl = document.getElementById('linenAssignmentToastBody');
+            const toast = toastEl ? new bootstrap.Toast(toastEl, { delay: 2500 }) : null;
+
+            const createModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('linenCreateModal'));
+            const editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('linenEditModal'));
+            const deleteModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('linenDeleteModal'));
+            const bulkModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('linenBulkModal'));
+
+            const createForm = document.getElementById('linenCreateForm');
+            const editForm = document.getElementById('linenEditForm');
+            const deleteForm = document.getElementById('linenDeleteForm');
+            const bulkForm = document.getElementById('linenBulkForm');
+
+            function showToast(message, isError) {
+                if (!toast || !toastEl || !toastBodyEl) return;
+                toastEl.classList.remove('text-bg-success', 'text-bg-danger');
+                toastEl.classList.add(isError ? 'text-bg-danger' : 'text-bg-success');
+                toastBodyEl.textContent = message;
+                toast.show();
+            }
+
+            function clearValidation(form) {
+                form.querySelectorAll('.is-invalid').forEach(x => x.classList.remove('is-invalid'));
+                form.querySelectorAll('.invalid-feedback').forEach(x => x.textContent = '');
+            }
+
+            function applyErrors(form, errors) {
+                if (!errors) return;
+                Object.keys(errors).forEach(k => {
+                    const msgs = errors[k] || [];
+                    const field = form.querySelector(`[name="${k}"]`);
+                    const feedback = form.querySelector(`.invalid-feedback[data-field="${k}"]`);
+                    if (field) field.classList.add('is-invalid');
+                    if (feedback) feedback.textContent = msgs[0] ?? 'Invalid value.';
+                });
+            }
+
+            async function postForm(form) {
+                const fd = new FormData(form);
+                fd.append('__RequestVerificationToken', antiforgery);
+                const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'fetch' } });
+                return await res.json();
+            }
+
+            function selectedIds() {
+                return Array.from(document.querySelectorAll('.js-row-select:checked')).map(x => x.value);
+            }
+
+            document.querySelector('.js-select-all')?.addEventListener('change', (e) => {
+                const checked = e.target.checked;
+                document.querySelectorAll('.js-row-select').forEach(cb => cb.checked = checked);
+            });
+
+            document.querySelector('.js-open-bulk')?.addEventListener('click', () => {
+                const ids = selectedIds();
+                if (ids.length === 0) {
+                    showToast('Select at least one row for bulk update.', true);
+                    return;
+                }
+                document.getElementById('bulkSelectedCount').textContent = String(ids.length);
+                bulkForm.reset();
+                bulkModal.show();
+            });
+
+            bulkForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const ids = selectedIds();
+                if (ids.length === 0) {
+                    showToast('No selected rows.', true);
+                    return;
+                }
+                const fd = new FormData(bulkForm);
+                ids.forEach(id => fd.append('SelectedIds', id));
+                fd.append('__RequestVerificationToken', antiforgery);
+                const res = await fetch(bulkForm.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'fetch' } });
+                const data = await res.json();
+                if (!data?.ok) {
+                    showToast(data?.message ?? 'Bulk update failed.', true);
+                    return;
+                }
+                sessionStorage.setItem('linenAssignmentToast', data?.message ?? 'Bulk update done.');
+                window.location.reload();
+            });
+
+            document.querySelector('.js-open-create')?.addEventListener('click', () => {
+                createForm.reset();
+                clearValidation(createForm);
+                createModal.show();
+            });
+
+            document.querySelectorAll('.js-open-edit').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    clearValidation(editForm);
+                    const id = btn.getAttribute('data-id');
+                    const res = await fetch(`@Url.Action("Get","LinenAssignment")?id=${encodeURIComponent(id)}`, { headers: { 'X-Requested-With': 'fetch' } });
+                    const data = await res.json();
+                    if (!data?.ok) {
+                        showToast(data?.message ?? 'Failed to load item.', true);
+                        return;
+                    }
+                    const item = data.item || {};
+                    editForm.querySelector('[name="Id"]').value = item.id ?? item.Id ?? '';
+                    editForm.querySelector('[name="RfidTag"]').value = item.rfidTag ?? item.RfidTag ?? '';
+                    editForm.querySelector('[name="ItemType"]').value = item.itemType ?? item.ItemType ?? '';
+                    editForm.querySelector('[name="SizeLabel"]').value = item.sizeLabel ?? item.SizeLabel ?? '';
+                    editForm.querySelector('[name="DefaultAssignmentType"]').value = (item.defaultAssignmentType ?? item.DefaultAssignmentType ?? 'fixed');
+                    editForm.querySelector('[name="OwnerCustomerId"]').value = (item.ownerCustomerId ?? item.OwnerCustomerId ?? '');
+                    editForm.querySelector('[name="AssignedEmployeeId"]').value = String(item.assignedEmployeeId ?? item.AssignedEmployeeId ?? '');
+                    editForm.querySelector('[name="CurrentLocationId"]').value = String(item.currentLocationId ?? item.CurrentLocationId ?? '');
+                    editForm.querySelector('[name="CurrentProcessStatus"]').value = (item.currentProcessStatus ?? item.CurrentProcessStatus ?? 'at_customer');
+                    editForm.querySelector('[name="PhysicalCondition"]').value = (item.physicalCondition ?? item.PhysicalCondition ?? 'good');
+                    editForm.querySelector('[name="IsActive"]').value = String(item.isActive ?? item.IsActive ?? true);
+                    editModal.show();
+                });
+            });
+
+            document.querySelectorAll('.js-open-delete').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    deleteForm.querySelector('[name="id"]').value = btn.getAttribute('data-id') ?? '';
+                    document.getElementById('deleteRfid').textContent = btn.getAttribute('data-rfid') ?? '';
+                    deleteModal.show();
+                });
+            });
+
+            createForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(createForm);
+                const data = await postForm(createForm);
+                if (!data?.ok) {
+                    applyErrors(createForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to create.', true);
+                    return;
+                }
+                sessionStorage.setItem('linenAssignmentToast', 'Created successfully.');
+                window.location.reload();
+            });
+
+            editForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                clearValidation(editForm);
+                const data = await postForm(editForm);
+                if (!data?.ok) {
+                    applyErrors(editForm, data?.errors);
+                    showToast(data?.message ?? 'Failed to save changes.', true);
+                    return;
+                }
+                sessionStorage.setItem('linenAssignmentToast', 'Updated successfully.');
+                window.location.reload();
+            });
+
+            deleteForm?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const data = await postForm(deleteForm);
+                if (!data?.ok) {
+                    showToast(data?.message ?? 'Failed to delete.', true);
+                    return;
+                }
+                sessionStorage.setItem('linenAssignmentToast', 'Deleted successfully.');
+                window.location.reload();
+            });
+
+            const pendingToast = sessionStorage.getItem('linenAssignmentToast');
+            if (pendingToast) {
+                sessionStorage.removeItem('linenAssignmentToast');
+                showToast(pendingToast, false);
+            }
+        })();
+    </script>
+}

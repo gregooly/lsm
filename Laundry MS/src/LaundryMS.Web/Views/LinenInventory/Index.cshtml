@@ -1,0 +1,59 @@
+@model IReadOnlyList<LaundryMS.Web.Models.ViewModels.LinenItemListItemViewModel>
+
+@{
+    ViewData["Title"] = "Linen inventory";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Linen inventory</h1>
+        <p class="page-subtitle">Master list of all RFID-tagged items: process status, owner, assignment type, and condition.</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-secondary" asp-controller="LinenAssignment" asp-action="Index">Linen assignment</a>
+        <input type="text" class="form-control form-control-sm js-table-search" data-table-id="linenInventoryTable" placeholder="Search..." />
+    </div>
+</section>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        @if (Model.Count == 0)
+        {
+            <p class="p-3 mb-0 text-muted">No linen items found.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table id="linenInventoryTable" class="table table-hover mb-0 js-filterable-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>RFID Tag</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Status</th>
+                            <th>Assignment</th>
+                            <th>Condition</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+                                <td>@item.RfidTag</td>
+                                <td>@item.ItemType</td>
+                                <td>@(item.SizeLabel ?? "-")</td>
+                                <td>@item.CurrentProcessStatus</td>
+                                <td><span class="badge-soft">@item.DefaultAssignmentType</span></td>
+                                <td>@item.PhysicalCondition</td>
+                                <td>@(item.OwnerCustomerName ?? "Laundry pool")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

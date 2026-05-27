@@ -1,0 +1,97 @@
+@model LaundryMS.Web.Models.ViewModels.ReaderWaysIndexViewModel
+@{
+    var readers = Model.Readers;
+    var locations = Model.Locations;
+}
+<div class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">Reader</label>
+        <select name="ReaderId" class="form-select">
+            @foreach (var r in readers)
+            {
+                <option value="@r.Id">@r.ReaderName</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="ReaderId"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Route name</label>
+        <input name="WayName" class="form-control" placeholder="e.g., Main gate IN" />
+        <div class="invalid-feedback" data-field="WayName"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Direction</label>
+        <select name="MovementDirection" class="form-select">
+            <option value="in">In</option>
+            <option value="out">Out</option>
+            <option value="enter">Enter</option>
+            <option value="exit">Exit</option>
+        </select>
+        <div class="invalid-feedback" data-field="MovementDirection"></div>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Purpose key</label>
+        <input name="BusinessPurposeKey" class="form-control" placeholder="e.g., pickup" />
+        <div class="invalid-feedback" data-field="BusinessPurposeKey"></div>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Target status</label>
+        <select name="TargetProcessStatus" class="form-select">
+            <option value="at_customer">At customer</option>
+            <option value="arriving_at_laundry">Arriving at laundry</option>
+            <option value="arrived_at_laundry">Arrived at laundry</option>
+            <option value="waiting_for_cleaning">Waiting for cleaning</option>
+            <option value="being_cleaned">Being cleaned</option>
+            <option value="cleaned">Cleaned</option>
+            <option value="ready_for_dispatch">Ready for dispatch</option>
+            <option value="in_transit">In transit</option>
+        </select>
+        <div class="invalid-feedback" data-field="TargetProcessStatus"></div>
+    </div>
+
+    <div class="col-md-4">
+        <label class="form-label">Antenna index</label>
+        <select name="AntennaIndex" class="form-select">
+            @for (var a = 0; a <= 16; a++)
+            {
+                var lab = a == 0 ? "0 — fallback / any antenna" : $"{a} — antenna port";
+                <option value="@a">@lab</option>
+            }
+        </select>
+        <div class="form-text small text-muted">URA8: map physical antenna ports 1–8, or 0 when only one route applies.</div>
+        <div class="invalid-feedback" data-field="AntennaIndex"></div>
+    </div>
+
+    <div class="col-md-6">
+        <label class="form-label">From location (optional)</label>
+        <select name="FromLocationId" class="form-select">
+            <option value="">N/A</option>
+            @foreach (var l in locations)
+            {
+                <option value="@l.Id">@l.LocationName</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="FromLocationId"></div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">To location (optional)</label>
+        <select name="ToLocationId" class="form-select">
+            <option value="">N/A</option>
+            @foreach (var l in locations)
+            {
+                <option value="@l.Id">@l.LocationName</option>
+            }
+        </select>
+        <div class="invalid-feedback" data-field="ToLocationId"></div>
+    </div>
+
+    <div class="col-md-3">
+        <label class="form-label">Active</label>
+        <select name="IsActive" class="form-select">
+            <option value="true" selected>Yes</option>
+            <option value="false">No</option>
+        </select>
+        <div class="invalid-feedback" data-field="IsActive"></div>
+    </div>
+</div>

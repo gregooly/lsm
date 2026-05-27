@@ -1,0 +1,321 @@
+@model LaundryMS.Web.Models.ViewModels.ReportsIndexViewModel
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Reports</h1>
+        <p class="page-subtitle">Operational summaries for stock posture, scan throughput, quality exceptions, and logistics risk.</p>
+    </div>
+    <div class="page-header-actions">
+        <a class="btn btn-sm btn-outline-primary" href="@Url.Action("ExportSummaryCsv", new {
+            customerId = Model.Query.CustomerId,
+            readerId = Model.Query.ReaderId,
+            readerWayId = Model.Query.ReaderWayId,
+            onlyExceptions = Model.Query.OnlyExceptions,
+            from = Model.Query.From,
+            to = Model.Query.To
+        })"><i class="bi bi-download me-1"></i>Export summary CSV</a>
+        <a class="btn btn-sm btn-outline-secondary" href="@Url.Action("ExportExceptionsCsv", new {
+            customerId = Model.Query.CustomerId,
+            readerId = Model.Query.ReaderId,
+            readerWayId = Model.Query.ReaderWayId,
+            from = Model.Query.From,
+            to = Model.Query.To
+        })">Export exceptions CSV</a>
+    </div>
+</section>
+
+<div class="card section-card mb-3">
+    <div class="card-body">
+        <form method="get" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Customer</label>
+                <select name="customerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var c in Model.Customers)
+                    {
+                        <option value="@c.Id" selected="@(Model.Query.CustomerId == c.Id)">@c.CustomerName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">Reader</label>
+                <select name="readerId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var r in Model.Readers)
+                    {
+                        <option value="@r.Id" selected="@(Model.Query.ReaderId == r.Id)">@r.ReaderName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small text-muted">Scan route</label>
+                <select name="readerWayId" class="form-select form-select-sm">
+                    <option value="">All</option>
+                    @foreach (var w in Model.ReaderWays)
+                    {
+                        <option value="@w.Id" selected="@(Model.Query.ReaderWayId == w.Id)">@w.DisplayName</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">From (UTC)</label>
+                <input type="datetime-local" name="from" class="form-control form-control-sm" value="@Model.Query.From.ToString("yyyy-MM-ddTHH:mm")" />
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small text-muted">To (UTC)</label>
+                <input type="datetime-local" name="to" class="form-control form-control-sm" value="@Model.Query.To.ToString("yyyy-MM-ddTHH:mm")" />
+            </div>
+            <div class="col-md-3">
+                <div class="form-check mt-1">
+                    <input class="form-check-input" type="checkbox" name="onlyExceptions" value="true" id="onlyExceptions" checked="@Model.Query.OnlyExceptions" />
+                    <label class="form-check-label small" for="onlyExceptions">Only exceptions (damaged/rejected)</label>
+                </div>
+            </div>
+            <div class="col-md-3 d-flex gap-2">
+                <button class="btn btn-sm btn-primary" type="submit"><i class="bi bi-funnel me-1"></i>Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </form>
+        <div class="small text-muted mt-2">
+            Window: <strong>@Model.Query.From.ToString("yyyy-MM-dd HH:mm")</strong> → <strong>@Model.Query.To.ToString("yyyy-MM-dd HH:mm")</strong>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.WindowNotice))
+        {
+            <div class="alert alert-warning mt-2 mb-0 py-2 px-3 small" role="alert">@Model.WindowNotice</div>
+        }
+        <div class="small text-muted mt-2">All timestamps are interpreted and shown in UTC. Last refreshed: @Model.GeneratedAtUtc.ToString("yyyy-MM-dd HH:mm:ss") UTC</div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><article class="metric-card h-100"><div class="metric-head"><h2>Total linen</h2><span class="metric-icon"><i class="bi bi-inboxes"></i></span></div><p class="metric-value">@Model.TotalLinenItems.ToString("N0")</p></article></div>
+    <div class="col-md-3"><article class="metric-card metric-card--alert h-100"><div class="metric-head"><h2>Damaged</h2><span class="metric-icon"><i class="bi bi-exclamation-triangle"></i></span></div><p class="metric-value">@Model.DamagedItemCount.ToString("N0")</p></article></div>
+    <div class="col-md-3"><article class="metric-card h-100"><div class="metric-head"><h2>Scans in window</h2><span class="metric-icon"><i class="bi bi-broadcast-pin"></i></span></div><p class="metric-value">@Model.TotalScansInWindow.ToString("N0")</p></article></div>
+    <div class="col-md-3"><article class="metric-card metric-card--alert h-100"><div class="metric-head"><h2>Rejected scans</h2><span class="metric-icon"><i class="bi bi-x-octagon"></i></span></div><p class="metric-value">@Model.RejectedScansInWindow.ToString("N0")</p></article></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><article class="metric-card h-100"><div class="metric-head"><h2>Avg lag</h2><span class="metric-icon"><i class="bi bi-hourglass-split"></i></span></div><p class="metric-value">@Model.AvgIngestLagSeconds s</p></article></div>
+    <div class="col-md-3"><article class="metric-card h-100"><div class="metric-head"><h2>P95 lag</h2><span class="metric-icon"><i class="bi bi-stopwatch"></i></span></div><p class="metric-value">@Model.P95IngestLagSeconds s</p></article></div>
+    <div class="col-md-2"><article class="metric-card h-100"><div class="metric-head"><h2>Open jobs</h2></div><p class="metric-value">@Model.OpenJobsCount</p></article></div>
+    <div class="col-md-2"><article class="metric-card metric-card--alert h-100"><div class="metric-head"><h2>Overdue</h2></div><p class="metric-value">@Model.OverdueJobsCount</p></article></div>
+    <div class="col-md-2"><article class="metric-card metric-card--alert h-100"><div class="metric-head"><h2>Stalled</h2></div><p class="metric-value">@Model.StalledJobsCount</p></article></div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-graph-up section-title-icon"></i>Throughput by day</h2></div>
+            <div class="card-body p-0">
+                @if (Model.ThroughputByDay.Count == 0) { <p class="p-3 mb-0 text-muted">No movement events in this window.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Date</th><th class="text-end">Events</th></tr></thead><tbody>
+                    @foreach (var row in Model.ThroughputByDay) { <tr><td>@row.Date.ToString("yyyy-MM-dd")</td><td class="text-end">@row.Count</td></tr> }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-graph-down section-title-icon"></i>Rejected by day</h2></div>
+            <div class="card-body p-0">
+                @if (Model.RejectedByDay.Count == 0) { <p class="p-3 mb-0 text-muted">No rejected events in this window.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Date</th><th class="text-end">Rejected</th></tr></thead><tbody>
+                    @foreach (var row in Model.RejectedByDay) { <tr><td>@row.Date.ToString("yyyy-MM-dd")</td><td class="text-end">@row.Count</td></tr> }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-arrow-left-right section-title-icon"></i>Throughput by route purpose</h2></div>
+            <div class="card-body p-0">
+                @if (Model.ThroughputByPurpose.Count == 0) { <p class="p-3 mb-0 text-muted">No movement events found in this time window.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Purpose key</th><th class="text-end">Events</th></tr></thead><tbody>
+                    @foreach (var row in Model.ThroughputByPurpose)
+                    {
+                        <tr>
+                            <td>
+                                <a asp-controller="ScanHistory" asp-action="Index"
+                                   asp-route-readerId="@Model.Query.ReaderId"
+                                   asp-route-readerWayId="@Model.Query.ReaderWayId"
+                                   asp-route-from="@Model.Query.From"
+                                   asp-route-to="@Model.Query.To">@row.PurposeKey</a>
+                            </td>
+                            <td class="text-end">@row.EventCount</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-exclamation-triangle section-title-icon"></i>Top rejection reasons</h2></div>
+            <div class="card-body p-0">
+                @if (Model.TopRejectionReasons.Count == 0) { <p class="p-3 mb-0 text-muted">No rejection reasons in this window.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Reason</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.TopRejectionReasons)
+                    {
+                        <tr>
+                            <td><a asp-controller="ScanHistory" asp-action="Index"
+                                   asp-route-readerId="@Model.Query.ReaderId"
+                                   asp-route-readerWayId="@Model.Query.ReaderWayId"
+                                   asp-route-rejectionReason="@row.Key"
+                                   asp-route-from="@Model.Query.From"
+                                   asp-route-to="@Model.Query.To">@row.Key</a></td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-ui-checks-grid section-title-icon"></i>Items by process status</h2></div>
+            <div class="card-body p-0">
+                @if (Model.ItemsByStatus.Count == 0) { <p class="p-3 mb-0 text-muted">No items found for this filter.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Status</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.ItemsByStatus)
+                    {
+                        <tr>
+                            <td><a asp-controller="LinenItems" asp-action="Index"
+                                   asp-route-customerId="@Model.Query.CustomerId"
+                                   asp-route-processStatus="@row.Status"
+                                   asp-route-exceptionOnly="@Model.Query.OnlyExceptions">@row.Status</a></td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-geo-alt section-title-icon"></i>Items by location</h2></div>
+            <div class="card-body p-0">
+                @if (Model.ItemsByLocation.Count == 0) { <p class="p-3 mb-0 text-muted">No location assignments found.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Location</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.ItemsByLocation)
+                    {
+                        <tr>
+                            <td>@row.LocationName</td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-people section-title-icon"></i>Clean / ready items by customer</h2></div>
+            <div class="card-body p-0">
+                @if (Model.ItemsCleanedByCustomer.Count == 0) { <p class="p-3 mb-0 text-muted">No items in clean/ready statuses.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Customer</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.ItemsCleanedByCustomer) { <tr><td>@row.CustomerName</td><td class="text-end">@row.CleanedOrReadyCount</td></tr> }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-truck section-title-icon"></i>Logistics jobs by status</h2></div>
+            <div class="card-body p-0">
+                @if (Model.JobsByStatus.Count == 0) { <p class="p-3 mb-0 text-muted">No logistics jobs for this filter.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Status</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.JobsByStatus)
+                    {
+                        <tr>
+                            <td><a asp-controller="LogisticsJobs" asp-action="Index"
+                                   asp-route-customerId="@Model.Query.CustomerId"
+                                   asp-route-readerWayId="@Model.Query.ReaderWayId"
+                                   asp-route-jobStatus="@row.JobStatus">@row.JobStatus</a></td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-person-exclamation section-title-icon"></i>Damaged by customer</h2></div>
+            <div class="card-body p-0">
+                @if (Model.DamagedByCustomer.Count == 0) { <p class="p-3 mb-0 text-muted">No damaged items in this filter.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Customer</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.DamagedByCustomer)
+                    {
+                        <tr>
+                            <td>@row.Key</td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card section-card h-100">
+            <div class="card-header section-card-header"><h2 class="section-title mb-0"><i class="bi bi-geo section-title-icon"></i>Damaged by location</h2></div>
+            <div class="card-body p-0">
+                @if (Model.DamagedByLocation.Count == 0) { <p class="p-3 mb-0 text-muted">No damaged items in this filter.</p> }
+                else
+                {
+                    <div class="table-responsive"><table class="table mb-0"><thead><tr><th>Location</th><th class="text-end">Count</th></tr></thead><tbody>
+                    @foreach (var row in Model.DamagedByLocation)
+                    {
+                        <tr>
+                            <td>@row.Key</td>
+                            <td class="text-end">@row.Count</td>
+                        </tr>
+                    }
+                    </tbody></table></div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

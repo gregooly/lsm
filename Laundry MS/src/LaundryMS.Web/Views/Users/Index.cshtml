@@ -1,0 +1,328 @@
+@model LaundryMS.Web.Models.ViewModels.UsersIndexViewModel
+@{
+    ViewData["Title"] = "Users";
+    string PageUrl(int p) => Url.Action("Index", new
+    {
+        q = Model.Query.Q,
+        includeInactive = Model.Query.IncludeInactive,
+        sortBy = Model.Query.SortBy,
+        sortDir = Model.Query.SortDir,
+        page = p,
+        pageSize = Model.PageSize
+    }) ?? "#";
+    string SortHref(string column)
+    {
+        var nextDir = string.Equals(Model.Query.SortBy, column, StringComparison.OrdinalIgnoreCase)
+            && string.Equals(Model.Query.SortDir, "asc", StringComparison.OrdinalIgnoreCase)
+            ? "desc"
+            : "asc";
+        return Url.Action("Index", new
+        {
+            q = Model.Query.Q,
+            includeInactive = Model.Query.IncludeInactive,
+            sortBy = column,
+            sortDir = nextDir,
+            page = 1,
+            pageSize = Model.PageSize
+        }) ?? "#";
+    }
+    var prevDisabled = Model.Page <= 1 ? "disabled" : "";
+    var nextDisabled = Model.Page >= Model.TotalPages ? "disabled" : "";
+}
+
+<section class="page-header">
+    <div>
+        <h1 class="page-title">Users</h1>
+        <p class="page-subtitle">Admin-only user management. Managers cannot access this page.</p>
+    </div>
+    <div class="page-header-actions">
+        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#createUserModal">
+            <i class="bi bi-plus-lg me-1"></i>New user
+        </button>
+    </div>
+</section>
+
+@{
+    var savedMessage = ViewData["Saved"] as string;
+    var errorMessage = ViewData["Error"] as string;
+}
+
+<div class="toast-container position-fixed top-0 end-0 p-3 users-toast-container">
+    <div id="usersToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="polite" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body" id="usersToastBody"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="card section-card mb-3">
+    <div class="card-body py-3">
+        <input type="hidden" name="sortBy" value="@Model.Query.SortBy" />
+        <input type="hidden" name="sortDir" value="@Model.Query.SortDir" />
+        <div class="row g-2 align-items-end">
+            <div class="col-12 col-lg-8">
+                <label class="form-label small text-muted mb-1">Search</label>
+                <input type="text" name="q" class="form-control form-control-sm" value="@Model.Query.Q" placeholder="Name, email, role..." />
+            </div>
+            <div class="col-6 col-lg-2">
+                <label class="form-label small text-muted mb-1">Page</label>
+                <select name="pageSize" class="form-select form-select-sm">
+                    @foreach (var sz in new[] { 25, 50, 100 })
+                    {
+                        if (Model.PageSize == sz)
+                        {
+                            <option value="@sz" selected>@sz</option>
+                        }
+                        else
+                        {
+                            <option value="@sz">@sz</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-6 col-lg-2">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" name="includeInactive" value="true" id="includeInactive" checked="@Model.Query.IncludeInactive" />
+                    <label class="form-check-label small" for="includeInactive">Include inactive</label>
+                </div>
+            </div>
+            <div class="col-12 d-flex gap-2">
+                <button type="submit" class="btn btn-sm btn-primary">Apply</button>
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Reset</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="card section-card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0 table-sm align-middle">
+                <thead>
+                    <tr>
+                        <th class="text-center">ID</th>
+                        <th><a href="@SortHref("name")" class="text-decoration-none text-dark">Name</a></th>
+                        <th><a href="@SortHref("email")" class="text-decoration-none text-dark">Email</a></th>
+                        <th><a href="@SortHref("role")" class="text-decoration-none text-dark">Role</a></th>
+                        <th><a href="@SortHref("status")" class="text-decoration-none text-dark">Status</a></th>
+                        <th><a href="@SortHref("updated")" class="text-decoration-none text-dark">Updated</a></th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Items.Count == 0)
+                    {
+                        <tr><td colspan="7" class="text-center text-muted py-3">No users found.</td></tr>
+                    }
+                    else
+                    {
+                        var rowNumber = (Model.Page - 1) * Model.PageSize;
+                        @foreach (var user in Model.Items)
+                        {
+                            rowNumber++;
+                            <tr>
+                                <td class="text-center">@rowNumber</td>
+                                <td>@user.Name</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                                <td>
+                                    @if (user.IsActive)
+                                    {
+                                        <span class="badge bg-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td class="small text-muted">@user.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="text-center text-nowrap">
+                                    <button type="button"
+                                            class="btn btn-sm btn-outline-primary btn-customer-action"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editUserModal"
+                                            data-id="@user.Id"
+                                            data-name="@user.Name"
+                                            data-email="@user.Email"
+                                            title="Edit"
+                                            aria-label="Edit">
+                                        <i class="bi bi-pencil-square" aria-hidden="true"></i>
+                                    </button>
+                                    @if (user.IsActive)
+                                    {
+                                        <form asp-action="Deactivate" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-secondary btn-customer-action"
+                                                    title="Deactivate"
+                                                    aria-label="Deactivate">
+                                                <i class="bi bi-toggle-off" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form asp-action="Activate" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@user.Id" />
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-success btn-customer-action"
+                                                    title="Activate"
+                                                    aria-label="Activate">
+                                                <i class="bi bi-toggle-on" aria-hidden="true"></i>
+                                            </button>
+                                        </form>
+                                    }
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          class="d-inline"
+                                          onsubmit="return confirm('Delete this user permanently?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@user.Id" />
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger btn-customer-action"
+                                                title="Delete"
+                                                aria-label="Delete">
+                                            <i class="bi bi-trash" aria-hidden="true"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer d-flex justify-content-between align-items-center">
+        <small class="text-muted">Showing @Model.Items.Count of @Model.TotalCount user(s)</small>
+        <nav aria-label="Users pagination">
+            <ul class="pagination pagination-sm mb-0">
+                <li class="page-item @prevDisabled">
+                    <a class="page-link" href="@PageUrl(Model.Page - 1)" tabindex="-1">Previous</a>
+                </li>
+                <li class="page-item disabled"><span class="page-link">Page @Model.Page of @Model.TotalPages</span></li>
+                <li class="page-item @nextDisabled">
+                    <a class="page-link" href="@PageUrl(Model.Page + 1)">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Create" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Create user</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label class="form-label small text-muted mb-1">Name</label>
+                        <input class="form-control form-control-sm" name="Name" required maxlength="150" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small text-muted mb-1">Email</label>
+                        <input class="form-control form-control-sm" name="Email" type="email" required maxlength="255" />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small text-muted mb-1">Password</label>
+                            <input class="form-control form-control-sm" name="Password" type="password" minlength="8" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small text-muted mb-1">Confirm password</label>
+                            <input class="form-control form-control-sm" name="ConfirmPassword" type="password" minlength="8" required />
+                        </div>
+                    </div>
+                    <div class="form-text">Role is set to MANAGER automatically.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editUserModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form asp-action="Edit" method="post">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit user</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="edit-id" name="Id" />
+                    <div class="mb-2">
+                        <label class="form-label small text-muted mb-1">Name</label>
+                        <input class="form-control form-control-sm" id="edit-name" name="Name" maxlength="150" required />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small text-muted mb-1">Email</label>
+                        <input class="form-control form-control-sm" id="edit-email" name="Email" type="email" maxlength="255" required />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small text-muted mb-1">New password</label>
+                            <input class="form-control form-control-sm" name="NewPassword" type="password" minlength="8" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small text-muted mb-1">Confirm password</label>
+                            <input class="form-control form-control-sm" name="ConfirmNewPassword" type="password" minlength="8" />
+                        </div>
+                    </div>
+                    <div class="form-text">Leave password fields empty to keep the current password hash.</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (() => {
+            const toastEl = document.getElementById("usersToast");
+            const toastBody = document.getElementById("usersToastBody");
+            const toast = toastEl ? bootstrap.Toast.getOrCreateInstance(toastEl, { delay: 3200 }) : null;
+
+            function showToast(message, isError) {
+                if (!toastEl || !toastBody || !toast || !message) return;
+                toastEl.classList.remove("text-bg-success", "text-bg-danger");
+                toastEl.classList.add(isError ? "text-bg-danger" : "text-bg-success");
+                toastBody.textContent = message;
+                toast.show();
+            }
+
+            const savedMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(savedMessage));
+            const errorMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(errorMessage));
+            if (errorMessage) {
+                showToast(errorMessage, true);
+            } else if (savedMessage) {
+                showToast(savedMessage, false);
+            }
+
+            const modal = document.getElementById("editUserModal");
+            if (!modal) return;
+            modal.addEventListener("show.bs.modal", (event) => {
+                const btn = event.relatedTarget;
+                if (!btn) return;
+                document.getElementById("edit-id").value = btn.getAttribute("data-id") || "";
+                document.getElementById("edit-name").value = btn.getAttribute("data-name") || "";
+                document.getElementById("edit-email").value = btn.getAttribute("data-email") || "";
+            });
+        })();
+    </script>
+}

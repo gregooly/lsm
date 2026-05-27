@@ -1,0 +1,10 @@
+# Build outputs
+**/bin/
+**/obj/
+
+# Build and publish artifacts
+artifacts/
+**/artifacts/
+
+# Visual Studio workspace files
+.vs/

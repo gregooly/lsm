@@ -1,0 +1,90 @@
+@model LaundryMS.Web.Models.ViewModels.DeliveryJobDetailViewModel
+
+@{
+    Layout = null;
+    string title = $"Delivery list — Job #{Model.Id}";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body { padding: 20px; }
+        .meta dt { width: 140px; }
+        .meta dd { margin-left: 0; }
+        @@media print {
+            .no-print { display: none !important; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="h4 mb-1">@title</h1>
+            <div class="text-muted small">
+                Created: @Model.CreatedAt.ToString("yyyy-MM-dd HH:mm") · Status: @Model.JobStatus.ToUpperInvariant()
+            </div>
+        </div>
+        <div class="no-print">
+            <button class="btn btn-sm btn-primary" onclick="window.print()">Print</button>
+            <a class="btn btn-sm btn-outline-secondary" asp-action="Details" asp-route-id="@Model.Id">Back</a>
+        </div>
+    </div>
+
+    <dl class="row meta small mb-3">
+        <dt class="col-3 text-muted">Customer</dt>
+        <dd class="col-9">@((Model.CustomerName ?? "—"))</dd>
+        <dt class="col-3 text-muted">Driver</dt>
+        <dd class="col-9">@((Model.DriverName ?? "—"))</dd>
+        <dt class="col-3 text-muted">Route</dt>
+        <dd class="col-9">@((Model.FromLocationName ?? "—")) → @((Model.ToLocationName ?? "—"))</dd>
+        <dt class="col-3 text-muted">Scan route</dt>
+        <dd class="col-9">@((Model.ReaderWayName ?? "—"))</dd>
+    </dl>
+
+    <div class="mb-2 small text-muted">
+        Planned list: @Model.ExpectedItems.Count item(s). Scanned unique: @Model.ScannedUniqueTagCount. Last scan: @(Model.LastScanAt?.ToString("yyyy-MM-dd HH:mm:ss") ?? "—").
+    </div>
+
+    @if (Model.ExpectedItems.Count == 0)
+    {
+        <div class="alert alert-warning mb-0">
+            No expected items are attached to this delivery job yet.
+        </div>
+    }
+    else
+    {
+        <table class="table table-sm table-bordered align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th style="width: 220px;">RFID</th>
+                    <th>Type</th>
+                    <th style="width: 80px;">Size</th>
+                    <th style="width: 120px;">Condition</th>
+                    <th style="width: 120px;">Reached</th>
+                    <th style="width: 160px;">Reached at</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in Model.ExpectedItems)
+                {
+                    <tr>
+                        <td><code>@row.RfidTag</code></td>
+                        <td>@row.ItemType</td>
+                        <td>@(row.SizeLabel ?? "—")</td>
+                        <td>@(row.PhysicalCondition ?? "—")</td>
+                        <td>@(row.ReachedExpectedStatus ? "Yes" : "No")</td>
+                        <td>@(row.ReachedAt?.ToString("yyyy-MM-dd HH:mm") ?? "—")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</body>
+</html>
+
