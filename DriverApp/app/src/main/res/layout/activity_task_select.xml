@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_back"
+            android:contentDescription="Back"
+            android:clickable="true"
+            android:focusable="true" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/select_task"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="40dp"
+            android:layout_height="40dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/active_tasks"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="4dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTasks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="true"
+                android:overScrollMode="never" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvNoTasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/no_assigned_tasks"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

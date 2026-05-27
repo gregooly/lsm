@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Top Header Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/connect_scanner"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_info"
+            android:padding="8dp"
+            android:alpha="0.7"
+            android:contentDescription="Info" />
+    </LinearLayout>
+
+    <!-- ============== STATE 1: NOT CONNECTED ============== -->
+    <LinearLayout
+        android:id="@+id/stateNotConnected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="visible">
+
+        <!-- Scanner Status Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanner Status"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_cancel"
+                android:contentDescription="Not connected" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/not_connected"
+                android:textColor="@color/error"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/scanner_not_connected_msg"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <Space android:layout_width="match_parent" android:layout_height="16dp" />
+
+        <!-- Search Button -->
+        <Button
+            android:id="@+id/btnSearchDevices"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_primary"
+            android:drawableStart="@drawable/ic_search"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_search_devices"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+
+        <Space android:layout_width="match_parent" android:layout_height="12dp" />
+
+        <!-- Tip Box -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_tip_box"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="14dp">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_info"
+                android:contentDescription="Tip" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="@string/tip_turn_on"
+                android:textColor="#1565C0"
+                android:textSize="13sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- ============== STATE 2: SEARCHING ============== -->
+    <LinearLayout
+        android:id="@+id/stateSearching"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <!-- Status Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanner Status"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <ProgressBar
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:indeterminateTint="@color/primary" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/searching"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/looking_for_scanners"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <Space android:layout_width="match_parent" android:layout_height="16dp" />
+
+        <!-- Device list (real BLE scan) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="8dp"
+                android:paddingBottom="6dp"
+                android:text="@string/ble_scanning_hint"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvBleDevices"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:scrollbars="vertical" />
+
+                <TextView
+                    android:id="@+id/tvBleEmpty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="16dp"
+                    android:text="@string/no_ble_devices"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <Space android:layout_width="match_parent" android:layout_height="12dp" />
+
+        <!-- STOP SEARCH button -->
+        <Button
+            android:id="@+id/btnStopSearch"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_danger"
+            android:drawableStart="@drawable/ic_stop"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_stop_search"
+            android:textColor="@color/error"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- ============== STATE 3: CONNECTING ============== -->
+    <LinearLayout
+        android:id="@+id/stateConnecting"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <!-- Large Scanner Illustration -->
+        <ImageView
+            android:layout_width="140dp"
+            android:layout_height="140dp"
+            android:src="@drawable/ic_scanner_device"
+            android:contentDescription="Scanner" />
+
+        <!-- Bluetooth ripple icon -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            android:src="@drawable/ic_bluetooth"
+            android:contentDescription="Bluetooth" />
+
+        <ProgressBar
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="16dp"
+            android:indeterminateTint="@color/primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:id="@+id/tvConnectingSubtitle"
+            android:text="@string/connect_scanner_to_reader"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Space android:layout_width="match_parent" android:layout_height="32dp" />
+
+        <!-- CANCEL button -->
+        <Button
+            android:id="@+id/btnCancelConnect"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_danger"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_cancel"
+            android:textColor="@color/error"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+    <!-- ============== STATE 4: CONNECTED ============== -->
+    <LinearLayout
+        android:id="@+id/stateConnected"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <!-- Connected Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Scanner Status"
+                android:textColor="@color/text_secondary"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:src="@drawable/ic_check_circle"
+                android:contentDescription="Connected" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/connected"
+                android:textColor="@color/success"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <!-- Device name and battery -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tvConnectedScannerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="—"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_battery"
+                    android:contentDescription="Battery" />
+
+                <TextView
+                    android:id="@+id/tvConnectedBattery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:text="—"
+                    android:textColor="@color/success"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvConnectedMac"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="—"
+                android:textColor="@color/gray_text"
+                android:textSize="12sp" />
+
+            <!-- Success info box -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_badge_connected"
+                android:gravity="center"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/connected_ready"
+                    android:textColor="@color/success"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <Space android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" />
+
+        <!-- CONTINUE TO HOME button -->
+        <Button
+            android:id="@+id/btnContinueHome"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_primary"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_continue_home"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+
+</LinearLayout>

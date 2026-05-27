@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <!-- Washing machine body -->
+    <path
+        android:pathData="M10,10 L54,10 C56.2,10 58,11.8 58,14 L58,54 C58,56.2 56.2,58 54,58 L10,58 C7.8,58 6,56.2 6,54 L6,14 C6,11.8 7.8,10 10,10 Z"
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2" />
+    <!-- Top control panel -->
+    <path
+        android:pathData="M6,10 L58,10 L58,20 L6,20 Z"
+        android:fillColor="#1976D2" />
+    <!-- LED indicator (small circle top right) -->
+    <path
+        android:pathData="M50,15 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+        android:fillColor="#22C55E" />
+    <!-- Dial left (small circle) -->
+    <path
+        android:pathData="M18,15 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"
+        android:fillColor="#FFFFFF" />
+    <!-- Drum circle outer -->
+    <path
+        android:pathData="M32,22 m-16,0 a16,16 0 1,0 32,0 a16,16 0 1,0 -32,0"
+        android:fillColor="#E3F2FD"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2" />
+    <!-- Drum circle inner ring -->
+    <path
+        android:pathData="M32,22 m-10,0 a10,10 0 1,0 20,0 a10,10 0 1,0 -20,0"
+        android:fillColor="#00000000"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="1.5" />
+    <!-- Small hole top -->
+    <path
+        android:pathData="M32,16 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#1976D2" />
+    <!-- Small hole right -->
+    <path
+        android:pathData="M38,20 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#1976D2" />
+    <!-- Small hole left -->
+    <path
+        android:pathData="M26,20 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#1976D2" />
+    <!-- Small hole bottom -->
+    <path
+        android:pathData="M32,28 m-2,0 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0"
+        android:fillColor="#1976D2" />
+    <!-- Soap drawer (rect as path) -->
+    <path
+        android:pathData="M42,11 L52,11 L52,16 L42,16 Z"
+        android:fillColor="#FFFFFF"
+        android:strokeColor="#1158A7"
+        android:strokeWidth="1" />
+</vector>

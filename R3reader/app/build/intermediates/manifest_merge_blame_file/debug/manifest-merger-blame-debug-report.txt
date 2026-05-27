@@ -1,0 +1,191 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.laundry.r3reader"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="27"
+9        android:targetSdkVersion="34" />
+10
+11    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+11-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:4:5-79
+11-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:4:22-76
+12    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+12-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:5:5-81
+12-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:5:22-78
+13    <uses-permission
+13-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:6:5-95
+14        android:name="android.permission.BLUETOOTH"
+14-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:6:22-65
+15        android:maxSdkVersion="30" />
+15-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:6:66-92
+16    <uses-permission
+16-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:7:5-101
+17        android:name="android.permission.BLUETOOTH_ADMIN"
+17-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:7:22-71
+18        android:maxSdkVersion="30" />
+18-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:7:72-98
+19    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+19-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:8:5-73
+19-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:8:22-70
+20    <uses-permission android:name="android.permission.BLUETOOTH_ADVERTISE" />
+20-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:9:5-78
+20-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:9:22-75
+21    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+21-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:10:5-76
+21-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:10:22-73
+22    <uses-permission android:name="android.permission.INTERNET" />
+22-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:11:5-67
+22-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:11:22-64
+23    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+23-->[DeviceAPI_ver20250209_release.aar] C:\Users\CodeSmith\.gradle\caches\transforms-3\4183052052bcbcae1794a605f8c93a30\transformed\DeviceAPI_ver20250209_release\AndroidManifest.xml:11:5-79
+23-->[DeviceAPI_ver20250209_release.aar] C:\Users\CodeSmith\.gradle\caches\transforms-3\4183052052bcbcae1794a605f8c93a30\transformed\DeviceAPI_ver20250209_release\AndroidManifest.xml:11:22-76
+24    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+24-->[DeviceAPI_ver20250209_release.aar] C:\Users\CodeSmith\.gradle\caches\transforms-3\4183052052bcbcae1794a605f8c93a30\transformed\DeviceAPI_ver20250209_release\AndroidManifest.xml:13:5-76
+24-->[DeviceAPI_ver20250209_release.aar] C:\Users\CodeSmith\.gradle\caches\transforms-3\4183052052bcbcae1794a605f8c93a30\transformed\DeviceAPI_ver20250209_release\AndroidManifest.xml:13:22-73
+25
+26    <permission
+26-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+27        android:name="com.laundry.r3reader.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+27-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+28        android:protectionLevel="signature" />
+28-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+29
+30    <uses-permission android:name="com.laundry.r3reader.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+30-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+30-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+31
+32    <application
+32-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:13:5-38:19
+33        android:name="com.laundry.r3reader.R3Application"
+33-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:14:9-38
+34        android:allowBackup="true"
+34-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:15:9-35
+35        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+35-->[androidx.core:core:1.13.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\c1c1b4f844f2da99d4b95162d7d36c40\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+36        android:debuggable="true"
+37        android:extractNativeLibs="false"
+38        android:icon="@mipmap/ic_launcher"
+38-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:16:9-43
+39        android:label="@string/app_name"
+39-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:17:9-41
+40        android:networkSecurityConfig="@xml/network_security_config"
+40-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:22:9-69
+41        android:roundIcon="@mipmap/ic_launcher_round"
+41-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:18:9-54
+42        android:supportsRtl="true"
+42-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:19:9-35
+43        android:theme="@style/Theme.R3reader"
+43-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:20:9-46
+44        android:usesCleartextTraffic="true" >
+44-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:21:9-44
+45        <activity
+45-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:24:9-32:20
+46            android:name="com.laundry.r3reader.ui.login.LoginActivity"
+46-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:25:13-51
+47            android:exported="true"
+47-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:26:13-36
+48            android:theme="@style/Theme.R3reader.Login" >
+48-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:27:13-56
+49            <intent-filter>
+49-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:28:13-31:29
+50                <action android:name="android.intent.action.MAIN" />
+50-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:29:17-69
+50-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:29:25-66
+51
+52                <category android:name="android.intent.category.LAUNCHER" />
+52-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:30:17-77
+52-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:30:27-74
+53            </intent-filter>
+54        </activity>
+55        <activity
+55-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:34:9-37:58
+56            android:name="com.laundry.r3reader.ui.main.MainActivity"
+56-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:35:13-49
+57            android:exported="false"
+57-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:36:13-37
+58            android:windowSoftInputMode="adjustResize" />
+58-->D:\Project\2026-3\Laundery ms apps\table\R3reader\app\src\main\AndroidManifest.xml:37:13-55
+59
+60        <provider
+60-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+61            android:name="androidx.startup.InitializationProvider"
+61-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+62            android:authorities="com.laundry.r3reader.androidx-startup"
+62-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+63            android:exported="false" >
+63-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+64            <meta-data
+64-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+65                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+65-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+66                android:value="androidx.startup" />
+66-->[androidx.emoji2:emoji2:1.3.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\822dbdffe73e4ce58dd6ce5277e5eb82\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+67            <meta-data
+67-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\CodeSmith\.gradle\caches\transforms-3\46a1331dd75cc60284dddddb1d8da918\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+68                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+68-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\CodeSmith\.gradle\caches\transforms-3\46a1331dd75cc60284dddddb1d8da918\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+69                android:value="androidx.startup" />
+69-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\CodeSmith\.gradle\caches\transforms-3\46a1331dd75cc60284dddddb1d8da918\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+70            <meta-data
+70-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+71                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+72                android:value="androidx.startup" />
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+73        </provider>
+74
+75        <uses-library
+75-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:25:9-27:40
+76            android:name="androidx.window.extensions"
+76-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:26:13-54
+77            android:required="false" />
+77-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:27:13-37
+78        <uses-library
+78-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:28:9-30:40
+79            android:name="androidx.window.sidecar"
+79-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:29:13-51
+80            android:required="false" />
+80-->[androidx.window:window:1.0.0] C:\Users\CodeSmith\.gradle\caches\transforms-3\e609815b7b43c1bb652de7bb51719624\transformed\window-1.0.0\AndroidManifest.xml:30:13-37
+81
+82        <receiver
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+83            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+83-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+84            android:directBootAware="false"
+84-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+85            android:enabled="true"
+85-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+86            android:exported="true"
+86-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+87            android:permission="android.permission.DUMP" >
+87-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+88            <intent-filter>
+88-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+89                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+89-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+90            </intent-filter>
+91            <intent-filter>
+91-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+92                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+92-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+93            </intent-filter>
+94            <intent-filter>
+94-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+95                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+95-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+96            </intent-filter>
+97            <intent-filter>
+97-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+98                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+98-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\CodeSmith\.gradle\caches\transforms-3\3d2e31f5710a8c99374271ca6891b4a1\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+99            </intent-filter>
+100        </receiver>
+101    </application>
+102
+103</manifest>

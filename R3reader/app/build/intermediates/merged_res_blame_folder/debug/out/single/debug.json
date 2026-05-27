@@ -1,0 +1,374 @@
+[
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_icon_error.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_icon_error.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_workflow_card.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_workflow_card.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_linen.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_linen.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_login_header.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_login_header.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_sync_queue.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_sync_queue.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_activity_main.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_delivery.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_delivery.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_verification.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_verification.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_user_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_user_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/color_bottom_nav_color.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/color/bottom_nav_color.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_settings.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_damage.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_damage.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_scan_session.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_scan_session.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_condition_selected.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_condition_selected.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_summary_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_summary_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/menu_menu_item_details.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/menu/menu_item_details.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_condition_option.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_condition_option.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_dashboard.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_dashboard.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_workflow_selected.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_workflow_selected.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_workflow.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_workflow.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_category_lost.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_category_lost.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_include_how_it_works.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_how_it_works.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_warning_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_warning_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_lock_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_lock_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_connect.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_connect.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_shipment.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_shipment.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_login_gradient.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_login_gradient.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_settings_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_settings_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_icon_success.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_icon_success.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_success_check.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_success_check.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_help.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_help.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/anim_pulse_scale.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/anim/pulse_scale.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_card_elevated.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_card_elevated.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_divider_line.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/divider_line.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_connected.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_connected.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/menu_menu_connect.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/menu/menu_connect.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_connect_stat.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_connect_stat.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_scan_result_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_scan_result_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_warning.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_warning.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_edit.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_edit.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_scan_results.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_scan_results.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_login_card_top.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_login_card_top.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_ble_device.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_ble_device.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/menu_menu_damage.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/menu/menu_damage.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_scan.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_scan.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/xml_network_security_config.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/xml/network_security_config.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_error.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_error.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_assignment_action.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_assignment_action.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_star_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_star_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_completed.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_completed.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_laundry_logo.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_laundry_logo.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_verification_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_verification_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_sync_failed_card.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_sync_failed_card.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_bt_icon_circle.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_bt_icon_circle.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_icon_warning.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_icon_warning.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_radio_unchecked.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_radio_unchecked.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_scan_pulse_glow.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_scan_pulse_glow.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_refresh.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_refresh.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_sync.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_sync.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_more.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_more.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_login_logo.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_login_logo.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_more.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_more.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_damage_bulk_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_damage_bulk_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_card.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_card.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_rfid_tag.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_rfid_tag.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_assignment.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_assignment.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_sync_outline.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_sync_outline.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_input_field.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_input_field.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_copy.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_copy.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_batches.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_batches.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_include_toolbar.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_toolbar.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_filter.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_filter.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_batch_kv_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_batch_kv_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_back.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_back.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_condition_normal.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_condition_normal.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_chip_completed_orange.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/chip_completed_orange.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_icon_blue.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_icon_blue.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_history.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_history.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/navigation_nav_graph.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/navigation/nav_graph.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_activity_login.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_bluetooth.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_bluetooth.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_check_circle.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_check_circle.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_terminal.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_terminal.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_sync_online_card.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_sync_online_card.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_bg_scan_pulse_ring.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/bg_scan_pulse_ring.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_assignment.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_assignment.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_include_login_info_box.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_login_info_box.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_item_settings_row.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_settings_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/drawable_ic_bluetooth_large.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/drawable/ic_bluetooth_large.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/menu_bottom_nav_menu.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/menu/bottom_nav_menu.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-merged_res-46:/layout_fragment_item_details.xml.flat",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_item_details.xml"
+    }
+]

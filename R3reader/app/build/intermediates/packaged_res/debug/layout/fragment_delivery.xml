@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/delivery_preparation" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:padding="@dimen/spacing_md">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1: Select or Create Batch -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/select_or_create_batch"
+                        android:textColor="@color/primary_dark" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_md"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/layoutBatch"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="@string/select_batch"
+                            app:boxStrokeColor="@color/border"
+                            app:endIconMode="dropdown_menu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spBatch"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:minHeight="@dimen/touch_target_min"
+                                android:text="BATCH-250507-01"
+                                android:textColor="@color/text_primary"
+                                android:textSize="@dimen/text_body" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnNewBatch"
+                            style="@style/Widget.R3reader.Button.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_sm"
+                            android:minHeight="48dp"
+                            android:paddingHorizontal="12dp"
+                            android:text="@string/new_batch"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: Batch Information -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/batch_information"
+                        android:textColor="@color/primary_dark" />
+
+                    <include
+                        android:id="@+id/rowDestination"
+                        layout="@layout/item_batch_kv_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm" />
+
+                    <include
+                        android:id="@+id/rowRoute"
+                        layout="@layout/item_batch_kv_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <include
+                        android:id="@+id/rowPlannedDate"
+                        layout="@layout/item_batch_kv_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <include
+                        android:id="@+id/rowPreparedBy"
+                        layout="@layout/item_batch_kv_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Batch Summary -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/batch_summary"
+                        android:textColor="@color/primary_dark" />
+
+                    <LinearLayout
+                        android:id="@+id/rowItemsInBatch"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center_vertical"
+                        android:minHeight="40dp"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
+
+                        <TextView
+                            android:id="@+id/tvLabelItems"
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/items_in_batch" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/tvItemsInBatch"
+                                style="@style/Text.R3reader.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="118"
+                                android:textColor="@color/text_primary"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/tvItemsExpected"
+                                style="@style/Text.R3reader.Body"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:text="/ 120"
+                                android:textColor="@color/text_primary"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <include
+                        android:id="@+id/rowTotalItems"
+                        layout="@layout/item_batch_kv_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:id="@+id/rowShortMissing"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:minHeight="40dp"
+                        android:orientation="horizontal"
+                        android:paddingVertical="6dp">
+
+                        <TextView
+                            android:id="@+id/tvLabelShort"
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/short_missing"
+                            android:textColor="@color/error_red" />
+
+                        <TextView
+                            android:id="@+id/tvShortMissing"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="end"
+                            android:text="2"
+                            android:textColor="@color/error_red"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md"
+        android:weightSum="2">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnViewItems"
+            style="@style/Widget.R3reader.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="@dimen/spacing_sm"
+            android:layout_weight="1"
+            android:text="@string/view_items" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddScanned"
+            style="@style/Widget.R3reader.Button.Success"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:layout_weight="1"
+            android:text="@string/add_scanned_items" />
+    </LinearLayout>
+</LinearLayout>

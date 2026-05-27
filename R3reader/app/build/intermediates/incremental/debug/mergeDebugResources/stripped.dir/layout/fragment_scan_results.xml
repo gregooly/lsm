@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/scan_results" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:id="@+id/tvSessionId"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textColor="@color/primary_dark"
+                android:textStyle="bold" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                app:cardBackgroundColor="@color/light_blue_bg"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/primary_blue"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.Secondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/reader_way"
+                        android:textColor="@color/primary_dark" />
+
+                    <TextView
+                        android:id="@+id/tvReaderWay"
+                        style="@style/Text.R3reader.SectionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/primary_blue"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvReaderMovement"
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textColor="@color/primary_dark" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:text="@string/auto_classification"
+                android:textColor="@color/primary_dark" />
+
+            <TextView
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_xs"
+                android:text="@string/auto_classification_desc"
+                android:textColor="@color/text_secondary" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/light_success"
+                    app:cardCornerRadius="@dimen/card_radius"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_md">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/category_normal"
+                            android:textColor="@color/success_green" />
+
+                        <TextView
+                            android:id="@+id/tvCountNormal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/success_green"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/light_warning"
+                    app:cardCornerRadius="@dimen/card_radius"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_md">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/category_damaged"
+                            android:textColor="@color/warning_orange" />
+
+                        <TextView
+                            android:id="@+id/tvCountDamaged"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/warning_orange"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/light_error"
+                    app:cardCornerRadius="@dimen/card_radius"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_md">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/category_lost"
+                            android:textColor="@color/error_red" />
+
+                        <TextView
+                            android:id="@+id/tvCountLost"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:textColor="@color/error_red"
+                            android:textSize="28sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <TextView
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:text="@string/classified_items"
+                android:textColor="@color/primary_dark" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvResults"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:nestedScrollingEnabled="false" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnTransmit"
+        style="@style/Widget.R3reader.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_margin="@dimen/spacing_md"
+        android:text="@string/transmit_to_backend"
+        android:textAllCaps="true" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnScanAgain"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/spacing_md"
+        android:layout_marginBottom="@dimen/spacing_md"
+        android:text="@string/scan_again"
+        android:textAllCaps="true"
+        android:textColor="@color/primary_blue" />
+</LinearLayout>

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/bg_card"
+    android:elevation="3dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvRecordTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:text="Tag ABCDEF1234"
+            android:textColor="@color/text_primary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/tvRecordSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="Event"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tvRecordTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2026-05-06T00:00:00Z"
+            android:textColor="@color/gray_text"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/badgeContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:paddingVertical="4dp"
+        android:background="@drawable/bg_badge_pending">
+
+        <ImageView
+            android:id="@+id/ivBadgeIcon"
+            android:layout_width="14dp"
+            android:layout_height="14dp"
+            android:visibility="gone"
+            android:contentDescription="status icon"
+            android:src="@drawable/ic_check_circle" />
+
+        <TextView
+            android:id="@+id/tvBadgeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="Pending"
+            android:textColor="@color/warning"
+            android:textSize="11sp"
+            android:fontFamily="sans-serif-medium" />
+    </LinearLayout>
+</LinearLayout>

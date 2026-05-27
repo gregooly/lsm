@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm"
+    app:cardCornerRadius="@dimen/card_radius"
+    app:cardElevation="@dimen/elevation_card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/card_padding">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/bg_icon_blue"
+                android:contentDescription="@null"
+                android:padding="8dp"
+                android:src="@drawable/ic_linen" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_md"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tvItemName"
+                    style="@style/Text.R3reader.CardTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_dark" />
+
+                <TextView
+                    android:id="@+id/tvItemEpc"
+                    style="@style/Text.R3reader.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textColor="@color/primary_blue" />
+
+                <TextView
+                    android:id="@+id/tvItemLinenId"
+                    style="@style/Text.R3reader.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/primary_blue" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilCondition"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:hint="@string/condition"
+            app:boxStrokeColor="@color/border">
+
+            <AutoCompleteTextView
+                android:id="@+id/spCondition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

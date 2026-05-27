@@ -1,0 +1,118 @@
+[
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/include_toolbar.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_toolbar.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_scan_session.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_scan_session.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_summary_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_summary_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/activity_login.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/activity_login.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_item_details.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_item_details.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_sync_queue.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_sync_queue.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_verification_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_verification_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_delivery.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_delivery.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_assignment.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_assignment.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_more.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_more.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/include_how_it_works.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_how_it_works.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_workflow_card.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_workflow_card.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_settings.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_settings.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_damage_bulk_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_damage_bulk_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_ble_device.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_ble_device.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_scan_results.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_scan_results.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_settings_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_settings_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/activity_main.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/activity_main.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_workflow.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_workflow.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_scan_result_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_scan_result_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_batch_kv_row.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_batch_kv_row.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_condition_option.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_condition_option.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_connect_stat.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_connect_stat.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_damage.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_damage.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/include_login_info_box.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/include_login_info_box.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/item_assignment_action.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/item_assignment_action.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_sync.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_sync.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_connect.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_connect.xml"
+    },
+    {
+        "merged": "com.laundry.r3reader.app-mergeDebugResources-45:/layout/fragment_verification.xml",
+        "source": "com.laundry.r3reader.app-main-48:/layout/fragment_verification.xml"
+    }
+]

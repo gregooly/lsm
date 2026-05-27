@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="@dimen/spacing_sm"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="64dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/card_padding">
+
+        <FrameLayout
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/bg_bt_icon_circle">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_bluetooth"
+                app:tint="@color/white" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDeviceName"
+                style="@style/Text.R3reader.Body"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/primary_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDeviceMac"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivSelected"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_check_circle"
+            android:visibility="gone" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

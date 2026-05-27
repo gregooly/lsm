@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="52dp"
+        android:orientation="horizontal"
+        android:paddingHorizontal="@dimen/card_padding"
+        android:paddingVertical="12dp">
+
+        <TextView
+            android:id="@+id/tvSettingLabel"
+            style="@style/Text.R3reader.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/text_secondary" />
+
+        <TextView
+            android:id="@+id/tvSettingValue"
+            style="@style/Text.R3reader.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/primary_dark"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvChevron"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="›"
+            android:textColor="@color/text_secondary"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/border" />
+</LinearLayout>

@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">LSM Table Reader</string>
+    <string name="app_subtitle">LSM Table Reader System</string>
+    <string name="app_subtitle_short">Table Reader</string>
+    <string name="app_version_label">1.0.0</string>
+    <string name="app_title_line1">LSM</string>
+    <string name="app_title_line2">TABLE READER</string>
+    <string name="app_version">v1.0.0</string>
+    <string name="enter_employee_id">Enter employee ID</string>
+    <string name="enter_password">Enter password</string>
+    <string name="login_bullet_1">• Scan bedding on the table reader.</string>
+    <string name="login_bullet_2">• Auto-classify: normal, damaged, lost.</string>
+    <string name="login_bullet_3">• Transmit results to LaundryMS.</string>
+
+    <!-- Login -->
+    <string name="login">LOGIN</string>
+    <string name="device_id">Device ID</string>
+    <string name="device_id_long_press_hint">Device ID (long press to copy)</string>
+    <string name="version_format">Version %1$s</string>
+
+    <!-- Bluetooth -->
+    <string name="connect_table_reader">Connect Table Reader</string>
+    <string name="connected">Connected</string>
+    <string name="disconnected">Disconnected</string>
+    <string name="available_devices">Available Devices</string>
+    <string name="scanning">Scanning…</string>
+    <string name="disconnect">DISCONNECT</string>
+    <string name="connect">CONNECT</string>
+    <string name="firmware">Firmware</string>
+    <string name="ant_power">Ant Power</string>
+    <string name="antenna">Antenna</string>
+    <string name="connection_status">Connection Status</string>
+    <string name="battery">Battery</string>
+    <string name="signal">Signal</string>
+    <string name="signal_strong">Strong</string>
+    <string name="mac_prefix">MAC: %1$s</string>
+    <string name="four_port">4 Port</string>
+
+    <!-- Workflow -->
+    <string name="workflow_reader_way">Select Reader Way</string>
+    <string name="workflow_instruction">Choose the reader way for this table, then scan. Items are classified automatically after scan.</string>
+    <string name="reader_way">Reader way</string>
+    <string name="select_workflow">Select Workflow</string>
+    <string name="target_status_label">Target Status: %1$s</string>
+    <string name="movement_sorting">Clean Area → Sorting Table</string>
+    <string name="movement_shipment">Sorting Table → Dispatch Area</string>
+    <string name="movement_quarantine">Sorting Table → Quarantine Area</string>
+    <string name="movement_return">Sorting Table → Laundry Inventory</string>
+    <string name="sorting_preparation">Sorting / Preparation</string>
+    <string name="shipment_preparation">Shipment Preparation</string>
+    <string name="quarantine_damage">Quarantine / Damage</string>
+    <string name="return_to_pool">Return to Pool</string>
+    <string name="active_reader">Active Reader</string>
+    <string name="location_clean_area">Location: Clean Area</string>
+
+    <!-- Scan -->
+    <string name="scan_session">Scan Session</string>
+    <string name="scan_rfid_tags">Scan RFID Tags</string>
+    <string name="session_id_format">Session #%1$s</string>
+    <string name="good_read">Good Read</string>
+    <string name="session_time">Session Time</string>
+    <string name="session_time_value">00:04:32</string>
+    <string name="unique_tags">Unique Tags</string>
+    <string name="total_reads">Total Reads</string>
+    <string name="duplicates">Duplicates</string>
+    <string name="last_epc">Last EPC</string>
+    <string name="pause">PAUSE</string>
+    <string name="stop">STOP</string>
+    <string name="resume">RESUME</string>
+    <string name="session_active">Active</string>
+    <string name="session_paused">Paused</string>
+    <string name="live_epc_feed">Live EPC Feed</string>
+    <string name="scan_table_hint">Place items on the table. The reader scans RFID tags automatically.</string>
+
+    <!-- Scan results -->
+    <string name="scan_results">Scan Results</string>
+    <string name="auto_classification">Automatic classification</string>
+    <string name="auto_classification_desc">Each scanned tag is classified as normal, damaged, or lost based on lookup rules (no manual entry on this device).</string>
+    <string name="category_normal">Normal</string>
+    <string name="category_damaged">Damaged</string>
+    <string name="category_lost">Lost</string>
+    <string name="classified_items">Classified items</string>
+    <string name="transmit_to_backend">TRANSMIT TO BACKEND</string>
+    <string name="transmit_success">Upload complete.</string>
+    <string name="transmit_success_count">Uploaded %1$d of %2$d items.</string>
+    <string name="transmit_queued">Upload failed — queued offline. %1$s</string>
+    <string name="transmit_missing_config">Cannot upload: missing reader or reader way. Log in and select a reader way from bootstrap.</string>
+    <string name="login_failed">Login failed. Check device ID and server URL.</string>
+    <string name="connection_failed">Could not connect reader. Check handheld and server.</string>
+    <string name="bootstrap_failed">Connected to reader but failed to load configuration.</string>
+    <string name="connecting">Connecting…</string>
+    <string name="reader_connected">Reader connected</string>
+    <string name="select_ble_device">Select a Bluetooth reader first</string>
+    <string name="login_required">Please log in first</string>
+    <string name="scan_finished">Scan finished</string>
+    <string name="reader_not_connected">Connect the Bluetooth reader first</string>
+    <string name="reader_disconnected_scan">Reader disconnected. Scan stopped.</string>
+    <string name="scan_start_failed">Could not start RFID inventory on reader</string>
+    <string name="no_tags_scanned">No tags scanned yet.</string>
+    <string name="sync_nothing_pending">No pending uploads.</string>
+    <string name="sync_complete">Sync finished.</string>
+    <string name="movement_batch_title">Reader way #%1$d</string>
+    <string name="scan_again">SCAN AGAIN</string>
+    <!-- Item details -->
+    <string name="item_details">Item Details</string>
+    <string name="epc_rfid_tag">EPC (RFID Tag)</string>
+    <string name="linen_id">Linen ID</string>
+    <string name="item_information">Item Information</string>
+    <string name="item_type">Item Type</string>
+    <string name="size">Size</string>
+    <string name="owner">Owner Customer</string>
+    <string name="process_status">Process Status</string>
+    <string name="assignment">Assignment</string>
+    <string name="unassigned">Unassigned</string>
+    <string name="current_location">Current Location</string>
+    <string name="wash_count">Wash Count</string>
+    <string name="condition">Condition</string>
+    <string name="prev">PREV</string>
+    <string name="next">NEXT</string>
+    <string name="good">Good</string>
+
+    <!-- Verification -->
+    <string name="verify_commit_session">Verify &amp; Commit Session</string>
+    <string name="verification_results">Verification Results</string>
+    <string name="workflow">Workflow</string>
+    <string name="expected_optional">Expected (Optional)</string>
+    <string name="duplicates_ignored">Duplicates Ignored</string>
+    <string name="notes_optional">Notes (Optional)</string>
+    <string name="notes_hint">Add notes here…</string>
+    <string name="session_summary">Session Summary</string>
+    <string name="unique_tags_count">Unique Tags</string>
+    <string name="expected">Expected</string>
+    <string name="matched">Matched</string>
+    <string name="unexpected">Unexpected</string>
+    <string name="commit_session">COMMIT SESSION</string>
+
+    <!-- Damage -->
+    <string name="mark_condition">Mark Condition</string>
+    <string name="bulk">Bulk</string>
+    <string name="select_condition">Select Condition</string>
+    <string name="good_desc">Item is in good condition</string>
+    <string name="torn_desc">Item is torn / ripped</string>
+    <string name="stained_desc">Heavy stains</string>
+    <string name="repair_desc">Needs repair / sew</string>
+    <string name="missing_rfid_desc">Tag not readable / missing</string>
+    <string name="discard_desc">Not usable</string>
+    <string name="item_id_prefix">Item ID: %1$s</string>
+    <string name="epc_prefix">EPC: %1$s</string>
+    <string name="torn">Torn</string>
+    <string name="stained">Stained</string>
+    <string name="repair_required">Repair Required</string>
+    <string name="missing_rfid">Missing RFID</string>
+    <string name="discard">Discard</string>
+    <string name="save_condition">SAVE CONDITION</string>
+    <string name="save_all_conditions">SAVE ALL CONDITIONS</string>
+    <string name="bulk_session_summary">Session #%1$s · %2$d items scanned</string>
+    <string name="single_item_index">Item %1$d of %2$d</string>
+    <string name="conditions_saved">Saved conditions for %1$d items</string>
+    <string name="condition_saved_one">Condition saved</string>
+    <string name="apply_to_all">Apply to all</string>
+    <string name="single">Single</string>
+    <string name="scanned_items">Scanned Items</string>
+
+    <!-- Assignment -->
+    <string name="assignment_management">Assignment Management</string>
+    <string name="current_assignment">Current Assignment</string>
+    <string name="remove_assignment">Remove Assignment</string>
+    <string name="assign_to_employee">Assign to Employee</string>
+    <string name="assign_to_customer">Assign to Customer</string>
+    <string name="set_as_fixed">Set as Fixed (Owned)</string>
+    <string name="set_as_fixed_desc">Mark as fixed assignment</string>
+    <string name="assigned_to">Assigned To</string>
+    <string name="type">Type</string>
+    <string name="since">Since</string>
+    <string name="temporary_employee">Temporary (Employee)</string>
+    <string name="action">Action</string>
+    <string name="remove_assignment_desc">Return item to laundry inventory</string>
+    <string name="assign_employee_desc">Assign this item to an employee</string>
+    <string name="assign_customer_desc">Assign this item to a customer</string>
+    <string name="apply_action">APPLY ACTION</string>
+
+    <!-- Delivery -->
+    <string name="delivery_preparation">Delivery Preparation</string>
+    <string name="select_or_create_batch">Select or Create Batch</string>
+    <string name="select_batch">Select Batch</string>
+    <string name="new_batch">+ New Batch</string>
+    <string name="batch_information">Batch Information</string>
+    <string name="batch_summary">Batch Summary</string>
+    <string name="destination">Destination</string>
+    <string name="route_vehicle">Route / Vehicle</string>
+    <string name="planned_date">Planned Date</string>
+    <string name="prepared_by">Prepared By</string>
+    <string name="items_in_batch">Items in Batch</string>
+    <string name="total_items">Total Items</string>
+    <string name="short_missing">Short / Missing</string>
+    <string name="view_items">VIEW ITEMS</string>
+    <string name="add_scanned_items">ADD SCANNED ITEMS</string>
+
+    <!-- Sync -->
+    <string name="sync_offline_queue">Sync / Offline Queue</string>
+    <string name="online">Online</string>
+    <string name="offline">Offline</string>
+    <string name="pending_uploads">Pending Uploads</string>
+    <string name="failed_uploads">Failed Uploads</string>
+    <string name="sync_now">SYNC NOW</string>
+    <string name="connection">Connection</string>
+    <string name="last_sync">Last sync: %1$s</string>
+    <string name="session_items_format">%1$d Items</string>
+
+    <string name="completed">Completed</string>
+    <string name="items_count_format">%1$d items</string>
+
+    <!-- Settings -->
+    <string name="settings">Settings</string>
+    <string name="reader_settings">Reader Settings</string>
+    <string name="app_settings">App Settings</string>
+    <string name="reader_name">Reader Name</string>
+    <string name="table_reader">Table Reader</string>
+    <string name="entry">Entry</string>
+    <string name="workflow_stage">Workflow Stage</string>
+    <string name="location">Location</string>
+    <string name="read_mode">Read Mode</string>
+    <string name="single_session">Single / Session</string>
+    <string name="sound">Sound</string>
+    <string name="on">On</string>
+    <string name="reader_type">Reader Type</string>
+    <string name="action_mode">Action Mode</string>
+    <string name="rf_power">RF Power</string>
+    <string name="sound_feedback">Sound Feedback</string>
+    <string name="vibration">Vibration</string>
+    <string name="save_settings">SAVE SETTINGS</string>
+    <string name="log_out">LOG OUT</string>
+
+    <!-- Bottom nav -->
+    <string name="nav_dashboard">Dashboard</string>
+    <string name="nav_scan">Scan</string>
+    <string name="nav_more">More</string>
+
+    <!-- How it works -->
+    <string name="how_it_works">How It Works</string>
+    <string name="step_connect">Connect reader</string>
+    <string name="step_workflow">Select reader way</string>
+    <string name="step_scan">Scan RFID tags</string>
+    <string name="step_verify">Auto-classify</string>
+    <string name="step_deliver">Transmit to backend</string>
+
+    <!-- Dashboard -->
+    <string name="dashboard">Dashboard</string>
+    <string name="reader_status">Reader Status</string>
+    <string name="start_scanning">START SCANNING</string>
+    <string name="more_options">More</string>
+</resources>

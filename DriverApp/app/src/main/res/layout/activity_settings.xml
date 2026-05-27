@@ -1,0 +1,421 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/settings"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View android:layout_width="40dp" android:layout_height="40dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Scanner Section Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/scanner"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08" />
+
+            <!-- Scanner Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvSettingsScannerName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="—"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvSettingsScannerMac"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="—"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_battery"
+                            android:contentDescription="Battery" />
+
+                        <TextView
+                            android:id="@+id/tvSettingsBattery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="—"
+                            android:textColor="@color/success"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@drawable/bg_badge_connected"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="8dp">
+
+                    <View
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:background="@drawable/bg_dot_connected" />
+
+                    <TextView
+                        android:id="@+id/tvSettingsConnBadge"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="@string/not_connected"
+                        android:textColor="@color/error"
+                        android:textSize="13sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="16dp" />
+
+            <!-- Preferences Section Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="Preferences"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08" />
+
+            <!-- Toggles Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical">
+
+                <!-- Auto-connect -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/auto_connect"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/auto_connect_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <Switch
+                        android:id="@+id/switchAutoConnect"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="false"
+                        android:thumbTint="@color/primary"
+                        android:trackTint="#99BBD4F0" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" android:layout_marginHorizontal="16dp" />
+
+                <!-- Vibration -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/vibration"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/vibration_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <Switch
+                        android:id="@+id/switchVibration"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:thumbTint="@color/primary"
+                        android:trackTint="#99BBD4F0" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" android:layout_marginHorizontal="16dp" />
+
+                <!-- Sound -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/sound"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sound_desc"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <Switch
+                        android:id="@+id/switchSound"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:thumbTint="@color/primary"
+                        android:trackTint="#99BBD4F0" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="16dp" />
+
+            <!-- More Section Label -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="More"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textAllCaps="true"
+                android:letterSpacing="0.08" />
+
+            <!-- Actions Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical">
+
+                <!-- Clear Scanner Cache -->
+                <LinearLayout
+                    android:id="@+id/actionClearCache"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_settings_item"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_clear_cache"
+                        android:contentDescription="Clear" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:text="@string/clear_scanner_cache"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_right"
+                        android:contentDescription="Arrow" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" android:layout_marginHorizontal="16dp" />
+
+                <!-- About App -->
+                <LinearLayout
+                    android:id="@+id/actionAbout"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:background="@drawable/bg_settings_item"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_info"
+                        android:contentDescription="Info" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/about_app"
+                            android:textColor="@color/text_primary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/version_info"
+                            android:textColor="@color/text_secondary"
+                            android:textSize="12sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_arrow_right"
+                        android:contentDescription="Arrow" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="24dp" />
+
+            <!-- LOGOUT Button -->
+            <Button
+                android:id="@+id/btnLogout"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_btn_danger"
+                android:drawableStart="@drawable/ic_logout"
+                android:drawablePadding="8dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/btn_logout"
+                android:textColor="@color/error"
+                android:textSize="16sp"
+                android:stateListAnimator="@null" />
+
+            <Space android:layout_width="match_parent" android:layout_height="16dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

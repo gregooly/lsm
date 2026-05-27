@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Header Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_more_vert"
+            android:contentDescription="Menu"
+            android:scaleType="fitCenter" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            android:text="@string/home"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_bell"
+            android:padding="8dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="Notifications" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
+
+            <!-- Scanner Card -->
+            <LinearLayout
+                android:id="@+id/cardScanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_scanner_header_card"
+                android:clickable="true"
+                android:focusable="true"
+                android:elevation="6dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/scanner"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="12sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <!-- Connected status dot + label -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="10dp"
+                            android:layout_height="10dp"
+                            android:background="@drawable/bg_dot_connected" />
+
+                        <TextView
+                            android:id="@+id/tvHomeScannerStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="@string/not_connected"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+                    </LinearLayout>
+
+                    <!-- Battery -->
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_battery"
+                            android:contentDescription="Battery" />
+
+                        <TextView
+                            android:id="@+id/tvHomeBattery"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="—"
+                            android:textColor="@color/white"
+                            android:textSize="13sp" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvHomeScannerName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="—"
+                    android:textColor="#CCFFFFFF"
+                    android:textSize="13sp" />
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="12dp" />
+
+            <!-- Pending Uploads Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:text="@string/pending_uploads"
+                    android:textColor="@color/text_primary"
+                    android:textSize="14sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvPendingUploadCount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="0"
+                        android:textColor="@color/primary"
+                        android:textSize="32sp"
+                        android:textStyle="bold" />
+
+                    <ImageView
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:src="@drawable/ic_cloud_upload"
+                        android:contentDescription="Upload" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pickups_waiting"
+                    android:textColor="@color/text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="16dp" />
+
+            <!-- START PICKUP Button -->
+            <Button
+                android:id="@+id/btnStartPickup"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_btn_primary"
+                android:elevation="4dp"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/btn_start_pickup"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:stateListAnimator="@null" />
+
+            <Space android:layout_width="match_parent" android:layout_height="12dp" />
+
+            <!-- SYNC DATA Button -->
+            <Button
+                android:id="@+id/btnSyncData"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_btn_secondary"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/btn_sync_data"
+                android:textColor="@color/primary"
+                android:textSize="16sp"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Settings link at bottom -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:id="@+id/btnSettings"
+        android:clickable="true"
+        android:focusable="true">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_settings"
+            android:contentDescription="Settings" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="@string/settings"
+            android:textColor="@color/text_secondary"
+            android:textSize="14sp" />
+    </LinearLayout>
+</LinearLayout>

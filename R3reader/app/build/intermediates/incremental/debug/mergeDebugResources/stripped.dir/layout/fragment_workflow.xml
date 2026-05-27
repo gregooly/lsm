@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:navigationIcon="@null"
+        app:title="@string/workflow_reader_way" />
+
+    <TextView
+        style="@style/Text.R3reader.Secondary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/card_background"
+        android:paddingHorizontal="@dimen/spacing_md"
+        android:paddingBottom="@dimen/spacing_sm"
+        android:text="@string/workflow_instruction" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <include
+                android:id="@+id/cardSorting"
+                layout="@layout/item_workflow_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                android:id="@+id/cardShipment"
+                layout="@layout/item_workflow_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm" />
+
+            <include
+                android:id="@+id/cardQuarantine"
+                layout="@layout/item_workflow_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm" />
+
+            <include
+                android:id="@+id/cardReturn"
+                layout="@layout/item_workflow_card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/spacing_md"
+        app:cardCornerRadius="12dp"
+        app:cardElevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="@dimen/spacing_md">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text.R3reader.Secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/active_reader" />
+
+                <TextView
+                    android:id="@+id/tvActiveReader"
+                    style="@style/Text.R3reader.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TABLE-RFID-01"
+                    android:textColor="@color/primary_dark"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvActiveLocation"
+                    style="@style/Text.R3reader.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/location_clean_area"
+                    android:textColor="@color/primary_dark" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnEditReader"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/active_reader"
+                android:src="@drawable/ic_edit" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</LinearLayout>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/workflowCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:clickable="true"
+    android:focusable="true"
+    app:cardCornerRadius="@dimen/card_radius"
+    app:cardElevation="@dimen/elevation_card">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:minHeight="88dp"
+        android:orientation="horizontal"
+        android:padding="@dimen/card_padding">
+
+        <FrameLayout
+            android:id="@+id/iconFrame"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/bg_icon_success">
+
+            <ImageView
+                android:id="@+id/ivWorkflowIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:contentDescription="@null"
+                android:src="@drawable/ic_rfid_tag" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvWorkflowTitle"
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/sorting_preparation" />
+
+            <TextView
+                android:id="@+id/tvWorkflowDesc"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/movement_sorting" />
+
+            <TextView
+                android:id="@+id/tvWorkflowTarget"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="Target Status: sorting_ready" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivSelected"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:contentDescription="@null"
+            android:src="@drawable/ic_check_circle"
+            android:visibility="gone" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

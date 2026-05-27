@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Scanner body (gun shape) -->
+    <path
+        android:pathData="M40,20 L80,20 C84,20 86,22 86,26 L86,60 C86,64 84,66 80,66 L60,66 L60,80 L72,80 C74,80 76,82 76,84 L76,90 C76,92 74,94 72,94 L48,94 C46,94 44,92 44,90 L44,84 C44,82 46,80 48,80 L60,80 L60,66 L40,66 C36,66 34,64 34,60 L34,26 C34,22 36,20 40,20 Z"
+        android:fillColor="#E3F2FD"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2.5" />
+    <!-- Scanner window background (path form of rect) -->
+    <path
+        android:pathData="M46,28 L78,28 C80.2,28 82,29.8 82,32 L82,48 C82,50.2 80.2,52 78,52 L46,52 C43.8,52 42,50.2 42,48 L42,32 C42,29.8 43.8,28 46,28 Z"
+        android:fillColor="#1976D2"
+        android:alpha="0.15" />
+    <!-- Scanner window border -->
+    <path
+        android:pathData="M46,28 L78,28 C80.2,28 82,29.8 82,32 L82,48 C82,50.2 80.2,52 78,52 L46,52 C43.8,52 42,50.2 42,48 L42,32 C42,29.8 43.8,28 46,28 Z"
+        android:fillColor="#00000000"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="1.5" />
+    <!-- Scan lines -->
+    <path
+        android:pathData="M48,37 L72,37"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="1.5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M48,42 L72,42"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2.5"
+        android:strokeLineCap="round" />
+    <!-- LED indicator circle (top right) -->
+    <path
+        android:pathData="M74,24 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0"
+        android:fillColor="#22C55E" />
+    <!-- Trigger button circle -->
+    <path
+        android:pathData="M52,72 m-4,0 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0"
+        android:fillColor="#1976D2" />
+    <!-- Bluetooth symbol lines -->
+    <path
+        android:pathData="M60,56 L60,64 M60,58 L64,55 M60,58 L64,61 M60,62 L64,65 M60,62 L64,59"
+        android:strokeColor="#1976D2"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+</vector>

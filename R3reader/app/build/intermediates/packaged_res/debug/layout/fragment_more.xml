@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar"
+            style="@style/Widget.R3reader.Toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@null"
+            app:title="@string/more_options" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/menuConnect"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardCornerRadius="12dp">
+
+                <TextView
+                    style="@style/Text.R3reader.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:drawableStart="@drawable/ic_bluetooth"
+                    android:drawablePadding="12dp"
+                    android:drawableTint="@color/primary_blue"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/spacing_md"
+                    android:text="@string/connect_table_reader" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/menuSync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
+                app:cardCornerRadius="12dp">
+
+                <TextView
+                    style="@style/Text.R3reader.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:drawableStart="@drawable/ic_sync_outline"
+                    android:drawablePadding="12dp"
+                    android:drawableTint="@color/primary_blue"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/spacing_md"
+                    android:text="@string/sync_offline_queue" />
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/menuSettings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="12dp">
+
+                <TextView
+                    style="@style/Text.R3reader.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:drawableStart="@drawable/ic_settings_outline"
+                    android:drawablePadding="12dp"
+                    android:drawableTint="@color/text_secondary"
+                    android:gravity="center_vertical"
+                    android:paddingHorizontal="@dimen/spacing_md"
+                    android:text="@string/settings" />
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/connectFragment">
+
+    <fragment
+        android:id="@+id/connectFragment"
+        android:name="com.laundry.r3reader.ui.connect.ConnectFragment"
+        android:label="@string/connect_table_reader"
+        tools:layout="@layout/fragment_connect">
+
+        <action
+            android:id="@+id/action_connect_to_workflow"
+            app:destination="@id/workflowFragment"
+            app:popUpTo="@id/connectFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/workflowFragment"
+        android:name="com.laundry.r3reader.ui.workflow.WorkflowFragment"
+        android:label="@string/workflow_reader_way"
+        tools:layout="@layout/fragment_workflow">
+
+        <action
+            android:id="@+id/action_workflow_to_scan"
+            app:destination="@id/scanSessionFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/moreFragment"
+        android:name="com.laundry.r3reader.ui.more.MoreFragment"
+        android:label="@string/nav_more"
+        tools:layout="@layout/fragment_more">
+
+        <action android:id="@+id/action_more_to_sync" app:destination="@id/syncFragment" />
+        <action android:id="@+id/action_more_to_settings" app:destination="@id/settingsFragment" />
+        <action android:id="@+id/action_more_to_connect" app:destination="@id/connectFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanSessionFragment"
+        android:name="com.laundry.r3reader.ui.scan.ScanSessionFragment"
+        android:label="@string/scan_rfid_tags"
+        tools:layout="@layout/fragment_scan_session">
+
+        <action
+            android:id="@+id/action_scan_to_results"
+            app:destination="@id/scanResultsFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/scanResultsFragment"
+        android:name="com.laundry.r3reader.ui.results.ScanResultFragment"
+        android:label="@string/scan_results"
+        tools:layout="@layout/fragment_scan_results">
+
+        <action
+            android:id="@+id/action_results_to_workflow"
+            app:destination="@id/workflowFragment"
+            app:popUpTo="@id/workflowFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemDetailsFragment"
+        android:name="com.laundry.r3reader.ui.item.ItemDetailsFragment"
+        android:label="@string/item_details"
+        tools:layout="@layout/fragment_item_details" />
+
+    <fragment
+        android:id="@+id/syncFragment"
+        android:name="com.laundry.r3reader.ui.sync.SyncFragment"
+        android:label="@string/sync_offline_queue"
+        tools:layout="@layout/fragment_sync" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.laundry.r3reader.ui.settings.SettingsFragment"
+        android:label="@string/settings"
+        tools:layout="@layout/fragment_settings" />
+</navigation>

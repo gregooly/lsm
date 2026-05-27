@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/confirm_pickup"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View android:layout_width="40dp" android:layout_height="40dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Illustration -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
+                    android:src="@drawable/ic_clipboard"
+                    android:contentDescription="Confirm Pickup" />
+            </LinearLayout>
+
+            <!-- Info Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <!-- Location Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_location"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvLocation"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Hotel Sakura"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" />
+
+                <!-- Items Scanned Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_items"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvItemsCount"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="128"
+                        android:textColor="@color/primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" />
+
+                <!-- Date Time Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_date_time"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvDateTime"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="May 28, 2025  08:45 AM"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="@color/border" />
+
+                <!-- Driver ID Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingVertical="8dp">
+
+                    <TextView
+                        android:layout_width="120dp"
+                        android:layout_height="wrap_content"
+                        android:text="@string/label_driver"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tvDriverId"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="DRV12345"
+                        android:textColor="@color/text_primary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <Space android:layout_width="match_parent" android:layout_height="24dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnSendData"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_primary"
+            android:drawableStart="@drawable/ic_send"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_send_data"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+
+        <Space android:layout_width="match_parent" android:layout_height="10dp" />
+
+        <Button
+            android:id="@+id/btnBack"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_secondary"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_back"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+</LinearLayout>

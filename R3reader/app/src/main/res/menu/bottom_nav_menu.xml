@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/workflowFragment"
+        android:icon="@drawable/ic_scan"
+        android:title="@string/nav_scan" />
+    <item
+        android:id="@+id/moreFragment"
+        android:icon="@drawable/ic_more"
+        android:title="@string/nav_more" />
+</menu>

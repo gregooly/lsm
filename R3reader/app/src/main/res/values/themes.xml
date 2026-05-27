@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.R3reader" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primary_blue</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorSecondary">@color/success_green</item>
+        <item name="colorError">@color/error_red</item>
+        <item name="android:colorBackground">@color/background</item>
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:navigationBarColor">@color/card_background</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="materialButtonStyle">@style/Widget.R3reader.Button.Primary</item>
+        <item name="bottomNavigationStyle">@style/Widget.R3reader.BottomNav</item>
+    </style>
+
+    <style name="Theme.R3reader.Login" parent="Theme.R3reader">
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowBackground">@drawable/bg_login_gradient</item>
+    </style>
+
+    <style name="Widget.R3reader.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="android:background">@color/primary_dark</item>
+        <item name="titleTextColor">@color/white</item>
+        <item name="titleTextAppearance">@style/Text.R3reader.ToolbarTitle</item>
+        <item name="android:elevation">4dp</item>
+        <item name="android:minHeight">56dp</item>
+    </style>
+
+    <style name="Widget.R3reader.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="backgroundTint">@color/primary_blue</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textAllCaps">true</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <style name="Widget.R3reader.Button.Secondary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+        <item name="cornerRadius">@dimen/button_radius</item>
+        <item name="strokeColor">@color/primary_blue</item>
+        <item name="android:textColor">@color/primary_blue</item>
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="Widget.R3reader.Button.Success" parent="Widget.R3reader.Button.Primary">
+        <item name="backgroundTint">@color/success_green</item>
+    </style>
+
+    <style name="Widget.R3reader.Button.Danger" parent="Widget.R3reader.Button.Primary">
+        <item name="backgroundTint">@color/error_red</item>
+    </style>
+
+    <style name="Widget.R3reader.Card" parent="">
+        <item name="android:background">@drawable/bg_card</item>
+        <item name="android:padding">@dimen/card_padding</item>
+    </style>
+
+    <style name="Text.R3reader.ScreenTitle" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_screen_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.R3reader.SectionTitle" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_section_title</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.R3reader.CardTitle" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_card_title</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.R3reader.ToolbarTitle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/text_section_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Text.R3reader.Body" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_body</item>
+        <item name="android:textColor">@color/text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text.R3reader.Secondary" parent="@android:style/TextAppearance.Material.Body1">
+        <item name="android:textSize">@dimen/text_secondary</item>
+        <item name="android:textColor">@color/text_secondary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="Text.R3reader.ScanCount" parent="@android:style/TextAppearance.Material.Display1">
+        <item name="android:textSize">@dimen/text_scan_count</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/primary_blue</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="Widget.R3reader.BottomNav" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_color</item>
+        <item name="itemTextColor">@color/bottom_nav_color</item>
+        <item name="android:background">@color/card_background</item>
+        <item name="labelVisibilityMode">labeled</item>
+        <item name="elevation">8dp</item>
+    </style>
+
+    <style name="Widget.R3reader.Tab" parent="Widget.MaterialComponents.TabLayout">
+        <item name="tabIndicatorColor">@color/primary_blue</item>
+        <item name="tabSelectedTextColor">@color/primary_blue</item>
+        <item name="tabTextColor">@color/text_secondary</item>
+    </style>
+</resources>

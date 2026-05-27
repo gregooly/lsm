@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/verify_commit_session" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardBackgroundColor="@color/light_success"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/success_green"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.Secondary"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/workflow"
+                        android:textColor="@color/primary_dark" />
+
+                    <TextView
+                        android:id="@+id/tvWorkflowName"
+                        style="@style/Text.R3reader.SectionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/sorting_preparation"
+                        android:textColor="@color/success_green"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvWorkflowMovement"
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="@string/movement_sorting"
+                        android:textColor="@color/primary_dark" />
+
+                    <TextView
+                        android:id="@+id/tvWorkflowTarget"
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="Target Status: sorting_ready"
+                        android:textColor="@color/success_green" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="@dimen/card_padding">
+
+                    <TextView
+                        style="@style/Text.R3reader.CardTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/session_summary"
+                        android:textColor="@color/primary_dark" />
+
+                    <include
+                        android:id="@+id/rowUnique"
+                        layout="@layout/item_verification_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm" />
+
+                    <include
+                        android:id="@+id/rowExpected"
+                        layout="@layout/item_verification_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <include
+                        android:id="@+id/rowMatched"
+                        layout="@layout/item_verification_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <include
+                        android:id="@+id/rowUnexpected"
+                        layout="@layout/item_verification_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <include
+                        android:id="@+id/rowDuplicates"
+                        layout="@layout/item_verification_row"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                android:text="@string/notes_optional"
+                android:textColor="@color/primary_dark" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                app:boxStrokeColor="@color/border">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etNotes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="top"
+                    android:hint="@string/notes_hint"
+                    android:inputType="textMultiLine"
+                    android:minLines="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCommit"
+        style="@style/Widget.R3reader.Button.Success"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_margin="@dimen/spacing_md"
+        android:text="@string/commit_session"
+        android:textAllCaps="true"
+        app:icon="@drawable/ic_success_check"
+        app:iconGravity="textStart"
+        app:iconTint="@color/white" />
+</LinearLayout>

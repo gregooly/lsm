@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Typography -->
+    <dimen name="text_screen_title">24sp</dimen>
+    <dimen name="text_section_title">18sp</dimen>
+    <dimen name="text_card_title">16sp</dimen>
+    <dimen name="text_body">14sp</dimen>
+    <dimen name="text_secondary">12sp</dimen>
+    <dimen name="text_metadata">11sp</dimen>
+    <dimen name="text_scan_count">56sp</dimen>
+    <dimen name="text_rfid_count">48sp</dimen>
+    <dimen name="text_status_number">40sp</dimen>
+
+    <!-- Components -->
+    <dimen name="button_height">52dp</dimen>
+    <dimen name="button_radius">14dp</dimen>
+    <dimen name="card_radius">18dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="chip_radius">20dp</dimen>
+    <dimen name="touch_target_min">48dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_sm">8dp</dimen>
+    <dimen name="spacing_md">16dp</dimen>
+    <dimen name="spacing_lg">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="scan_ring_size">220dp</dimen>
+    <dimen name="elevation_card">4dp</dimen>
+</resources>

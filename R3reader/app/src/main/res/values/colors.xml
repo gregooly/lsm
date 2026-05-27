@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary -->
+    <color name="primary_blue">#1976D2</color>
+    <color name="primary_dark">#0D47A1</color>
+    <color name="light_blue_bg">#E3F2FD</color>
+
+    <!-- Success -->
+    <color name="success_green">#2E7D32</color>
+    <color name="light_success">#E8F5E9</color>
+
+    <!-- Warning -->
+    <color name="warning_orange">#F9A825</color>
+    <color name="light_warning">#FFF8E1</color>
+
+    <!-- Error -->
+    <color name="error_red">#D32F2F</color>
+    <color name="light_error">#FFEBEE</color>
+
+    <!-- Neutral (light) -->
+    <color name="background">#F5F7FA</color>
+    <color name="card_background">#FFFFFF</color>
+    <color name="border">#DADCE0</color>
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#757575</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+
+    <!-- Workflow accents -->
+    <color name="workflow_sorting">#2E7D32</color>
+    <color name="workflow_shipment">#1976D2</color>
+    <color name="workflow_quarantine">#F9A825</color>
+    <color name="workflow_return">#7B1FA2</color>
+
+    <!-- Terminal feed -->
+    <color name="terminal_bg">#1E293B</color>
+    <color name="terminal_text">#4ADE80</color>
+
+    <!-- Dark mode -->
+    <color name="dark_background">#0F172A</color>
+    <color name="dark_card">#1E293B</color>
+    <color name="dark_text">#F8FAFC</color>
+    <color name="dark_text_secondary">#94A3B8</color>
+    <color name="dark_border">#334155</color>
+</resources>

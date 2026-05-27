@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/light_blue_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="@dimen/spacing_md">
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_linen" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_md"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/Text.R3reader.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/login_bullet_1"
+            android:textColor="@color/primary_dark" />
+
+        <TextView
+            style="@style/Text.R3reader.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/login_bullet_2"
+            android:textColor="@color/primary_dark" />
+
+        <TextView
+            style="@style/Text.R3reader.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="@string/login_bullet_3"
+            android:textColor="@color/primary_dark" />
+    </LinearLayout>
+</LinearLayout>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/assignment_management" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/current_assignment"
+                android:textColor="@color/primary_dark" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/card_padding">
+
+                    <ImageView
+                        android:layout_width="52dp"
+                        android:layout_height="52dp"
+                        android:background="@drawable/bg_icon_blue"
+                        android:padding="12dp"
+                        android:src="@drawable/ic_user_outline" />
+
+                    <GridLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_md"
+                        android:layout_weight="1"
+                        android:columnCount="2"
+                        android:rowCount="3">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_column="0"
+                            android:layout_row="0"
+                            android:text="@string/assigned_to" />
+
+                        <TextView
+                            android:id="@+id/tvAssignName"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_column="1"
+                            android:layout_row="0"
+                            android:text="John Smith"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_column="0"
+                            android:layout_row="1"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/type" />
+
+                        <TextView
+                            android:id="@+id/tvAssignType"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_column="1"
+                            android:layout_row="1"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/temporary_employee"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_column="0"
+                            android:layout_row="2"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/since" />
+
+                        <TextView
+                            android:id="@+id/tvAssignSince"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_column="1"
+                            android:layout_row="2"
+                            android:layout_marginTop="8dp"
+                            android:text="Apr 15, 2025"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+                    </GridLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                style="@style/Text.R3reader.CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:text="@string/action"
+                android:textColor="@color/primary_dark" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                app:cardCornerRadius="@dimen/card_radius"
+                app:cardElevation="@dimen/elevation_card">
+
+                <LinearLayout
+                    android:id="@+id/layoutActions"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include
+                        android:id="@+id/actionRemove"
+                        layout="@layout/item_assignment_action" />
+
+                    <include
+                        android:id="@+id/actionEmployee"
+                        layout="@layout/item_assignment_action" />
+
+                    <include
+                        android:id="@+id/actionCustomer"
+                        layout="@layout/item_assignment_action" />
+
+                    <include
+                        android:id="@+id/actionFixed"
+                        layout="@layout/item_assignment_action" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnApplyAction"
+        style="@style/Widget.R3reader.Button.Primary"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/button_height"
+        android:layout_margin="@dimen/spacing_md"
+        android:text="@string/apply_action"
+        android:textAllCaps="true" />
+</LinearLayout>

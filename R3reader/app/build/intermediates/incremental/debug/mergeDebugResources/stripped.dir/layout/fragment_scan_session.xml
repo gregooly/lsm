@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/Widget.R3reader.Toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:title="@string/scan_session" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_md">
+
+            <TextView
+                android:id="@+id/tvSessionId"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end"
+                android:textColor="@color/primary_dark"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvScanHint"
+                style="@style/Text.R3reader.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_sm"
+                android:gravity="center"
+                android:text="@string/scan_table_hint"
+                android:textColor="@color/text_secondary" />
+
+            <FrameLayout
+                android:layout_width="@dimen/scan_ring_size"
+                android:layout_height="@dimen/scan_ring_size"
+                android:layout_marginTop="@dimen/spacing_md">
+
+                <View
+                    android:id="@+id/pulseGlow"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_scan_pulse_glow" />
+
+                <View
+                    android:id="@+id/pulseRing"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/bg_scan_pulse_ring" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/unique_tags"
+                        android:textColor="@color/primary_dark" />
+
+                    <TextView
+                        android:id="@+id/tvUniqueCount"
+                        style="@style/Text.R3reader.ScanCount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="128"
+                        android:textColor="@color/primary_dark" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <View
+                            android:layout_width="8dp"
+                            android:layout_height="8dp"
+                            android:background="@drawable/chip_connected" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/good_read"
+                            android:textColor="@color/success_green"
+                            android:textSize="@dimen/text_secondary" />
+                    </LinearLayout>
+                </LinearLayout>
+            </FrameLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_lg"
+                android:orientation="horizontal"
+                android:weightSum="3">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:strokeColor="@color/border"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_sm">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/total_reads" />
+
+                        <TextView
+                            android:id="@+id/tvTotalReads"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="468"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:strokeColor="@color/border"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_sm">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/duplicates" />
+
+                        <TextView
+                            android:id="@+id/tvDuplicates"
+                            style="@style/Text.R3reader.Body"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="340"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_xs"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    app:strokeColor="@color/border"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_sm">
+
+                        <TextView
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/last_epc" />
+
+                        <TextView
+                            android:id="@+id/tvLastEpc"
+                            style="@style/Text.R3reader.Secondary"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:ellipsize="end"
+                            android:gravity="center"
+                            android:maxLines="2"
+                            android:text="E200001722110144"
+                            android:textColor="@color/primary_dark"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/spacing_md"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/border"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/spacing_md">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🕐"
+                        android:textSize="18sp" />
+
+                    <TextView
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/spacing_sm"
+                        android:text="@string/session_time"
+                        android:textColor="@color/primary_dark"
+                        android:textStyle="bold" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:layout_weight="1" />
+
+                    <TextView
+                        android:id="@+id/tvSessionTime"
+                        style="@style/Text.R3reader.Body"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/session_time_value"
+                        android:textColor="@color/primary_dark"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_md"
+        android:weightSum="2">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPause"
+            style="@style/Widget.R3reader.Button.Secondary"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginEnd="@dimen/spacing_sm"
+            android:layout_weight="1"
+            android:text="@string/pause"
+            android:textAllCaps="true" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnStop"
+            style="@style/Widget.R3reader.Button.Danger"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/button_height"
+            android:layout_marginStart="@dimen/spacing_sm"
+            android:layout_weight="1"
+            android:text="@string/stop"
+            android:textAllCaps="true" />
+    </LinearLayout>
+</LinearLayout>

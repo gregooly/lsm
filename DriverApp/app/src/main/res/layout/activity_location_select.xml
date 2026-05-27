@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/select_location"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_qr_code"
+            android:padding="8dp"
+            android:contentDescription="QR Code"
+            android:id="@+id/ivQrCode" />
+    </LinearLayout>
+
+    <!-- Search bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:background="@color/surface"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_search"
+            android:contentDescription="Search" />
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="10dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:hint="@string/search_location_hint"
+            android:inputType="text"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/gray_text"
+            android:textSize="14sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/all_locations"
+                android:textColor="@color/text_primary"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Space android:layout_width="match_parent" android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_card"
+                android:elevation="4dp"
+                android:orientation="vertical"
+                android:padding="4dp">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvLocations"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:overScrollMode="never" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvNoLocations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="No locations found."
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:visibility="gone" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- Bottom SCAN QR CODE button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnScanQr"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_secondary"
+            android:drawableStart="@drawable/ic_qr_code"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_scan_qr"
+            android:textColor="@color/primary"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+</LinearLayout>

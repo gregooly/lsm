@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_gradient_header"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_back"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="8dp"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/sync_status"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <View android:layout_width="40dp" android:layout_height="40dp" />
+    </LinearLayout>
+
+    <!-- Tab Bar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:background="@color/surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp"
+        android:elevation="2dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/tabAll"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_tab_selected"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/tab_all"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="4dp"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/tabPending"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/tab_pending"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="4dp"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/tabFailed"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/tab_failed"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="4dp"
+                android:stateListAnimator="@null" />
+
+            <Button
+                android:id="@+id/tabUploaded"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-medium"
+                android:text="@string/tab_uploaded"
+                android:textColor="@color/text_secondary"
+                android:textSize="13sp"
+                android:textAllCaps="false"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:paddingHorizontal="4dp"
+                android:stateListAnimator="@null" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSyncRecords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:overScrollMode="never" />
+
+        <TextView
+            android:id="@+id/tvEmptySync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:text="@string/no_sync_records"
+            android:textColor="@color/text_secondary"
+            android:textSize="13sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <!-- SYNC ALL Button -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:elevation="8dp"
+        android:padding="16dp">
+
+        <Button
+            android:id="@+id/btnSyncAll"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_btn_primary"
+            android:drawableStart="@drawable/ic_sync"
+            android:drawablePadding="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/btn_sync_all"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:stateListAnimator="@null" />
+    </LinearLayout>
+</LinearLayout>
